@@ -1,0 +1,214 @@
+"use client";
+
+import Image from "next/image";
+import Link from "next/link";
+import { useState, useId, useEffect } from "react";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation, Pagination } from "swiper/modules";
+import { useFavorites } from "@/contexts/FavoritesContext";
+import type { Dictionary } from "@/lib/dictionaries";
+
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+
+interface PropertyCardProps {
+  id: string | number;
+  title: string;
+  location: string;
+  price: string;
+  beds: number;
+  baths: number;
+  area: number;
+  images: string[];
+  featured?: boolean;
+  compact?: boolean;
+  lang?: string;
+  dictionary?: Dictionary;
+  previewTags?: string[];
+}
+
+export default function PropertyCard({
+  id,
+  title,
+  location,
+  price,
+  beds,
+  baths,
+  area,
+  images,
+  featured = false,
+  compact = false,
+  lang = 'sk',
+  dictionary,
+  previewTags = [],
+}: PropertyCardProps) {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const uniqueId = useId().replace(/:/g, "");
+  const { isFavorite, toggleFavorite } = useFavorites();
+  const favorited = isFavorite(id);
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
+
+  useEffect(() => {
+    setIsTouchDevice("ontouchstart" in window || navigator.maxTouchPoints > 0);
+  }, []);
+
+  const handleFavoriteClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    toggleFavorite(id);
+  };
+
+  const featuredLabel = dictionary?.common?.featured || 'Featured';
+  const addToFavoritesLabel = dictionary?.common?.addToFavorites || 'Add to favorites';
+  const removeFromFavoritesLabel = dictionary?.common?.removeFromFavorites || 'Remove from favorites';
+
+  // Label map for preview tags
+  const tagLabels: Record<string, string> = {
+    pool: lang === 'en' ? 'Pool' : 'Bazén',
+    garden: lang === 'en' ? 'Garden' : 'Záhrada',
+    balcony: lang === 'en' ? 'Balcony' : 'Balkón',
+    sea_view: lang === 'en' ? 'Sea View' : 'Výhľad na more',
+    first_line: lang === 'en' ? 'First Line' : 'Prvá línia',
+    new_build: lang === 'en' ? 'New Build' : 'Novostavba',
+    new_project: lang === 'en' ? 'New Project' : 'Nový projekt',
+    luxury: lang === 'en' ? 'Luxury' : 'Luxus',
+    golf: 'Golf',
+    mountains: lang === 'en' ? 'Mountains' : 'Hory',
+  };
+
+  return (
+    <Link href={`/${lang}/properties/${id}`} className="block h-full">
+      <article className="group h-full bg-white rounded-2xl overflow-hidden shadow-[var(--shadow-sm)] hover:shadow-[var(--shadow-lg)] transition-all duration-300 hover:-translate-y-1">
+        {/* Image */}
+        <div className={`relative ${compact ? "h-44 sm:h-48" : "aspect-[4/3]"} overflow-hidden bg-[var(--color-surface)] property-image-watermark`}>
+          <Swiper
+            modules={[Navigation, Pagination]}
+            navigation={!isTouchDevice ? {
+              nextEl: `.property-next-${uniqueId}`,
+              prevEl: `.property-prev-${uniqueId}`,
+            } : false}
+            pagination={isTouchDevice ? {
+              clickable: true,
+              dynamicBullets: true,
+            } : false}
+            loop={images.length > 1}
+            onSlideChange={(swiper) => setActiveIndex(swiper.realIndex)}
+            className="w-full h-full property-card-swiper"
+          >
+            {images.map((image, index) => (
+              <SwiperSlide key={index}>
+                <Image
+                  src={image}
+                  alt={`${title} - foto ${index + 1}`}
+                  fill
+                  className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                />
+              </SwiperSlide>
+            ))}
+          </Swiper>
+
+          {/* Navigation Arrows */}
+          {images.length > 1 && !isTouchDevice && (
+            <>
+              <button
+                onClick={(e) => e.preventDefault()}
+                className={`property-prev-${uniqueId} absolute left-2.5 top-1/2 -translate-y-1/2 z-10 w-8 h-8 flex items-center justify-center bg-white/90 hover:bg-white rounded-full opacity-0 group-hover:opacity-100 transition-all shadow-sm backdrop-blur-sm`}
+              >
+                <svg className="w-4 h-4 text-[var(--color-secondary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+              <button
+                onClick={(e) => e.preventDefault()}
+                className={`property-next-${uniqueId} absolute right-2.5 top-1/2 -translate-y-1/2 z-10 w-8 h-8 flex items-center justify-center bg-white/90 hover:bg-white rounded-full opacity-0 group-hover:opacity-100 transition-all shadow-sm backdrop-blur-sm`}
+              >
+                <svg className="w-4 h-4 text-[var(--color-secondary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            </>
+          )}
+
+          {/* Favorite Button */}
+          <button
+            onClick={handleFavoriteClick}
+            className="absolute top-3 left-3 z-10 w-10 h-10 sm:w-9 sm:h-9 flex items-center justify-center bg-white/90 hover:bg-white rounded-full shadow-sm transition-all active:scale-95 backdrop-blur-sm"
+            title={favorited ? removeFromFavoritesLabel : addToFavoritesLabel}
+          >
+            <svg
+              className={`w-5 h-5 transition-colors ${favorited ? "text-red-500 fill-red-500" : "text-[var(--color-muted)]"}`}
+              fill={favorited ? "currentColor" : "none"}
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+            </svg>
+          </button>
+
+          {/* Featured Badge */}
+          {featured && (
+            <span className="absolute top-3 right-3 z-10 px-3 py-1 text-[10px] font-medium uppercase tracking-widest bg-[var(--color-accent)] text-white rounded-full">
+              {featuredLabel}
+            </span>
+          )}
+        </div>
+
+        {/* Preview Tags */}
+        {previewTags.length > 0 && (
+          <div className="px-5 sm:px-6 pt-3 flex flex-wrap gap-1.5">
+            {previewTags.map(tag => (
+              <span
+                key={tag}
+                className="px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider bg-[var(--color-primary)]/10 text-[var(--color-primary)] rounded-md"
+              >
+                {tagLabels[tag] || tag}
+              </span>
+            ))}
+          </div>
+        )}
+
+        {/* Content */}
+        <div className={compact ? "p-4 sm:p-5" : "p-5 sm:p-6"}>
+          {/* Price — large serif */}
+          <p className={`font-serif ${compact ? "text-lg sm:text-xl" : "text-xl sm:text-2xl"} text-[var(--color-primary)] mb-1.5 tabular-nums`}>
+            {price}
+          </p>
+
+          {/* Title */}
+          <h3 className={`font-medium text-[var(--color-secondary)] ${compact ? "text-sm" : "text-sm sm:text-base"} mb-1.5 group-hover:text-[var(--color-primary)] transition-colors line-clamp-1`}>
+            {title}
+          </h3>
+
+          {/* Location */}
+          <p className="text-[var(--color-muted)] text-xs sm:text-sm mb-4">{location}</p>
+
+          {/* Stats — pipe-separated */}
+          <div className="flex items-center gap-0 text-xs sm:text-sm text-[var(--color-muted)]">
+            <div className="flex items-center gap-1.5">
+              <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[var(--color-muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+              </svg>
+              <span>{beds}</span>
+            </div>
+            <span className="mx-2.5 text-[var(--color-border-dark)]">|</span>
+            <div className="flex items-center gap-1.5">
+              <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[var(--color-muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3 13h18v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4zm2-3V6a2 2 0 012-2h2a2 2 0 012 2v4" />
+              </svg>
+              <span>{baths}</span>
+            </div>
+            <span className="mx-2.5 text-[var(--color-border-dark)]">|</span>
+            <div className="flex items-center gap-1.5">
+              <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[var(--color-muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" />
+              </svg>
+              <span>{area} m²</span>
+            </div>
+          </div>
+        </div>
+      </article>
+    </Link>
+  );
+}

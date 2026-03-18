@@ -1,0 +1,87 @@
+import { Suspense } from "react";
+import PropertiesContent from "@/components/sections/PropertiesContent";
+import { getDictionary } from "@/lib/dictionaries";
+import { getPropertiesServer, type Language } from "@/lib/data-access";
+import { getPageHero } from "@/lib/page-hero-store";
+
+// Loading fallback for Suspense
+function LoadingFallback() {
+    return (
+        <section className="py-12 md:py-16">
+            <div className="container-custom">
+                <div className="flex flex-col lg:flex-row gap-8">
+                    <aside className="lg:w-72 flex-shrink-0">
+                        <div className="bg-white rounded-2xl border border-[var(--color-border)] p-6 animate-pulse">
+                            <div className="h-6 bg-gray-200 rounded w-24 mb-6"></div>
+                            <div className="space-y-4">
+                                <div className="h-12 bg-gray-200 rounded"></div>
+                                <div className="h-12 bg-gray-200 rounded"></div>
+                                <div className="h-12 bg-gray-200 rounded"></div>
+                            </div>
+                        </div>
+                    </aside>
+                    <main className="flex-1">
+                        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                            {[1, 2, 3, 4, 5, 6].map((i) => (
+                                <div key={i} className="bg-white rounded-xl border border-[var(--color-border)] overflow-hidden animate-pulse">
+                                    <div className="h-56 bg-gray-200"></div>
+                                    <div className="p-4 space-y-3">
+                                        <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                                        <div className="h-5 bg-gray-200 rounded"></div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </main>
+                </div>
+            </div>
+        </section>
+    );
+}
+
+export default async function PropertiesPage({
+    params,
+}: {
+    params: Promise<{ lang: string }>
+}) {
+    const { lang } = await params;
+    const validLang = (['sk', 'en', 'cz'].includes(lang) ? lang : 'sk') as Language;
+    const dictionary = getDictionary(validLang);
+    const properties = await getPropertiesServer(validLang);
+
+    let heroImage = "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1920&q=80";
+    try {
+        const hero = await getPageHero('properties');
+        if (hero?.image_url) heroImage = hero.image_url;
+    } catch {}
+
+    return (
+        <div className="min-h-screen bg-[var(--color-background)]">
+            {/* Hero Banner */}
+            <section className="relative h-64 md:h-80 bg-[var(--color-primary)]">
+                <div
+                    className="absolute inset-0 bg-cover bg-center opacity-30"
+                    style={{
+                        backgroundImage: `url('${heroImage}')`,
+                    }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-primary)] via-transparent to-transparent" />
+                <div className="relative container-custom h-full flex flex-col justify-center items-center text-center text-white pt-16">
+                    <p className="text-sm uppercase tracking-[0.2em] text-[var(--color-sand-light)] mb-3">
+                        {dictionary.properties.subtitle}
+                    </p>
+                    <h1 className="font-serif text-4xl md:text-5xl font-medium text-white mb-4">
+                        {dictionary.properties.title}
+                    </h1>
+                    <p className="text-lg text-white/80">
+                        {dictionary.properties.heroText}
+                    </p>
+                </div>
+            </section>
+
+            <Suspense fallback={<LoadingFallback />}>
+                <PropertiesContent lang={validLang} properties={properties} />
+            </Suspense>
+        </div>
+    );
+}

@@ -1,0 +1,405 @@
+{
+    "nav": {
+        "properties": "Properties",
+        "buyingProcess": "Buying Process",
+        "about": "About Us",
+        "blog": "Blog",
+        "contact": "Contact",
+        "favorites": "Favorites"
+    },
+    "header": {
+        "menu": "Menu",
+        "callUs": "Call us",
+        "writeUs": "Write to us",
+        "language": "Language"
+    },
+    "footer": {
+        "description": "Your trusted partner for luxury Mediterranean real estate. We help you find the perfect home by the sea.",
+        "quickLinks": "Quick Links",
+        "countries": "Countries",
+        "contactUs": "Contact Us",
+        "allRights": "All rights reserved.",
+        "privacy": "Privacy Policy",
+        "terms": "Terms & Conditions"
+    },
+    "common": {
+        "search": "Search",
+        "filter": "Filter",
+        "sort": "Sort",
+        "viewMore": "View More",
+        "viewAll": "View All",
+        "viewOffers": "View Offers",
+        "submit": "Submit",
+        "send": "Send",
+        "loading": "Loading...",
+        "noResults": "No results",
+        "close": "Close",
+        "featured": "Featured",
+        "new": "New",
+        "addToFavorites": "Add to favorites",
+        "removeFromFavorites": "Remove from favorites",
+        "browseProperties": "Browse Properties",
+        "contactUs": "Contact Us"
+    },
+    "properties": {
+        "title": "Properties",
+        "subtitle": "Property Listings",
+        "heroText": "Find your dream property by the sea",
+        "found": "Found",
+        "propertiesLabel": "properties",
+        "noMatch": "No properties match your criteria.",
+        "filters": {
+            "country": "Country",
+            "type": "Type",
+            "bedrooms": "Bedrooms",
+            "price": "Price",
+            "seaView": "Sea View",
+            "firstLine": "Beachfront",
+            "pool": "Pool",
+            "luxury": "Luxury"
+        }
+    },
+    "about": {
+        "title": "About Us",
+        "subtitle": "About the company",
+        "heroTitle": "Your partner for properties abroad",
+        "heroText": "Comprehensive service when buying foreign properties tailored to individual client requirements.",
+        "intro": "Relax Properties strives to provide comprehensive services tailored to the individual requirements of each client. We cooperate only with selected partners such as lawyers, notaries, tax advisors, developers, and real estate agencies. Our goal is to ensure a smooth process when purchasing property, including comprehensive services provided.",
+        "partnersLabel": "We cooperate with",
+        "partners": ["Lawyers", "Notaries", "Tax advisors", "Developers", "Real estate agencies"],
+        "goalsSubtitle": "Our main goals",
+        "goalsTitle": "What we stand for",
+        "goals": [
+            "Provide a quality selection of foreign properties from affordable to premium properties in the most sought-after international locations",
+            "Ensure a smooth, problem-free, and secure process when buying/selling foreign properties",
+            "Our properties undergo selling price verification, ensuring our clients purchase at the best market price",
+            "We approach each client individually with maximum empathy and a high standard of assistance and services",
+            "Our main goal is client satisfaction and protection of their finances when purchasing property abroad",
+            "Our client can reach out to us at any time even after the purchase itself — we are here for them the entire time"
+        ],
+        "servicesSubtitle": "Our services",
+        "servicesTitle": "What we provide for you",
+        "services": [
+            {
+                "title": "Finding the right property",
+                "description": "Finding the ideal property based on the specific requirements of our clients"
+            },
+            {
+                "title": "Property viewings",
+                "description": "Virtual online and in-person property viewings"
+            },
+            {
+                "title": "Legal & financial advisory",
+                "description": "Qualified legal and financial advisory services"
+            },
+            {
+                "title": "Detailed property research",
+                "description": "Detailed research of the selected foreign property including title deed verification, double-checking court records, and debt verification — through our legal representatives"
+            },
+            {
+                "title": "Property insurance",
+                "description": "Property insurance for 1 year free of charge"
+            },
+            {
+                "title": "Advisory & contacts",
+                "description": "Advisory services, providing useful contacts, and additional services upon request"
+            }
+        ],
+        "teamSubtitle": "Our Team",
+        "teamTitle": "Meet Us",
+        "teamLanguages": "Languages spoken:",
+        "ctaTitle": "Ready to find your dream home?",
+        "ctaText": "Contact us and let's start looking for a property that will fulfill your dreams."
+    },
+    "contact": {
+        "title": "Contact",
+        "subtitle": "Contact",
+        "heroTitle": "Get in Touch",
+        "weAreHere": "We're here for you",
+        "howCanHelp": "How can we help you?",
+        "introText": "Whether you're looking for a property to live in or invest in, our team of experts is ready to answer all your questions. Don't hesitate to contact us – we'll be happy to help.",
+        "ourOffices": "Our Offices",
+        "openingHours": "Opening Hours",
+        "mapPlaceholder": "Interactive map coming soon",
+        "faqSubtitle": "FAQ",
+        "faqTitle": "Frequently Asked Questions",
+        "companyInfo": {
+            "name": "Relax Properties s. r. o.",
+            "address": ["Na vyhliadke 2915/5", "900 31 Stupava", "Slovak Republic"],
+            "registration": "The company is registered in the Commercial Register of the District Court Bratislava I, Section Sro, File No.: 152886/B.",
+            "ids": "Company ID: 53784961, Tax ID: 2121506464, VAT ID: SK2121506464",
+            "phoneLabel": "Phone:",
+            "emailLabel": "Email:",
+            "phones": [
+                { "name": "Mgr. Aleš Dvořák", "number": "+421 911 989 895", "raw": "+421911989895" },
+                { "name": "Mgr. Viera Dvořáková", "number": "+421 911 819 152", "raw": "+421911819152" },
+                { "name": "Bc. Tatiana Tóthová", "number": "+421 911 353 550", "raw": "+421911353550" }
+            ],
+            "emails": ["info@relaxproperties.sk", "spanielsko@relaxproperties.sk"]
+        },
+        "form": {
+            "name": "Name",
+            "email": "Email",
+            "phone": "Phone",
+            "message": "Message",
+            "submit": "Send Message",
+            "success": "Message sent!",
+            "selectProperty": "Select property",
+            "yourMessage": "Your message"
+        },
+        "faq": [
+            {
+                "q": "How does buying property abroad work?",
+                "a": "We'll guide you through the entire process step by step. From property selection, through legal verification, to contract signing and ownership transfer. We work with local lawyers and notaries."
+            },
+            {
+                "q": "What are your service fees?",
+                "a": "Our commission is standard for the real estate market and depends on the property value. We'll inform you of the exact amount at the first consultation. No hidden fees."
+            },
+            {
+                "q": "Can I view the property in person?",
+                "a": "Of course! We organize property viewings for our clients. We can plan an entire trip including multiple viewings in one day."
+            },
+            {
+                "q": "Do you help with financing?",
+                "a": "Yes, we work with banks and mortgage advisors who will help you find the best financing conditions for your property."
+            }
+        ]
+    },
+    "buyingProcess": {
+        "title": "Buying Process",
+        "subtitle": "How to Buy Property",
+        "heroTitle": "How to Buy Property Abroad",
+        "heroText": "Your guide to buying property abroad",
+        "selectCountry": "Select a country to view the buying process",
+        "stepsTitle": "Steps to Your Property",
+        "advantagesTitle": "Why Invest in Property Abroad",
+        "advantages": [
+            {
+                "title": "Legal Security",
+                "description": "We work with local lawyers and notaries to ensure a safe and secure transaction."
+            },
+            {
+                "title": "Investment Potential",
+                "description": "Seaside properties offer stable value growth and rental income opportunities."
+            },
+            {
+                "title": "Personal Guidance",
+                "description": "From first contact to the keys — our team guides you through the entire process."
+            },
+            {
+                "title": "No Hidden Fees",
+                "description": "Transparent terms with no surprises. You'll know all costs upfront."
+            }
+        ],
+        "faqTitle": "Frequently Asked Questions",
+        "faq": [
+            {
+                "q": "Can I buy property abroad remotely?",
+                "a": "Yes, with a power of attorney the entire process can be completed without being present in person. However, we recommend at least one personal viewing."
+            },
+            {
+                "q": "What are the total purchase costs?",
+                "a": "In addition to the property price, expect notary fees (1-2%), transfer tax (2-10% depending on country), and legal fees. We'll prepare a detailed cost breakdown for you."
+            },
+            {
+                "q": "How long does the process take?",
+                "a": "From selection to ownership transfer typically takes 4-8 weeks, depending on the country and property type."
+            },
+            {
+                "q": "Do I need special permission?",
+                "a": "EU citizens can purchase property without restrictions in all our destinations. For non-EU citizens, specific rules apply depending on the country."
+            }
+        ],
+        "readyTitle": "Ready for the Next Step?",
+        "readyText": "Contact us and let's start looking for your dream seaside property together.",
+        "contactUs": "Contact Us",
+        "viewProperties": "Properties in",
+        "resetFilters": "Reset filters",
+        "countries": {
+            "bulgaria": {
+                "name": "Bulgaria",
+                "flag": "🇧🇬",
+                "intro": "Property prices in Bulgaria are growing as the second fastest in the EU. The country is expected to join the Eurozone soon and is a member of the EU and NATO.",
+                "highlights": [
+                    "Eurozone entry",
+                    "Schengen",
+                    "EU Member"
+                ],
+                "process": [
+                    {
+                        "title": "Property Selection",
+                        "description": "We'll help you choose the right property according to your requirements, including viewings."
+                    },
+                    {
+                        "title": "Reservation",
+                        "description": "Signing a reservation agreement and a deposit of €2,000 – €5,000."
+                    },
+                    {
+                        "title": "Legal Check",
+                        "description": "Our lawyer will review all documents and verify the property's history."
+                    },
+                    {
+                        "title": "Contract Signing",
+                        "description": "Purchase agreement at the notary. Remote signing via power of attorney is possible."
+                    },
+                    {
+                        "title": "Ownership Transfer",
+                        "description": "After payment, the property is transferred to your name."
+                    }
+                ]
+            },
+            "croatia": {
+                "name": "Croatia",
+                "flag": "🇭🇷",
+                "intro": "Croatia has been part of Schengen and the Eurozone since 2023. The Adriatic coast offers high tourist potential.",
+                "highlights": [
+                    "Schengen + Euro",
+                    "Tourist potential",
+                    "Stable growth"
+                ],
+                "process": [
+                    {
+                        "title": "Property Selection",
+                        "description": "Together we'll find the ideal property on the coast or inland."
+                    },
+                    {
+                        "title": "Preliminary Contract",
+                        "description": "Pre-purchase agreement with a 10% deposit."
+                    },
+                    {
+                        "title": "Legal Check",
+                        "description": "Verification of ownership rights and cadastral registration."
+                    },
+                    {
+                        "title": "Purchase Agreement",
+                        "description": "Signing at the notary with official translation."
+                    },
+                    {
+                        "title": "Cadastral Registration",
+                        "description": "The property is registered in your name. The process takes approximately 30 days."
+                    }
+                ]
+            },
+            "spain": {
+                "name": "Spain",
+                "flag": "🇪🇸",
+                "intro": "Spain offers a stable legal system and year-round sunshine. Costa Blanca and Costa del Sol are among the most popular destinations.",
+                "highlights": [
+                    "Stable legal system",
+                    "Strong rentals",
+                    "Excellent infrastructure"
+                ],
+                "process": [
+                    {
+                        "title": "NIE Number",
+                        "description": "We'll help you obtain a Spanish tax identification number."
+                    },
+                    {
+                        "title": "Property Selection",
+                        "description": "We'll find a property matching your criteria and organize viewings."
+                    },
+                    {
+                        "title": "Arras Contract",
+                        "description": "Preliminary contract with a 10% deposit."
+                    },
+                    {
+                        "title": "Escritura",
+                        "description": "Signing of the public deed at the notary."
+                    },
+                    {
+                        "title": "Registration",
+                        "description": "Registration in the property register and transfer of utilities."
+                    }
+                ]
+            },
+            "greece": {
+                "name": "Greece",
+                "flag": "🇬🇷",
+                "intro": "Greece attracts with attractive prices and the Golden Visa program for residency permits. Growing tourism sector.",
+                "highlights": [
+                    "Golden Visa",
+                    "Attractive prices",
+                    "Mediterranean climate"
+                ],
+                "process": [
+                    {
+                        "title": "AFM Number",
+                        "description": "We'll help you obtain a Greek tax identification number."
+                    },
+                    {
+                        "title": "Property Selection",
+                        "description": "Visiting and selecting properties on the mainland or islands."
+                    },
+                    {
+                        "title": "Legal Check",
+                        "description": "A lawyer will verify ownership rights and documents."
+                    },
+                    {
+                        "title": "Purchase Agreement",
+                        "description": "Signing the contract at the notary."
+                    },
+                    {
+                        "title": "Registration",
+                        "description": "Property registration and Golden Visa application."
+                    }
+                ]
+            }
+        }
+    },
+    "home": {
+        "hero": {
+            "title": "Luxury Seaside Properties",
+            "subtitle": "Discover your perfect home"
+        },
+        "featured": "Featured Listings",
+        "newOffers": "New Listings",
+        "countries": "Our Destinations",
+        "whyUs": "Why Choose Us",
+        "testimonials": "What Our Clients Say",
+        "slides": {
+            "bulgaria": {
+                "location": "Sunny Beach",
+                "region": "Bulgaria",
+                "title": "Seaside apartments from €45,000"
+            },
+            "croatia": {
+                "location": "Dalmatia",
+                "region": "Croatia",
+                "title": "Luxury beachfront villas"
+            },
+            "spain": {
+                "location": "Costa del Sol",
+                "region": "Spain",
+                "title": "Premium golf residences"
+            }
+        }
+    },
+    "favorites": {
+        "title": "Favorites",
+        "subtitle": "Your favorite properties",
+        "empty": "You don't have any favorite properties yet.",
+        "browseProperties": "Browse Properties"
+    },
+    "blog": {
+        "subtitle": "News & Tips",
+        "title": "Blog",
+        "heroText": "Articles, tips and advice for seaside property investors",
+        "featured": "Featured",
+        "featuredTitle": "Most Read Articles",
+        "allArticles": "All Articles",
+        "latestPosts": "Latest Posts",
+        "readTime": "min read",
+        "allCategories": "All Categories",
+        "backToBlog": "Back to Blog",
+        "share": "Share",
+        "relatedArticles": "Related Articles",
+        "newsletterTitle": "Subscribe to Our Newsletter",
+        "newsletterText": "Stay informed about new properties, market trends and practical tips.",
+        "newsletterPlaceholder": "Your email",
+        "newsletterButton": "Subscribe",
+        "ctaTitle": "Looking for a Seaside Property?",
+        "ctaText": "Browse our selection of properties in the most beautiful coastal destinations.",
+        "ctaButton": "Browse Properties"
+    }
+}

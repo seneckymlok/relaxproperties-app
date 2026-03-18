@@ -1,0 +1,666 @@
+@import "tailwindcss";
+
+/* Dual range slider — fully reset native styling */
+.range-slider input[type="range"] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    pointer-events: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: none;
+    background-color: transparent;
+    margin: 0;
+    padding: 0;
+    border: none;
+    outline: none;
+}
+.range-slider input[type="range"]:focus {
+    outline: none;
+    box-shadow: none;
+}
+.range-slider input[type="range"]::-webkit-slider-runnable-track {
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+    border: none;
+    height: 0;
+}
+.range-slider input[type="range"]::-moz-range-track {
+    -moz-appearance: none;
+    appearance: none;
+    background: transparent;
+    border: none;
+    height: 0;
+}
+.range-slider input[type="range"]::-ms-track {
+    background: transparent;
+    border: none;
+    color: transparent;
+    height: 0;
+}
+/* Thumb — clean minimal circle */
+.range-slider input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    pointer-events: auto;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: white;
+    border: 2.5px solid var(--color-primary);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 0 0 0 rgba(43,110,110,0);
+    cursor: pointer;
+    margin-top: -9px;
+    position: relative;
+    transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.range-slider input[type="range"]::-moz-range-thumb {
+    -moz-appearance: none;
+    appearance: none;
+    pointer-events: auto;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: white;
+    border: 2.5px solid var(--color-primary);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 0 0 0 rgba(43,110,110,0);
+    cursor: pointer;
+    position: relative;
+    transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+/* Hover — soft glow */
+.range-slider input[type="range"]::-webkit-slider-thumb:hover {
+    border-color: var(--color-primary-dark);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 0 0 5px rgba(43,110,110,0.1);
+}
+.range-slider input[type="range"]::-moz-range-thumb:hover {
+    border-color: var(--color-primary-dark);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 0 0 5px rgba(43,110,110,0.1);
+}
+/* Active / dragging — stronger glow, slightly larger */
+.range-slider input[type="range"]:active::-webkit-slider-thumb {
+    border-color: var(--color-primary-dark);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 0 0 7px rgba(43,110,110,0.15);
+    transform: scale(1.08);
+}
+.range-slider input[type="range"]:active::-moz-range-thumb {
+    border-color: var(--color-primary-dark);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 0 0 7px rgba(43,110,110,0.15);
+    transform: scale(1.08);
+}
+/* Remove Firefox dotted outline on focus */
+.range-slider input[type="range"]::-moz-focus-outer {
+    border: 0;
+}
+
+/* ============================================
+   DESIGN SYSTEM: "COASTAL PREMIUM"
+   Timeless • Elegant • Reliable
+   ============================================ */
+
+:root {
+
+    /* Premium Color Palette — Sand / Dark Green / White */
+    --color-background: #F9F9F7;
+    /* Warm sand-white */
+    --color-surface: #F4F3F0;
+    /* Warm Stone - cards/sections */
+    --color-surface-elevated: #FFFFFF;
+
+    --color-primary: #2B6E6E;
+    /* Dark green — matched to logo */
+    --color-primary-light: #358282;
+    --color-primary-dark: #1F5252;
+
+    --color-secondary: #1A1A1A;
+    /* Charcoal - softer than black */
+    --color-foreground: #2D2D2D;
+    --color-muted: #6B6B6B;
+
+    --color-accent: #2B6E6E;
+    /* Unified — same as primary green, no gold */
+    --color-accent-light: #358282;
+    --color-accent-dark: #1F5252;
+
+    --color-sand: #C4A882;
+    /* Warm sand — for subtitles/labels on dark backgrounds */
+    --color-sand-light: #D4BE9C;
+    /* Lighter sand — hover/highlight variant */
+
+    --color-border: #EDECE9;
+    --color-border-dark: #DDDCD8;
+
+    /* Spacing & Radius */
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 16px;
+    --radius-full: 9999px;
+
+    /* Shadows — multi-layer depth */
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.05), 0 2px 6px rgba(0, 0, 0, 0.03);
+    --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.07), 0 6px 16px rgba(0, 0, 0, 0.04);
+    --shadow-xl: 0 24px 64px rgba(0, 0, 0, 0.08), 0 8px 24px rgba(0, 0, 0, 0.04);
+
+    /* Transitions */
+    --transition-fast: 150ms ease;
+    --transition-base: 250ms ease;
+    --transition-slow: 400ms ease;
+}
+
+/* ============================================
+   BASE STYLES
+   ============================================ */
+
+@layer base {
+
+    /* Universal font reset — browsers override font-family on interactive
+       elements with their UA stylesheet. This forces ALL elements to 
+       inherit from body, guaranteeing Inter is used everywhere. */
+    *,
+    *::before,
+    *::after {
+        font-family: inherit;
+    }
+
+    html {
+        scroll-behavior: smooth;
+    }
+
+    body {
+        /* Font variables must be on body (not :root) because Next.js 
+           sets --font-inter and --font-libre-baskerville on <body> via className */
+        --font-sans: var(--font-inter), system-ui, -apple-system, sans-serif;
+        --font-serif: var(--font-libre-baskerville), 'Baskerville', 'Georgia', serif;
+        font-family: var(--font-sans);
+        background-color: var(--color-background);
+        color: var(--color-foreground);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* Refined serif headings — Sotheby's/Knight Frank inspired */
+    h1,
+    h2 {
+        font-family: var(--font-serif);
+        font-weight: 400;
+        letter-spacing: -0.01em;
+        line-height: 1.25;
+        color: var(--color-secondary);
+    }
+
+    h3 {
+        font-family: var(--font-serif);
+        font-weight: 400;
+        letter-spacing: 0;
+        line-height: 1.3;
+    }
+
+    h1 {
+        font-size: clamp(2.5rem, 5vw, 4rem);
+    }
+
+    h2 {
+        font-size: clamp(1.75rem, 3vw, 2.5rem);
+    }
+
+    h3 {
+        font-size: clamp(1.25rem, 2vw, 1.5rem);
+    }
+}
+
+/* ============================================
+   UTILITY CLASSES
+   ============================================ */
+
+.container-custom {
+    width: 100%;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+}
+
+@media (min-width: 1024px) {
+    .container-custom {
+        padding: 0 2rem;
+    }
+}
+
+/* Typography utilities */
+.font-serif {
+    font-family: var(--font-serif);
+}
+
+.text-accent {
+    color: var(--color-accent);
+}
+
+.text-muted {
+    color: var(--color-muted);
+}
+
+/* ============================================
+   GRADIENTS & OVERLAYS
+   ============================================ */
+
+/* Image watermark overlay */
+.property-image-watermark {
+    position: relative;
+}
+
+.property-image-watermark::after {
+    content: "RELAX";
+    position: absolute;
+    bottom: 8px;
+    right: 10px;
+    font-family: var(--font-serif);
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.15em;
+    color: rgba(255, 255, 255, 0.15);
+    pointer-events: none;
+    z-index: 5;
+    text-transform: uppercase;
+}
+
+.hero-gradient {
+    background: linear-gradient(to bottom,
+            rgba(0, 0, 0, 0.4) 0%,
+            rgba(0, 0, 0, 0.1) 35%,
+            rgba(0, 0, 0, 0.15) 60%,
+            rgba(0, 0, 0, 0.65) 100%);
+}
+
+
+
+/* ============================================
+   BUTTON STYLES
+   ============================================ */
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.875rem 2rem;
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-size: 0.9375rem;
+    letter-spacing: 0.02em;
+    transition: all var(--transition-base);
+    cursor: pointer;
+    border: none;
+    outline: none;
+}
+
+.btn-primary {
+    background-color: var(--color-primary);
+    color: white;
+    border-radius: var(--radius-sm);
+}
+
+.btn-primary:hover {
+    background-color: var(--color-primary-dark);
+    transform: translateY(-1px);
+}
+
+.btn-secondary {
+    background-color: transparent;
+    color: var(--color-accent);
+    border: 1.5px solid var(--color-accent);
+    border-radius: var(--radius-sm);
+}
+
+.btn-secondary:hover {
+    background-color: var(--color-accent);
+    color: white;
+}
+
+.btn-pill {
+    border-radius: var(--radius-full);
+}
+
+/* ============================================
+   CARD STYLES (Minimalist / Flat)
+   ============================================ */
+
+.card {
+    background-color: var(--color-surface-elevated);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    transition: all var(--transition-base);
+}
+
+.card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+}
+
+/* ============================================
+   GLASSMORPHISM
+   ============================================ */
+
+.glass {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.glass-dark {
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Hero Search — white frosted glass (matches CTA button style) */
+.hero-search-card {
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(12px) saturate(1.3);
+    -webkit-backdrop-filter: blur(12px) saturate(1.3);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: var(--radius-lg);
+    box-shadow:
+        0 16px 48px rgba(0, 0, 0, 0.2),
+        0 4px 16px rgba(0, 0, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+/* Mode toggle pill — centered above card */
+.hero-mode-toggle {
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0;
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: var(--radius-full);
+    padding: 4px;
+}
+
+.hero-search-accent-bar {
+    position: relative;
+}
+
+.hero-search-accent-bar::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(to right, var(--color-accent), var(--color-accent-light), var(--color-accent));
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+
+/* Mobile search trigger animation */
+@keyframes subtleEntrance {
+    0% {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.hero-mobile-trigger {
+    animation: subtleEntrance 0.8s ease 1s both;
+}
+
+/* Advanced filters expand inside card */
+.hero-advanced-expand {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.35s ease, opacity 0.25s ease;
+    opacity: 0;
+}
+
+.hero-advanced-expand.expanded {
+    grid-template-rows: 1fr;
+    opacity: 1;
+}
+
+.hero-advanced-expand>div {
+    overflow: hidden;
+}
+
+/* ============================================
+   FORM ELEMENTS
+   ============================================ */
+
+@layer base {
+
+    select,
+    input,
+    textarea {
+        font-family: var(--font-sans);
+        font-size: 0.9375rem;
+        color: var(--color-foreground);
+        background-color: white;
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-sm);
+        transition: all var(--transition-fast);
+    }
+
+    select:focus,
+    input:focus,
+    textarea:focus {
+        outline: none;
+        border-color: var(--color-primary);
+        box-shadow: 0 0 0 3px rgba(28, 63, 67, 0.1);
+    }
+}
+
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in-up {
+    animation: fadeInUp 0.6s ease forwards;
+}
+
+/* Staggered animations */
+.stagger-1 {
+    animation-delay: 0.1s;
+}
+
+.stagger-2 {
+    animation-delay: 0.2s;
+}
+
+.stagger-3 {
+    animation-delay: 0.3s;
+}
+
+.stagger-4 {
+    animation-delay: 0.4s;
+}
+
+/* ============================================
+   SWIPER PAGINATION (Property Cards)
+   ============================================ */
+
+@layer components {
+    .property-swiper .swiper-pagination {
+        position: absolute !important;
+        bottom: 12px !important;
+        left: 0 !important;
+        right: 0 !important;
+        width: 100% !important;
+        display: flex !important;
+        justify-content: center !important;
+        gap: 6px;
+        z-index: 10;
+        transform: none !important;
+    }
+
+    .property-swiper .swiper-pagination-bullet {
+        width: 6px !important;
+        height: 6px !important;
+        border-radius: 50% !important;
+        background: rgba(255, 255, 255, 0.5) !important;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        opacity: 1 !important;
+    }
+
+    .property-swiper .swiper-pagination-bullet-active {
+        width: 16px !important;
+        border-radius: 3px !important;
+        background: white !important;
+    }
+}
+
+/* ============================================
+   MOBILE-FIRST TOUCH OPTIMIZATIONS
+   ============================================ */
+
+@layer base {
+
+    /* Remove blue tap highlight on mobile */
+    * {
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    /* Faster taps on touch devices */
+    button,
+    a,
+    input,
+    select,
+    textarea,
+    [role="button"] {
+        touch-action: manipulation;
+    }
+
+    /* Minimum touch target size for accessibility */
+    @media (pointer: coarse) {
+
+        button:not(.exclude-touch-size),
+        a:not(.exclude-touch-size),
+        input[type="checkbox"],
+        input[type="radio"] {
+            min-height: 44px;
+            min-width: 44px;
+        }
+    }
+
+    /* Prevent text selection on interactive elements */
+    button,
+    [role="button"] {
+        user-select: none;
+        -webkit-user-select: none;
+    }
+
+    /* Safe area padding for iPhone notch/home indicator */
+    .safe-area-inset-bottom {
+        padding-bottom: env(safe-area-inset-bottom, 0);
+    }
+
+    .safe-area-inset-top {
+        padding-top: env(safe-area-inset-top, 0);
+    }
+
+    /* Smooth scrolling containers */
+    .smooth-scroll {
+        scroll-behavior: smooth;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Hide scrollbar on mobile carousels but keep functionality */
+    .hide-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+
+    .hide-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+/* ============================================
+   SWIPER PAGINATION CUSTOMIZATIONS
+   ============================================ */
+
+/* Hero Slider */
+.hero-bullet {
+    width: 8px;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.4);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.hero-bullet-active {
+    background: white;
+    transform: scale(1.2);
+}
+
+@media (min-width: 768px) {
+    .hero-bullet {
+        width: 10px;
+        height: 10px;
+    }
+}
+
+/* Property Card */
+.property-card-swiper .swiper-pagination {
+    bottom: 8px !important;
+}
+
+.property-card-swiper .swiper-pagination-bullet {
+    width: 6px;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.6) !important;
+    opacity: 1 !important;
+}
+
+.property-card-swiper .swiper-pagination-bullet-active {
+    background: white !important;
+}
+
+/* Content Sections (Blog, New Offers, Reviews) */
+.blog-swiper .swiper-pagination,
+.new-offers-swiper .swiper-pagination,
+.reviews-swiper .swiper-pagination {
+    bottom: 0 !important;
+}
+
+.blog-swiper .swiper-pagination-bullet,
+.new-offers-swiper .swiper-pagination-bullet,
+.reviews-swiper .swiper-pagination-bullet {
+    width: 8px;
+    height: 8px;
+    background: var(--color-border) !important;
+    opacity: 1 !important;
+}
+
+.blog-swiper .swiper-pagination-bullet-active,
+.new-offers-swiper .swiper-pagination-bullet-active,
+.reviews-swiper .swiper-pagination-bullet-active {
+    background: var(--color-primary) !important;
+}

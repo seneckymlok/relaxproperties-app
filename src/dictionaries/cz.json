@@ -1,0 +1,405 @@
+{
+    "nav": {
+        "properties": "Prodej",
+        "buyingProcess": "Proces nákupu",
+        "about": "O nás",
+        "blog": "Blog",
+        "contact": "Kontakt",
+        "favorites": "Oblíbené"
+    },
+    "header": {
+        "menu": "Menu",
+        "callUs": "Zavolejte nám",
+        "writeUs": "Napište nám",
+        "language": "Jazyk"
+    },
+    "footer": {
+        "description": "Váš spolehlivý partner pro luxusní nemovitosti ve Středomoří. Pomáháme vám najít dokonalý domov u moře.",
+        "quickLinks": "Rychlé odkazy",
+        "countries": "Země",
+        "contactUs": "Kontakt",
+        "allRights": "Všechna práva vyhrazena.",
+        "privacy": "Ochrana soukromí",
+        "terms": "Obchodní podmínky"
+    },
+    "common": {
+        "search": "Hledat",
+        "filter": "Filtrovat",
+        "sort": "Seřadit",
+        "viewMore": "Zobrazit více",
+        "viewAll": "Zobrazit vše",
+        "viewOffers": "Zobrazit nabídky",
+        "submit": "Odeslat",
+        "send": "Odeslat",
+        "loading": "Načítání...",
+        "noResults": "Žádné výsledky",
+        "close": "Zavřít",
+        "featured": "Doporučené",
+        "new": "Nové",
+        "addToFavorites": "Přidat do oblíbených",
+        "removeFromFavorites": "Odebrat z oblíbených",
+        "browseProperties": "Prohlížet nemovitosti",
+        "contactUs": "Kontaktovat"
+    },
+    "properties": {
+        "title": "Nemovitosti",
+        "subtitle": "Nabídka nemovitostí",
+        "heroText": "Najděte svou vysněnou nemovitost u moře",
+        "found": "Nalezeno",
+        "propertiesLabel": "nemovitostí",
+        "noMatch": "Žádné nemovitosti neodpovídají vašim kritériím.",
+        "filters": {
+            "country": "Země",
+            "type": "Typ",
+            "bedrooms": "Ložnice",
+            "price": "Cena",
+            "seaView": "Výhled na moře",
+            "firstLine": "První linie",
+            "pool": "Bazén",
+            "luxury": "Luxusní"
+        }
+    },
+    "about": {
+        "title": "O nás",
+        "subtitle": "O společnosti",
+        "heroTitle": "Váš partner pro nemovitosti v zahraničí",
+        "heroText": "Komplexní servis při koupi zahraničních nemovitostí podle individuálních požadavků klienta.",
+        "intro": "Společnost Relax Properties se snaží svými službami zajistit komplexní servis podle individuálních požadavků klienta. Spolupracujeme pouze s vybranými partnery jako jsou: advokáti, notáři, daňoví poradci, developeři či realitní kanceláře. Naším cílem je přinášet hladký průběh při koupi nemovitosti včetně komplexních poskytovaných služeb.",
+        "partnersLabel": "Spolupracujeme s",
+        "partners": ["Advokáti", "Notáři", "Daňoví poradci", "Developeři", "Realitní kanceláře"],
+        "goalsSubtitle": "Naše hlavní cíle",
+        "goalsTitle": "Na čem nám záleží",
+        "goals": [
+            "Poskytnout kvalitní výběr zahraničních nemovitostí od cenově dostupných až po nemovitosti určené pro náročného klienta v těch nejžádanějších zahraničních lokalitách",
+            "Zajistit hladký a bezproblémový bezpečný proces při koupi/prodeji zahraničních nemovitostí",
+            "Naše nemovitosti procházejí ověřením prodejní ceny, čímž se snažíme pro klienta zajistit nákup za nejlepší tržní cenu",
+            "Ke každému klientovi přistupujeme individuálně s maximální mírou empatie a vysokým standardem pomoci a služeb",
+            "Naším hlavním cílem je spokojenost klienta a ochrana jeho financí při koupi nemovitosti v zahraničí",
+            "Náš klient se na nás může kdykoli obrátit i po samotné koupi, jsme tu celý čas pro něj"
+        ],
+        "servicesSubtitle": "Naše služby",
+        "servicesTitle": "Co pro vás zajistíme",
+        "services": [
+            {
+                "title": "Nalezení nemovitosti",
+                "description": "Nalezení vhodné nemovitosti na základě požadavků našich zákazníků"
+            },
+            {
+                "title": "Prohlídky nemovitostí",
+                "description": "Virtuální online i osobní prohlídky nemovitostí"
+            },
+            {
+                "title": "Právní a finanční poradenství",
+                "description": "Kvalifikované právní a finanční poradenství"
+            },
+            {
+                "title": "Detailní průzkum",
+                "description": "Detailní průzkum vybrané zahraniční nemovitosti včetně kontroly Listu vlastnictví, dvojité kontroly soudních záznamů, kontroly dluhu – pomocí našich právních zástupců"
+            },
+            {
+                "title": "Pojištění majetku",
+                "description": "Pojištění majetku na 1 rok zdarma"
+            },
+            {
+                "title": "Poradenství a kontakty",
+                "description": "Poradenství, poskytnutí užitečných kontaktů a další služby podle požadavků"
+            }
+        ],
+        "teamSubtitle": "Náš tým",
+        "teamTitle": "Poznejte nás",
+        "teamLanguages": "Komunikace v jazyce:",
+        "ctaTitle": "Připraveni najít váš vysněný domov?",
+        "ctaText": "Kontaktujte nás a začněme spolu hledat nemovitost, která vám splní vaše sny."
+    },
+    "contact": {
+        "title": "Kontakt",
+        "subtitle": "Kontakt",
+        "heroTitle": "Spojte se s námi",
+        "weAreHere": "Jsme tu pro vás",
+        "howCanHelp": "Jak vám můžeme pomoci?",
+        "introText": "Ať už hledáte nemovitost k bydlení nebo investici, náš tým odborníků je připraven odpovědět na všechny vaše otázky. Neváhejte nás kontaktovat – rádi vám pomůžeme.",
+        "ourOffices": "Naše kanceláře",
+        "openingHours": "Otevírací hodiny",
+        "mapPlaceholder": "Interaktivní mapa bude doplněna",
+        "faqSubtitle": "FAQ",
+        "faqTitle": "Časté dotazy",
+        "companyInfo": {
+            "name": "Relax Properties s. r. o.",
+            "address": ["Na vyhliadke 2915/5", "900 31 Stupava", "Slovenská republika"],
+            "registration": "Společnost je zapsána v obchodním rejstříku vedeném Okresním soudem Bratislava I., oddíl Sro, vložka: 152886/B.",
+            "ids": "IČO: 53784961, DIČ: 2121506464, IČ DPH: SK2121506464",
+            "phoneLabel": "Tel.:",
+            "emailLabel": "Mail:",
+            "phones": [
+                { "name": "Mgr. Aleš Dvořák", "number": "+421 911 989 895", "raw": "+421911989895" },
+                { "name": "Mgr. Viera Dvořáková", "number": "+421 911 819 152", "raw": "+421911819152" },
+                { "name": "Bc. Tatiana Tóthová", "number": "+421 911 353 550", "raw": "+421911353550" }
+            ],
+            "emails": ["info@relaxproperties.sk", "spanielsko@relaxproperties.sk"]
+        },
+        "form": {
+            "name": "Jméno",
+            "email": "Email",
+            "phone": "Telefon",
+            "message": "Zpráva",
+            "submit": "Odeslat zprávu",
+            "success": "Zpráva byla odeslána!",
+            "selectProperty": "Vyberte nemovitost",
+            "yourMessage": "Vaše zpráva"
+        },
+        "faq": [
+            {
+                "q": "Jak probíhá koupě nemovitosti v zahraničí?",
+                "a": "Celým procesem vás provedeme krok za krokem. Od výběru nemovitosti, přes právní ověření, až po podpis smlouvy a převod vlastnictví. Spolupracujeme s místními právníky a notáři."
+            },
+            {
+                "q": "Jaké jsou poplatky za vaše služby?",
+                "a": "Naše provize je standardní pro realitní trh a závisí na hodnotě nemovitosti. Přesnou výši vám sdělíme při první konzultaci. Žádné skryté poplatky."
+            },
+            {
+                "q": "Mohu si nemovitost prohlédnout osobně?",
+                "a": "Samozřejmě! Organizujeme prohlídky nemovitostí pro naše klienty. Můžeme vám naplánovat celý výlet včetně více prohlídek v jeden den."
+            },
+            {
+                "q": "Pomáháte i s financováním?",
+                "a": "Ano, spolupracujeme s bankami a hypotečními poradci, kteří vám pomohou najít nejlepší podmínky financování vaší nemovitosti."
+            }
+        ]
+    },
+    "buyingProcess": {
+        "title": "Proces nákupu",
+        "subtitle": "Jak koupit nemovitost",
+        "heroTitle": "Jak koupit nemovitost v zahraničí",
+        "heroText": "Průvodce nákupem nemovitosti v zahraničí",
+        "selectCountry": "Vyberte zemi pro zobrazení procesu nákupu",
+        "stepsTitle": "Kroky k vaší nemovitosti",
+        "advantagesTitle": "Proč investovat do nemovitostí v zahraničí",
+        "advantages": [
+            {
+                "title": "Právní jistota",
+                "description": "Spolupracujeme s místními právníky a notáři, kteří zajistí bezpečnou transakci."
+            },
+            {
+                "title": "Investiční potenciál",
+                "description": "Přímořské nemovitosti nabízejí stabilní růst hodnoty a příjem z pronájmu."
+            },
+            {
+                "title": "Osobní doprovod",
+                "description": "Od prvního kontaktu až po klíče – náš tým vás provede celým procesem."
+            },
+            {
+                "title": "Žádné skryté poplatky",
+                "description": "Transparentní podmínky bez překvapení. Všechny náklady znáte předem."
+            }
+        ],
+        "faqTitle": "Časté dotazy o nákupu",
+        "faq": [
+            {
+                "q": "Mohu koupit nemovitost v zahraničí na dálku?",
+                "a": "Ano, díky plné moci je možné celý proces zvládnout bez osobní přítomnosti. Doporučujeme však alespoň jednu osobní prohlídku."
+            },
+            {
+                "q": "Jaké jsou celkové náklady nákupu?",
+                "a": "Kromě ceny nemovitosti počítejte s notářskými poplatky (1-2%), daní z převodu (2-10% podle země) a právními poplatky. Přesnou kalkulaci vám připravíme."
+            },
+            {
+                "q": "Jak dlouho trvá celý proces?",
+                "a": "Od výběru po převod vlastnictví obvykle 4-8 týdnů, v závislosti na zemi a typu nemovitosti."
+            },
+            {
+                "q": "Potřebuji speciální povolení?",
+                "a": "Občané EU mohou kupovat nemovitosti bez omezení ve všech našich destinacích. Pro občany mimo EU existují specifická pravidla podle země."
+            }
+        ],
+        "readyTitle": "Připraveni na další krok?",
+        "readyText": "Kontaktujte nás a začněme spolu hledat vaši vysněnou nemovitost u moře.",
+        "contactUs": "Kontaktujte nás",
+        "viewProperties": "Nemovitosti v",
+        "resetFilters": "Resetovat filtry",
+        "countries": {
+            "bulgaria": {
+                "name": "Bulharsko",
+                "flag": "🇧🇬",
+                "intro": "Ceny nemovitostí v Bulharsku rostou jako druhé nejrychleji v EU. Země očekává brzký vstup do eurozóny a je členem EU a NATO.",
+                "highlights": [
+                    "Vstup do eurozóny",
+                    "Schengen",
+                    "Člen EU"
+                ],
+                "process": [
+                    {
+                        "title": "Výběr nemovitosti",
+                        "description": "Pomůžeme vám vybrat nemovitost podle vašich požadavků včetně prohlídek."
+                    },
+                    {
+                        "title": "Rezervace",
+                        "description": "Podpis rezervační smlouvy a záloha 2 000 – 5 000 €."
+                    },
+                    {
+                        "title": "Právní kontrola",
+                        "description": "Náš právník zkontroluje dokumenty a ověří historii nemovitosti."
+                    },
+                    {
+                        "title": "Podpis smlouvy",
+                        "description": "Kupní smlouva u notáře. Možnost na dálku přes plnou moc."
+                    },
+                    {
+                        "title": "Převod vlastnictví",
+                        "description": "Po zaplacení se nemovitost převede na vaše jméno."
+                    }
+                ]
+            },
+            "croatia": {
+                "name": "Chorvatsko",
+                "flag": "🇭🇷",
+                "intro": "Chorvatsko je od roku 2023 součástí Schengenu a eurozóny. Jadranské pobřeží nabízí vysoký turistický potenciál.",
+                "highlights": [
+                    "Schengen + Euro",
+                    "Turistický potenciál",
+                    "Stabilní růst"
+                ],
+                "process": [
+                    {
+                        "title": "Výběr nemovitosti",
+                        "description": "Společně najdeme ideální nemovitost na pobřeží nebo v zázemí."
+                    },
+                    {
+                        "title": "Předběžná smlouva",
+                        "description": "Smlouva o budoucí kupní smlouvě se zálohou 10%."
+                    },
+                    {
+                        "title": "Právní kontrola",
+                        "description": "Ověření vlastnických práv a zápisu v katastru."
+                    },
+                    {
+                        "title": "Kupní smlouva",
+                        "description": "Podpis u notáře s úředním překladem."
+                    },
+                    {
+                        "title": "Zápis do katastru",
+                        "description": "Nemovitost zapíšeme na vaše jméno. Proces trvá cca 30 dní."
+                    }
+                ]
+            },
+            "spain": {
+                "name": "Španělsko",
+                "flag": "🇪🇸",
+                "intro": "Španělsko nabízí stabilní právní systém a celoroční slunečné podnebí. Costa Blanca a Costa del Sol patří k nejoblíbenějším.",
+                "highlights": [
+                    "Stabilní právní systém",
+                    "Silný pronájem",
+                    "Výborná infrastruktura"
+                ],
+                "process": [
+                    {
+                        "title": "NIE číslo",
+                        "description": "Pomůžeme získat španělské daňové identifikační číslo."
+                    },
+                    {
+                        "title": "Výběr nemovitosti",
+                        "description": "Najdeme nemovitost podle kritérií a zorganizujeme prohlídky."
+                    },
+                    {
+                        "title": "Arras smlouva",
+                        "description": "Předběžná smlouva se zálohou 10%."
+                    },
+                    {
+                        "title": "Escritura",
+                        "description": "Podpis veřejné listiny u notáře."
+                    },
+                    {
+                        "title": "Registrace",
+                        "description": "Zápis do registru a převod služeb."
+                    }
+                ]
+            },
+            "greece": {
+                "name": "Řecko",
+                "flag": "🇬🇷",
+                "intro": "Řecko láká atraktivními cenami a programem Golden Visa pro povolení k pobytu. Rostoucí turistický sektor.",
+                "highlights": [
+                    "Golden Visa",
+                    "Atraktivní ceny",
+                    "Středomořské klima"
+                ],
+                "process": [
+                    {
+                        "title": "AFM číslo",
+                        "description": "Pomůžeme získat řecké daňové číslo."
+                    },
+                    {
+                        "title": "Výběr nemovitosti",
+                        "description": "Návštěva a výběr na pevnině nebo ostrovech."
+                    },
+                    {
+                        "title": "Právní kontrola",
+                        "description": "Advokát ověří vlastnická práva a dokumenty."
+                    },
+                    {
+                        "title": "Kupní smlouva",
+                        "description": "Podpis smlouvy u notáře."
+                    },
+                    {
+                        "title": "Registrace",
+                        "description": "Zápis do registru a vyřízení Golden Visa."
+                    }
+                ]
+            }
+        }
+    },
+    "home": {
+        "hero": {
+            "title": "Luxusní nemovitosti u moře",
+            "subtitle": "Objevte své dokonalé bydlení"
+        },
+        "featured": "Doporučené nabídky",
+        "newOffers": "Nové nabídky",
+        "countries": "Naše destinace",
+        "whyUs": "Proč my",
+        "testimonials": "Co říkají naši klienti",
+        "slides": {
+            "bulgaria": {
+                "location": "Slunečné pobřeží",
+                "region": "Bulharsko",
+                "title": "Apartmány u moře od 45 000 €"
+            },
+            "croatia": {
+                "location": "Dalmácie",
+                "region": "Chorvatsko",
+                "title": "Luxusní vily v první linii u moře"
+            },
+            "spain": {
+                "location": "Costa del Sol",
+                "region": "Španělsko",
+                "title": "Prémiové rezidence s golfem"
+            }
+        }
+    },
+    "favorites": {
+        "title": "Oblíbené",
+        "subtitle": "Vaše oblíbené nemovitosti",
+        "empty": "Zatím nemáte žádné oblíbené nemovitosti.",
+        "browseProperties": "Prohlížet nemovitosti"
+    },
+    "blog": {
+        "subtitle": "Novinky & Tipy",
+        "title": "Blog",
+        "heroText": "Články, tipy a rady pro investory do přímořských nemovitostí",
+        "featured": "Doporučené",
+        "featuredTitle": "Nejčtenější články",
+        "allArticles": "Všechny články",
+        "latestPosts": "Nejnovější příspěvky",
+        "readTime": "min čtení",
+        "allCategories": "Všechny kategorie",
+        "backToBlog": "Zpět na blog",
+        "share": "Sdílet",
+        "relatedArticles": "Související články",
+        "newsletterTitle": "Odebírejte náš newsletter",
+        "newsletterText": "Buďte informováni o nových nemovitostech, trendech na trhu a praktických tipech.",
+        "newsletterPlaceholder": "Váš e-mail",
+        "newsletterButton": "Přihlásit se",
+        "ctaTitle": "Hledáte nemovitost u moře?",
+        "ctaText": "Prohlédněte si naši nabídku nemovitostí v nejkrásnějších přímořských destinacích.",
+        "ctaButton": "Prohlížet nemovitosti"
+    }
+}

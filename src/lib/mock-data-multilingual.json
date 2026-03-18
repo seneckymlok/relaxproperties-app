@@ -1,0 +1,483 @@
+{
+  "generatedAt": "2026-02-09T09:03:18.499Z",
+  "properties": [
+    {
+      "id": 1,
+      "title": {
+        "sk": "Luxusná Villa s bazénom",
+        "en": "Luxurious Villa with a Pool",
+        "de": "Exquisite Villa mit Pool"
+      },
+      "location": {
+        "sk": "Split, Chorvátsko",
+        "en": "Split, Croatia",
+        "de": "Split, Kroatien – Ein Juwel an der Adriaküste"
+      },
+      "country": "croatia",
+      "price": 850000,
+      "priceFormatted": "€ 850,000",
+      "beds": 4,
+      "baths": 3,
+      "area": 280,
+      "type": "villa",
+      "images": [
+        "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&q=80"
+      ],
+      "featured": true,
+      "year": 2022,
+      "description": {
+        "sk": "Nádherná moderná vila s panoramatickým výhľadom na more. Táto nehnuteľnosť ponúka luxusné bývanie v jednej z najžiadanejších lokalít Chorvátska.",
+        "en": "Exquisite modern villa boasting panoramic sea views. This property offers luxurious living in one of Croatia's most coveted locations.",
+        "de": "Atemberaubende, moderne Villa mit atemberaubendem Panoramablick auf das Meer. Dieses Anwesen bietet luxuriöses Wohnen in einer der begehrtesten Lagen Kroatiens."
+      },
+      "seaView": true,
+      "firstLine": true,
+      "luxury": true
+    },
+    {
+      "id": 2,
+      "title": {
+        "sk": "Apartmán s výhľadom na more",
+        "en": "Ocean View Apartment",
+        "de": "Exklusives Apartment mit atemberaubendem Meerblick."
+      },
+      "location": {
+        "sk": "Marbella, Španielsko",
+        "en": "Marbella, Spain: Where sun-kissed shores meet unparalleled luxury.",
+        "de": "Marbella, Spanien."
+      },
+      "country": "spain",
+      "price": 425000,
+      "priceFormatted": "€ 425,000",
+      "beds": 2,
+      "baths": 2,
+      "area": 120,
+      "type": "apartment",
+      "images": [
+        "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&q=80"
+      ],
+      "featured": false,
+      "description": {
+        "sk": "Elegantný apartmán v prestížnej lokalite s priamym výhľadom na Stredozemné more.",
+        "en": "An elegant apartment in a prestigious location with an uninterrupted view of the Mediterranean Sea.",
+        "de": "Elegantes Apartment in begehrter Bestlage mit unverbaubarem Blick auf das Mittelmeer."
+      },
+      "seaView": true
+    },
+    {
+      "id": 3,
+      "title": {
+        "sk": "Moderný byt pri pláži",
+        "en": "A contemporary beachfront residence.",
+        "de": "Modernes Apartment direkt am Strand"
+      },
+      "location": {
+        "sk": "Slnečné pobrežie, Bulharsko",
+        "en": "Sunny Beach, Bulgaria",
+        "de": "Sonnenküste, Bulgarien"
+      },
+      "country": "bulgaria",
+      "price": 95000,
+      "priceFormatted": "€ 95,000",
+      "beds": 1,
+      "baths": 1,
+      "area": 55,
+      "type": "apartment",
+      "images": [
+        "https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=800&q=80"
+      ],
+      "featured": true,
+      "description": {
+        "sk": "Kompaktný apartmán ideálny na dovolenku alebo investíciu. Len pár minút od pláže.",
+        "en": "A perfectly formed apartment, ideal for a vacation retreat or astute investment. Just moments from the shimmering sands of the beach.",
+        "de": "Ein kompaktes Apartment, perfekt für einen luxuriösen Urlaub oder eine lohnende Investition. Nur wenige Minuten vom Strand entfernt."
+      }
+    },
+    {
+      "id": 4,
+      "title": {
+        "sk": "Historická vila v Toskánsku",
+        "en": "A Historic Tuscan Villa",
+        "de": "Historische Villa in der Toskana."
+      },
+      "location": {
+        "sk": "Firenze, Taliansko",
+        "en": "Florence, Italy",
+        "de": "Florenz, Italien. Ein Ort, an dem Kunst, Geschichte und unvergleichliche Eleganz eine unwiderstehliche Symphonie bilden."
+      },
+      "country": "italy",
+      "price": 1200000,
+      "priceFormatted": "€ 1,200,000",
+      "beds": 6,
+      "baths": 4,
+      "area": 450,
+      "type": "villa",
+      "images": [
+        "https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=800&q=80"
+      ],
+      "featured": true,
+      "description": {
+        "sk": "Historická vila s moderným interiérom v srdci Toskánska. Ideálna pre milovníkov architektúry a talianskej kultúry.",
+        "en": "A historic villa with a modern interior, nestled in the heart of Tuscany. Perfect for connoisseurs of architecture and Italian culture.",
+        "de": "Historische Villa mit modernem Interieur im Herzen der Toskana. Ideal für Liebhaber von Architektur und italienischer Kultur."
+      }
+    },
+    {
+      "id": 5,
+      "title": {
+        "sk": "Penthouse s terasou",
+        "en": "Penthouse with Terrace\n(Alternative more descriptive options, depending on context:)\n\nLuxury Penthouse with Expansive Terrace\n\nExclusive Penthouse with Private Terrace",
+        "de": "Penthouse mit Dachterrasse"
+      },
+      "location": {
+        "sk": "Dubrovník, Chorvátsko",
+        "en": "Dubrovnik, Croatia: Where timeless elegance meets Adriatic splendor.",
+        "de": "Dubrovnik, Kroatien"
+      },
+      "country": "croatia",
+      "price": 680000,
+      "priceFormatted": "€ 680,000",
+      "beds": 3,
+      "baths": 2,
+      "area": 180,
+      "type": "apartment",
+      "images": [
+        "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&q=80"
+      ],
+      "featured": false,
+      "description": {
+        "sk": "Luxusný penthouse s veľkou terasou a výhľadom na historické centrum Dubrovníka.",
+        "en": "Indulge in the height of luxury with this exquisite penthouse, boasting a sprawling terrace and breathtaking views of Dubrovnik's historic heart.",
+        "de": "Exklusives Penthouse mit weitläufiger Terrasse und atemberaubendem Blick auf das historische Zentrum von Dubrovnik."
+      }
+    },
+    {
+      "id": 6,
+      "title": {
+        "sk": "Rodinný dom pri mori",
+        "en": "Seaside Family Estate",
+        "de": "Exklusive Villa am Meer"
+      },
+      "location": {
+        "sk": "Burgas, Bulharsko",
+        "en": "Burgas, Bulgaria",
+        "de": "Burgas, Bulgarien – Eine exklusive Adresse für anspruchsvolles Wohnen."
+      },
+      "country": "bulgaria",
+      "price": 185000,
+      "priceFormatted": "€ 185,000",
+      "beds": 4,
+      "baths": 2,
+      "area": 220,
+      "type": "house",
+      "images": [
+        "https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=800&q=80"
+      ],
+      "featured": false,
+      "description": {
+        "sk": "Priestranný rodinný dom s veľkou záhradou, ideálny pre rodinu s deťmi.",
+        "en": "Discover this expansive family residence, nestled on a generous garden plot, perfectly designed for creating lasting memories with your loved ones.",
+        "de": "Grosszügiges Familienhaus mit weitläufigem Garten, perfekt für eine Familie mit Kindern."
+      }
+    },
+    {
+      "id": 7,
+      "title": {
+        "sk": "Moderná vila s infinity bazénom",
+        "en": "A contemporary villa featuring a breathtaking infinity pool.",
+        "de": "Moderne Villa mit Infinity-Pool"
+      },
+      "location": {
+        "sk": "Costa Brava, Španielsko",
+        "en": "Costa Brava, Spain: Where the sapphire sea kisses the sun-drenched shore.",
+        "de": "Costa Brava, Spanien"
+      },
+      "country": "spain",
+      "price": 1450000,
+      "priceFormatted": "€ 1,450,000",
+      "beds": 5,
+      "baths": 4,
+      "area": 380,
+      "type": "villa",
+      "images": [
+        "https://images.unsplash.com/photo-1613977257363-707ba9348227?w=800&q=80"
+      ],
+      "featured": true,
+      "description": {
+        "sk": "Architektonický skvost s infinity bazénom a panoramatickým výhľadom na more.",
+        "en": "An architectural masterpiece featuring an infinity pool and offering panoramic ocean vistas.",
+        "de": "Ein architektonisches Meisterwerk mit Infinity-Pool und atemberaubendem Panoramablick auf das Meer."
+      }
+    },
+    {
+      "id": 8,
+      "title": {
+        "sk": "Apartmán v centre mesta",
+        "en": "Luxury City Center Residence",
+        "de": "Exklusives Apartment im Herzen der Stadt."
+      },
+      "location": {
+        "sk": "Zadar, Chorvátsko",
+        "en": "Zadar, Croatia",
+        "de": "Zadar, Kroatien – Ein Juwel an der Adria."
+      },
+      "country": "croatia",
+      "price": 220000,
+      "priceFormatted": "€ 220,000",
+      "beds": 2,
+      "baths": 1,
+      "area": 75,
+      "type": "apartment",
+      "images": [
+        "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800&q=80"
+      ],
+      "featured": false,
+      "description": {
+        "sk": "Útulný apartmán v historickom centre Zadaru, pešia dostupnosť ku všetkým atrakciám.",
+        "en": "Discover your charming retreat in the heart of Zadar's historic centre, where all the city's captivating attractions are just a leisurely stroll away.",
+        "de": "Ein charmantes Apartment im Herzen der historischen Altstadt von Zadar, alle Sehenswürdigkeiten bequem zu Fuß erreichbar."
+      }
+    },
+    {
+      "id": 9,
+      "title": {
+        "sk": "Luxusná vila na ostrove",
+        "en": "Luxury Island Villa",
+        "de": "Exklusive Villa auf einer Insel."
+      },
+      "location": {
+        "sk": "Hvar, Chorvátsko",
+        "en": "Hvar, Croatia. Where timeless elegance meets sun-drenched shores.",
+        "de": "Hvar, Kroatien – Eine exklusive Adresse."
+      },
+      "country": "croatia",
+      "price": 2100000,
+      "priceFormatted": "€ 2,100,000",
+      "beds": 6,
+      "baths": 5,
+      "area": 520,
+      "type": "villa",
+      "images": [
+        "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&q=80"
+      ],
+      "featured": true,
+      "description": {
+        "sk": "Exkluzívna vila na prestížnom ostrove Hvar s priamym prístupom k moru.",
+        "en": "An exclusive villa on the prestigious island of Hvar, boasting direct access to the shimmering sea.",
+        "de": "Eine exklusive Villa auf der prestigeträchtigen Insel Hvar mit direktem Meerzugang."
+      }
+    }
+  ],
+  "filters": {
+    "countries": [
+      {
+        "value": "all",
+        "label": {
+          "sk": "Všetky krajiny",
+          "en": "All corners of the earth.",
+          "de": "Alle Länder. / Sämtliche Länder. / Alle Destinationen."
+        }
+      },
+      {
+        "value": "bulgaria",
+        "label": {
+          "sk": "Bulharsko",
+          "en": "Bulgaria",
+          "de": "Bulgarien"
+        }
+      },
+      {
+        "value": "greece",
+        "label": {
+          "sk": "Grécko",
+          "en": "Greece",
+          "de": "Griechenland: Wo die Sonne auf azurblaues Wasser trifft und antike Geschichte auf modernen Luxus trifft. Ein zeitloses Paradies, das darauf wartet, entdeckt zu werden."
+        }
+      },
+      {
+        "value": "spain",
+        "label": {
+          "sk": "Španielsko",
+          "en": "Spain",
+          "de": "Spanien. Ein Land voller Sonne, Lebensfreude und unvergleichlicher Schönheit."
+        }
+      },
+      {
+        "value": "croatia",
+        "label": {
+          "sk": "Chorvátsko",
+          "en": "Croatia",
+          "de": "Kroatien"
+        }
+      }
+    ],
+    "propertyTypes": [
+      {
+        "value": "all",
+        "label": {
+          "sk": "Všetky typy",
+          "en": "All types.",
+          "de": "Alle Ausführungen."
+        }
+      },
+      {
+        "value": "villa",
+        "label": {
+          "sk": "Vila",
+          "en": "Villa",
+          "de": "Villa"
+        }
+      },
+      {
+        "value": "apartment",
+        "label": {
+          "sk": "Apartmán",
+          "en": "Apartment\n\n(Choosing to keep it simple but impactful. The word \"apartment\" on its own, especially in marketing materials, can evoke a sense of refined urban living. If more context was provided, the translation could be more elaborate, such as \"Luxury Apartment\" or \"Exclusive Apartment Residence.\")",
+          "de": "Luxuriöses Apartment"
+        }
+      },
+      {
+        "value": "house",
+        "label": {
+          "sk": "Dom",
+          "en": "Residence.",
+          "de": "Das Anwesen"
+        }
+      },
+      {
+        "value": "land",
+        "label": {
+          "sk": "Pozemok",
+          "en": "Estate Lot",
+          "de": "Exklusives Baugrundstück"
+        }
+      }
+    ],
+    "priceRanges": [
+      {
+        "value": "all",
+        "label": {
+          "sk": "Akákoľvek cena",
+          "en": "Price Upon Request.",
+          "de": "Jeder Preis ist denkbar."
+        }
+      },
+      {
+        "value": "0-100000",
+        "label": {
+          "sk": "do €100,000",
+          "en": "Up to €100,000",
+          "de": "bis zu €100.000"
+        }
+      },
+      {
+        "value": "100000-300000",
+        "label": {
+          "sk": "€100,000 - €300,000",
+          "en": "Priced from €100,000 to €300,000",
+          "de": "€100.000 - €300.000"
+        }
+      },
+      {
+        "value": "300000-500000",
+        "label": {
+          "sk": "€300,000 - €500,000",
+          "en": "Priced from €300,000 to €500,000.",
+          "de": "€300.000 - €500.000"
+        }
+      },
+      {
+        "value": "500000-1000000",
+        "label": {
+          "sk": "€500,000 - €1,000,000",
+          "en": "From €500,000 to €1,000,000",
+          "de": "€500.000 - €1.000.000"
+        }
+      },
+      {
+        "value": "1000000+",
+        "label": {
+          "sk": "nad €1,000,000",
+          "en": "Over €1,000,000",
+          "de": "Über €1.000.000"
+        }
+      }
+    ],
+    "bedroomOptions": [
+      {
+        "value": "all",
+        "label": {
+          "sk": "Všetky",
+          "en": "All",
+          "de": "Alle"
+        }
+      },
+      {
+        "value": "1",
+        "label": {
+          "sk": "1+ izieb",
+          "en": "One-bedroom plus.",
+          "de": "1 Zimmer plus separates Schlafzimmer"
+        }
+      },
+      {
+        "value": "2",
+        "label": {
+          "sk": "2+ izieb",
+          "en": "Two-bedroom plus.",
+          "de": "2+ Zimmer"
+        }
+      },
+      {
+        "value": "3",
+        "label": {
+          "sk": "3+ izieb",
+          "en": "3+ Bedrooms",
+          "de": "3+ Zimmer"
+        }
+      },
+      {
+        "value": "4",
+        "label": {
+          "sk": "4+ izieb",
+          "en": "4+ Bedrooms",
+          "de": "4+ Zimmer"
+        }
+      },
+      {
+        "value": "5",
+        "label": {
+          "sk": "5+ izieb",
+          "en": "5+ Bedrooms",
+          "de": "5+ Zimmer"
+        }
+      }
+    ],
+    "sortOptions": [
+      {
+        "value": "newest",
+        "label": {
+          "sk": "Najnovšia ponuka",
+          "en": "Our Newest Offering",
+          "de": "Neueste Offerte"
+        }
+      },
+      {
+        "value": "price-asc",
+        "label": {
+          "sk": "Cena od najnižšej",
+          "en": "Starting from the most attractive price point.",
+          "de": "Preis ab dem niedrigsten Gebot"
+        }
+      },
+      {
+        "value": "price-desc",
+        "label": {
+          "sk": "Cena od najvyššej",
+          "en": "Price upon request.",
+          "de": "Preis auf Anfrage"
+        }
+      }
+    ]
+  }
+}
