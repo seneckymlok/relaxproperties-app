@@ -14,7 +14,7 @@
         "language": "Jazyk"
     },
     "footer": {
-        "description": "Váš spolehlivý partner pro luxusní nemovitosti ve Středomoří. Pomáháme vám najít dokonalý domov u moře.",
+        "description": "Váš spolehlivý partner pro bezpečný nákup zahraničních nemovitostí. Pomáháme vám najít váš vysněný druhý domov u moře.",
         "quickLinks": "Rychlé odkazy",
         "countries": "Země",
         "contactUs": "Kontakt",
@@ -68,7 +68,13 @@
         "introSecondary": "Naším cílem je zajistit bezpečný, transparentní a bezstarostný proces koupě nemovitosti v zahraničí. Díky dlouholetým zkušenostem a spolupráci s ověřenými partnery přímo v jednotlivých zemích poskytujeme klientům kompletní servis – od výběru nemovitosti až po právní služby a poprodejní péči.",
         "googleReviews": "60+ pozitivních 5hvězdičkových recenzí na Google",
         "partnersLabel": "Spolupracujeme s",
-        "partners": ["Advokáti", "Notáři", "Daňoví poradci", "Developeři", "Realitní kanceláře"],
+        "partners": [
+            "Advokáti",
+            "Notáři",
+            "Daňoví poradci",
+            "Developeři",
+            "Realitní kanceláře"
+        ],
         "whyUsSubtitle": "Proč právě my",
         "whyUsTitle": "Proč si vybrat právě nás?",
         "whyUsIntro": "Zakládáme si na hodnotách a transparentním přístupu, díky kterým jsme spolehlivým partnerem na vaší realitní cestě.",
@@ -146,16 +152,31 @@
         "faqTitle": "Časté dotazy",
         "companyInfo": {
             "name": "Relax Properties s. r. o.",
-            "address": ["Na vyhliadke 2915/5", "900 31 Stupava", "Slovenská republika"],
+            "address": [
+                "Na vyhliadke 2915/5",
+                "900 31 Stupava",
+                "Slovenská republika"
+            ],
             "registration": "Společnost je zapsána v obchodním rejstříku vedeném Okresním soudem Bratislava I., oddíl Sro, vložka: 152886/B.",
             "ids": "IČO: 53784961, DIČ: 2121506464, IČ DPH: SK2121506464",
             "phoneLabel": "Tel.:",
             "emailLabel": "Mail:",
             "phones": [
-                { "name": "Mgr. Aleš Dvořák", "number": "+420 739 049 593", "raw": "+420739049593" },
-                { "name": "Mgr. Viera Dvořáková", "number": "+421 911 819 152", "raw": "+421911819152" }
+                {
+                    "name": "Mgr. Aleš Dvořák",
+                    "number": "+420 739 049 593",
+                    "raw": "+420739049593"
+                },
+                {
+                    "name": "Mgr. Viera Dvořáková",
+                    "number": "+421 911 819 152",
+                    "raw": "+421911819152"
+                }
             ],
-            "emails": ["info@relaxproperties.cz", "spanelsko@relaxproperties.cz"]
+            "emails": [
+                "info@relaxproperties.cz",
+                "spanelsko@relaxproperties.cz"
+            ]
         },
         "form": {
             "name": "Jméno",

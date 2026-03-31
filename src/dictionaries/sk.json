@@ -14,7 +14,7 @@
         "language": "Jazyk"
     },
     "footer": {
-        "description": "Váš spoľahlivý partner pre luxusné nehnuteľnosti v Stredomorí. Pomáhame vám nájsť dokonalý domov pri mori.",
+        "description": "Váš spoľahlivý partner pre bezpečnú kúpu zahraničných nehnuteľností. Pomáhame vám nájsť svoj vysnívaný druhý domov pri mori.",
         "quickLinks": "Rýchle odkazy",
         "countries": "Krajiny",
         "contactUs": "Kontakt",
@@ -68,7 +68,13 @@
         "introSecondary": "Našim cieľom je zabezpečiť bezpečný, transparentný a bezstarostný proces kúpy nehnuteľnosti v zahraničí. Vďaka dlhoročným skúsenostiam a spolupráci s overenými partnermi priamo v jednotlivých krajinách poskytujeme klientom kompletný servis – od výberu nehnuteľnosti až po právne služby a popredajnú starostlivosť.",
         "googleReviews": "60+ pozitívnych 5-hviezdičkových recenzií na Google",
         "partnersLabel": "Spolupracujeme s",
-        "partners": ["Advokáti", "Notári", "Daňoví poradcovia", "Developeri", "Realitné kancelárie"],
+        "partners": [
+            "Advokáti",
+            "Notári",
+            "Daňoví poradcovia",
+            "Developeri",
+            "Realitné kancelárie"
+        ],
         "whyUsSubtitle": "Prečo práve my",
         "whyUsTitle": "Prečo si vybrať práve nás?",
         "whyUsIntro": "Zakladáme si na hodnotách a transparentnom prístupe, vďaka ktorým sme spoľahlivým partnerom na vašej realitnej ceste.",
@@ -146,17 +152,36 @@
         "faqTitle": "Časté otázky",
         "companyInfo": {
             "name": "Relax Properties s. r. o.",
-            "address": ["Na vyhliadke 2915/5", "900 31 Stupava", "Slovenská republika"],
+            "address": [
+                "Na vyhliadke 2915/5",
+                "900 31 Stupava",
+                "Slovenská republika"
+            ],
             "registration": "Spoločnosť je zapísaná v obchodnom registri vedenom Okresným súdom Bratislava I., oddiel Sro, vložka: 152886/B.",
             "ids": "IČO: 53784961, DIČ: 2121506464, IČ DPH: SK2121506464",
             "phoneLabel": "Tel.:",
             "emailLabel": "Mail:",
             "phones": [
-                { "name": "Mgr. Aleš Dvořák", "number": "+421 911 989 895", "raw": "+421911989895" },
-                { "name": "Mgr. Viera Dvořáková", "number": "+421 911 819 152", "raw": "+421911819152" },
-                { "name": "Bc. Tatiana Tóthová", "number": "+421 911 353 550", "raw": "+421911353550" }
+                {
+                    "name": "Mgr. Aleš Dvořák",
+                    "number": "+421 911 989 895",
+                    "raw": "+421911989895"
+                },
+                {
+                    "name": "Mgr. Viera Dvořáková",
+                    "number": "+421 911 819 152",
+                    "raw": "+421911819152"
+                },
+                {
+                    "name": "Bc. Tatiana Tóthová",
+                    "number": "+421 911 353 550",
+                    "raw": "+421911353550"
+                }
             ],
-            "emails": ["info@relaxproperties.sk", "spanielsko@relaxproperties.sk"]
+            "emails": [
+                "info@relaxproperties.sk",
+                "spanielsko@relaxproperties.sk"
+            ]
         },
         "form": {
             "name": "Meno",

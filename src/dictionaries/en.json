@@ -14,7 +14,7 @@
         "language": "Language"
     },
     "footer": {
-        "description": "Your trusted partner for luxury Mediterranean real estate. We help you find the perfect home by the sea.",
+        "description": "Your trusted partner for safe international real estate investments. Helping you discover your dream seaside home.",
         "quickLinks": "Quick Links",
         "countries": "Countries",
         "contactUs": "Contact Us",
@@ -68,7 +68,13 @@
         "introSecondary": "Our goal is to ensure a safe, transparent, and worry-free process when buying property abroad. Thanks to years of experience and cooperation with verified partners directly in each country, we provide clients with a complete service — from property selection to legal services and after-sale care.",
         "googleReviews": "60+ positive 5-star Google reviews",
         "partnersLabel": "We cooperate with",
-        "partners": ["Lawyers", "Notaries", "Tax advisors", "Developers", "Real estate agencies"],
+        "partners": [
+            "Lawyers",
+            "Notaries",
+            "Tax advisors",
+            "Developers",
+            "Real estate agencies"
+        ],
         "whyUsSubtitle": "Why us",
         "whyUsTitle": "Why choose us?",
         "whyUsIntro": "We build on values and a transparent approach that make us a reliable partner on your real estate journey.",
@@ -146,17 +152,36 @@
         "faqTitle": "Frequently Asked Questions",
         "companyInfo": {
             "name": "Relax Properties s. r. o.",
-            "address": ["Na vyhliadke 2915/5", "900 31 Stupava", "Slovak Republic"],
+            "address": [
+                "Na vyhliadke 2915/5",
+                "900 31 Stupava",
+                "Slovak Republic"
+            ],
             "registration": "The company is registered in the Commercial Register of the District Court Bratislava I, Section Sro, File No.: 152886/B.",
             "ids": "Company ID: 53784961, Tax ID: 2121506464, VAT ID: SK2121506464",
             "phoneLabel": "Phone:",
             "emailLabel": "Email:",
             "phones": [
-                { "name": "Mgr. Aleš Dvořák", "number": "+421 911 989 895", "raw": "+421911989895" },
-                { "name": "Mgr. Viera Dvořáková", "number": "+421 911 819 152", "raw": "+421911819152" },
-                { "name": "Bc. Tatiana Tóthová", "number": "+421 911 353 550", "raw": "+421911353550" }
+                {
+                    "name": "Mgr. Aleš Dvořák",
+                    "number": "+421 911 989 895",
+                    "raw": "+421911989895"
+                },
+                {
+                    "name": "Mgr. Viera Dvořáková",
+                    "number": "+421 911 819 152",
+                    "raw": "+421911819152"
+                },
+                {
+                    "name": "Bc. Tatiana Tóthová",
+                    "number": "+421 911 353 550",
+                    "raw": "+421911353550"
+                }
             ],
-            "emails": ["info@relaxproperties.sk", "spanielsko@relaxproperties.sk"]
+            "emails": [
+                "info@relaxproperties.sk",
+                "spanielsko@relaxproperties.sk"
+            ]
         },
         "form": {
             "name": "Name",
