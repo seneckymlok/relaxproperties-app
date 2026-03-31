@@ -11,6 +11,7 @@ import HeroSearch from "./HeroSearch";
 import MagneticButton from "@/components/ui/MagneticButton";
 import type { Dictionary } from "@/lib/dictionaries";
 import type { PublicProperty } from "@/lib/data-access";
+import { useCookieConsent } from "@/contexts/CookieConsentContext";
 
 import "swiper/css";
 import "swiper/css/effect-fade";
@@ -38,6 +39,7 @@ function translateCountry(country: string, lang: string): string {
 }
 
 export default function HeroSlider({ lang = 'sk', dictionary, featuredProperties = [], allProperties = [] }: HeroSliderProps) {
+    const { hasConsented } = useCookieConsent();
     const [currentSlide, setCurrentSlide] = useState(0);
     const [isMobile, setIsMobile] = useState(false);
     const [swiperInstance, setSwiperInstance] = useState<SwiperType | null>(null);
@@ -122,16 +124,16 @@ export default function HeroSlider({ lang = 'sk', dictionary, featuredProperties
         return () => window.removeEventListener("resize", checkMobile);
     }, []);
 
-    // Pause Swiper autoplay during intro phase
+    // Pause Swiper autoplay during intro phase and when cookie consent banner is visible
     useEffect(() => {
         if (swiperInstance) {
-            if (showIntro) {
+            if (showIntro || !hasConsented) {
                 swiperInstance.autoplay?.stop();
             } else {
                 swiperInstance.autoplay?.start();
             }
         }
-    }, [swiperInstance, showIntro]);
+    }, [swiperInstance, showIntro, hasConsented]);
 
     // Fade out intro after 5 seconds
     useEffect(() => {
