@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import PropertyCard from "@/components/ui/PropertyCard";
 import CustomSelect from "@/components/ui/CustomSelect";
@@ -97,6 +97,17 @@ export default function PropertiesContent({ lang, properties }: PropertiesConten
     const [sortBy, setSortBy] = useState(initialSort);
     const [searchQuery, setSearchQuery] = useState("");
     const [featuresExpanded, setFeaturesExpanded] = useState(false);
+    const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+
+    const openMobileFilters = useCallback(() => {
+        setMobileFiltersOpen(true);
+        document.body.style.overflow = "hidden";
+    }, []);
+    const closeMobileFilters = useCallback(() => {
+        setMobileFiltersOpen(false);
+        document.body.style.overflow = "";
+    }, []);
+    useEffect(() => () => { document.body.style.overflow = ""; }, []);
 
     // Search by ID or keyword
     const handleSearch = () => {
@@ -200,133 +211,144 @@ export default function PropertiesContent({ lang, properties }: PropertiesConten
         { key: 'luxury', label: l.luxury },
     ];
 
+    // Shared filter panel content — reused in sidebar and bottom sheet
+    const filterPanelContent = (
+        <>
+            {/* Search by ID/keyword */}
+            <div className="mb-6">
+                <label className="block text-xs uppercase tracking-wider text-[var(--color-muted)] mb-2">{l.search}</label>
+                <div className="flex gap-2">
+                    <input
+                        type="text"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                        placeholder={l.searchPlaceholder}
+                        className="flex-1 px-3 py-2.5 text-sm border border-[var(--color-border)] rounded-lg focus:border-[var(--color-primary)] focus:ring-1 focus:ring-[var(--color-primary)]/20 outline-none"
+                    />
+                </div>
+            </div>
+
+            <h3 className="font-medium text-[var(--color-secondary)] mb-6">{l.filter}</h3>
+
+            <div className="mb-5">
+                <label className="block text-xs uppercase tracking-wider text-[var(--color-muted)] mb-2">{l.country}</label>
+                <CustomSelect
+                    options={countries}
+                    value={filters.country}
+                    onChange={(value) => handleFilterChange("country", value)}
+                    searchable
+                    alphabetical
+                />
+            </div>
+
+            <div className="mb-5">
+                <label className="block text-xs uppercase tracking-wider text-[var(--color-muted)] mb-2">{l.type}</label>
+                <CustomSelect
+                    options={propertyTypes}
+                    value={filters.propertyType}
+                    onChange={(value) => handleFilterChange("propertyType", value)}
+                    searchable
+                />
+            </div>
+
+            <div className="mb-5">
+                <label className="block text-xs uppercase tracking-wider text-[var(--color-muted)] mb-2">{l.bedrooms}</label>
+                <CustomSelect
+                    options={bedroomOptions}
+                    value={filters.bedrooms}
+                    onChange={(value) => handleFilterChange("bedrooms", value)}
+                />
+            </div>
+
+            <div className="mb-5">
+                <label className="block text-xs uppercase tracking-wider text-[var(--color-muted)] mb-3">{l.price}</label>
+                <PriceRangeSlider
+                    min={priceStats.min}
+                    max={priceStats.max}
+                    step={5000}
+                    value={priceRange}
+                    onChange={setPriceRange}
+                />
+            </div>
+
+            {/* Feature checkboxes — collapsible */}
+            <div className="border-t border-[var(--color-border)] pt-5">
+                <p className="text-xs uppercase tracking-wider text-[var(--color-muted)] mb-3">{l.features}</p>
+                <div className="space-y-2.5">
+                    {(featuresExpanded ? featureCheckboxes : featureCheckboxes.slice(0, INITIAL_FEATURES_SHOWN)).map(({ key, label: checkLabel }) => (
+                        <label key={key} className="flex items-center gap-3 cursor-pointer group">
+                            <div className="relative">
+                                <input
+                                    type="checkbox"
+                                    checked={filters[key as keyof typeof filters] as boolean}
+                                    onChange={(e) => handleFilterChange(key, e.target.checked)}
+                                    className="peer sr-only"
+                                />
+                                <div className="w-5 h-5 rounded border-2 border-[var(--color-border)] peer-checked:border-[var(--color-primary)] peer-checked:bg-[var(--color-primary)] transition-colors flex items-center justify-center">
+                                    <svg className="w-3 h-3 text-white opacity-0 peer-checked:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                                    </svg>
+                                </div>
+                            </div>
+                            <span className="text-sm text-[var(--color-foreground)] group-hover:text-[var(--color-teal)] transition-colors">{checkLabel}</span>
+                        </label>
+                    ))}
+                </div>
+                {featureCheckboxes.length > INITIAL_FEATURES_SHOWN && (
+                    <button
+                        onClick={() => setFeaturesExpanded(!featuresExpanded)}
+                        className="mt-3 flex items-center gap-1.5 text-xs font-medium text-[var(--color-primary)] hover:text-[var(--color-teal)] transition-colors"
+                    >
+                        <svg
+                            className={`w-3.5 h-3.5 transition-transform duration-200 ${featuresExpanded ? 'rotate-180' : ''}`}
+                            fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                        >
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        </svg>
+                        {featuresExpanded
+                            ? (lang === 'en' ? 'Show less' : lang === 'cz' ? 'Zobrazit méně' : 'Zobraziť menej')
+                            : (lang === 'en' ? `Show all (${featureCheckboxes.length})` : lang === 'cz' ? `Zobrazit vše (${featureCheckboxes.length})` : `Zobraziť všetky (${featureCheckboxes.length})`)}
+                    </button>
+                )}
+            </div>
+
+            {/* Reset filters */}
+            {activeFilterCount > 0 && (
+                <button
+                    onClick={resetFilters}
+                    className="mt-5 w-full py-2.5 text-sm font-medium text-[var(--color-muted)] hover:text-[var(--color-teal)] border border-[var(--color-border)] rounded-lg hover:border-[var(--color-teal)]/30 transition-colors"
+                >
+                    {l.resetFilters} ({activeFilterCount})
+                </button>
+            )}
+        </>
+    );
+
+    const filtersLabel = lang === 'en' ? 'Filters' : lang === 'cz' ? 'Filtry' : 'Filtre';
+    const showResultsLabel = lang === 'en' ? `Show ${filteredProperties.length} results` : lang === 'cz' ? `Zobrazit ${filteredProperties.length} výsledků` : `Zobraziť ${filteredProperties.length} výsledkov`;
+
     return (
         <section className="py-[clamp(2rem,4vw,4rem)]">
             <div className="container-custom">
                 <div className="flex flex-col lg:flex-row gap-8">
-                    {/* Sidebar Filters */}
-                    <aside className="lg:w-72 flex-shrink-0">
+                    {/* Desktop Sidebar — hidden on mobile */}
+                    <aside className="hidden lg:block lg:w-72 flex-shrink-0">
                         <div className="bg-white rounded-2xl border border-[var(--color-border)] sticky top-24 lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto lg:overflow-x-hidden lg:overscroll-contain scrollbar-thin">
                             <div className="p-6">
-                            {/* Search by ID/keyword */}
-                            <div className="mb-6">
-                                <label className="block text-xs uppercase tracking-wider text-[var(--color-muted)] mb-2">{l.search}</label>
-                                <div className="flex gap-2">
-                                    <input
-                                        type="text"
-                                        value={searchQuery}
-                                        onChange={(e) => setSearchQuery(e.target.value)}
-                                        onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                                        placeholder={l.searchPlaceholder}
-                                        className="flex-1 px-3 py-2.5 text-sm border border-[var(--color-border)] rounded-lg focus:border-[var(--color-primary)] focus:ring-1 focus:ring-[var(--color-primary)]/20 outline-none"
-                                    />
-                                </div>
-                            </div>
-
-                            <h3 className="font-medium text-[var(--color-secondary)] mb-6">{l.filter}</h3>
-
-                            <div className="mb-5">
-                                <label className="block text-xs uppercase tracking-wider text-[var(--color-muted)] mb-2">{l.country}</label>
-                                <CustomSelect
-                                    options={countries}
-                                    value={filters.country}
-                                    onChange={(value) => handleFilterChange("country", value)}
-                                    searchable
-                                    alphabetical
-                                />
-                            </div>
-
-                            <div className="mb-5">
-                                <label className="block text-xs uppercase tracking-wider text-[var(--color-muted)] mb-2">{l.type}</label>
-                                <CustomSelect
-                                    options={propertyTypes}
-                                    value={filters.propertyType}
-                                    onChange={(value) => handleFilterChange("propertyType", value)}
-                                    searchable
-                                />
-                            </div>
-
-                            <div className="mb-5">
-                                <label className="block text-xs uppercase tracking-wider text-[var(--color-muted)] mb-2">{l.bedrooms}</label>
-                                <CustomSelect
-                                    options={bedroomOptions}
-                                    value={filters.bedrooms}
-                                    onChange={(value) => handleFilterChange("bedrooms", value)}
-                                />
-                            </div>
-
-                            <div className="mb-5">
-                                <label className="block text-xs uppercase tracking-wider text-[var(--color-muted)] mb-3">{l.price}</label>
-                                <PriceRangeSlider
-                                    min={priceStats.min}
-                                    max={priceStats.max}
-                                    step={5000}
-                                    value={priceRange}
-                                    onChange={setPriceRange}
-                                />
-                            </div>
-
-                            {/* Feature checkboxes — collapsible */}
-                            <div className="border-t border-[var(--color-border)] pt-5">
-                                <p className="text-xs uppercase tracking-wider text-[var(--color-muted)] mb-3">{l.features}</p>
-                                <div className="space-y-2.5">
-                                    {(featuresExpanded ? featureCheckboxes : featureCheckboxes.slice(0, INITIAL_FEATURES_SHOWN)).map(({ key, label: checkLabel }) => (
-                                        <label key={key} className="flex items-center gap-3 cursor-pointer group">
-                                            <div className="relative">
-                                                <input
-                                                    type="checkbox"
-                                                    checked={filters[key as keyof typeof filters] as boolean}
-                                                    onChange={(e) => handleFilterChange(key, e.target.checked)}
-                                                    className="peer sr-only"
-                                                />
-                                                <div className="w-5 h-5 rounded border-2 border-[var(--color-border)] peer-checked:border-[var(--color-primary)] peer-checked:bg-[var(--color-primary)] transition-colors flex items-center justify-center">
-                                                    <svg className="w-3 h-3 text-white opacity-0 peer-checked:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                                                    </svg>
-                                                </div>
-                                            </div>
-                                            <span className="text-sm text-[var(--color-foreground)] group-hover:text-[var(--color-teal)] transition-colors">{checkLabel}</span>
-                                        </label>
-                                    ))}
-                                </div>
-                                {featureCheckboxes.length > INITIAL_FEATURES_SHOWN && (
-                                    <button
-                                        onClick={() => setFeaturesExpanded(!featuresExpanded)}
-                                        className="mt-3 flex items-center gap-1.5 text-xs font-medium text-[var(--color-primary)] hover:text-[var(--color-teal)] transition-colors"
-                                    >
-                                        <svg
-                                            className={`w-3.5 h-3.5 transition-transform duration-200 ${featuresExpanded ? 'rotate-180' : ''}`}
-                                            fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                                        >
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                        </svg>
-                                        {featuresExpanded
-                                            ? (lang === 'en' ? 'Show less' : lang === 'cz' ? 'Zobrazit méně' : 'Zobraziť menej')
-                                            : (lang === 'en' ? `Show all (${featureCheckboxes.length})` : lang === 'cz' ? `Zobrazit vše (${featureCheckboxes.length})` : `Zobraziť všetky (${featureCheckboxes.length})`)}
-                                    </button>
-                                )}
-                            </div>
-
-                            {/* Reset filters */}
-                            {activeFilterCount > 0 && (
-                                <button
-                                    onClick={resetFilters}
-                                    className="mt-5 w-full py-2.5 text-sm font-medium text-[var(--color-muted)] hover:text-[var(--color-teal)] border border-[var(--color-border)] rounded-lg hover:border-[var(--color-teal)]/30 transition-colors"
-                                >
-                                    {l.resetFilters} ({activeFilterCount})
-                                </button>
-                            )}
+                                {filterPanelContent}
                             </div>
                         </div>
                     </aside>
 
                     {/* Main Content */}
                     <main className="flex-1">
+                        {/* Top bar: result count + sort */}
                         <div className="flex items-center justify-between mb-6">
-                            <p className="text-[var(--color-muted)]">
+                            <p className="text-sm sm:text-base text-[var(--color-muted)]">
                                 {l.found} <span className="font-medium text-[var(--color-secondary)]">{filteredProperties.length}</span> {l.propertiesLabel}
                             </p>
-                            <div className="w-48">
+                            <div className="w-36 sm:w-48">
                                 <CustomSelect
                                     options={sortOptions}
                                     value={sortBy}
@@ -335,7 +357,7 @@ export default function PropertiesContent({ lang, properties }: PropertiesConten
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-[clamp(1rem,3vw,1.5rem)]">
                             {filteredProperties.map((property) => (
                                 <PropertyCard
                                     key={property.id}
@@ -371,6 +393,69 @@ export default function PropertiesContent({ lang, properties }: PropertiesConten
                     </main>
                 </div>
             </div>
+
+            {/* Mobile: Sticky bottom filter button */}
+            <div className="lg:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-40">
+                <button
+                    onClick={openMobileFilters}
+                    className="flex items-center gap-2 px-6 py-3 bg-[var(--color-primary)] text-white text-sm font-medium rounded-full shadow-lg active:scale-95 transition-transform"
+                >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75" />
+                    </svg>
+                    {filtersLabel}
+                    {activeFilterCount > 0 && (
+                        <span className="ml-0.5 w-5 h-5 flex items-center justify-center bg-white text-[var(--color-primary)] text-[10px] font-bold rounded-full">
+                            {activeFilterCount}
+                        </span>
+                    )}
+                </button>
+            </div>
+
+            {/* Mobile: Bottom sheet filter drawer */}
+            {mobileFiltersOpen && (
+                <div className="lg:hidden fixed inset-0 z-50" onClick={closeMobileFilters}>
+                    {/* Backdrop */}
+                    <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
+
+                    {/* Sheet */}
+                    <div
+                        className="absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl max-h-[85vh] flex flex-col animate-slide-up"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        {/* Handle + Header */}
+                        <div className="flex-shrink-0 pt-3 pb-4 px-6 border-b border-[var(--color-border)]">
+                            <div className="w-10 h-1 bg-[var(--color-border-dark)] rounded-full mx-auto mb-4" />
+                            <div className="flex items-center justify-between">
+                                <h3 className="font-medium text-[var(--color-secondary)] text-base">{filtersLabel}</h3>
+                                <button
+                                    onClick={closeMobileFilters}
+                                    className="w-8 h-8 flex items-center justify-center text-[var(--color-muted)] hover:text-[var(--color-secondary)] transition-colors"
+                                >
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Scrollable filter content */}
+                        <div className="flex-1 overflow-y-auto overscroll-contain p-6">
+                            {filterPanelContent}
+                        </div>
+
+                        {/* Sticky bottom CTA */}
+                        <div className="flex-shrink-0 p-4 border-t border-[var(--color-border)] bg-white safe-area-inset-bottom">
+                            <button
+                                onClick={closeMobileFilters}
+                                className="w-full py-3 bg-[var(--color-teal)] text-white text-sm font-semibold rounded-xl active:scale-[0.98] transition-transform"
+                            >
+                                {showResultsLabel}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </section>
     );
 }

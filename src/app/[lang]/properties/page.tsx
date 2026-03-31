@@ -58,22 +58,21 @@ export default async function PropertiesPage({
     return (
         <div className="min-h-screen bg-[var(--color-background)]">
             {/* Hero Banner */}
-            <section className="relative h-64 md:h-80 bg-[var(--color-primary)]">
+            <section className="relative h-40 sm:h-56 md:h-80 bg-[var(--color-primary)]">
                 <div
                     className="absolute inset-0 bg-cover bg-center opacity-30"
                     style={{
                         backgroundImage: `url('${heroImage}')`,
                     }}
                 />
-                {/* Removed filter per user request */}
-                <div className="relative container-custom h-full flex flex-col justify-center items-center text-center text-white pt-16">
-                    <p className="text-sm uppercase tracking-[0.2em] text-[var(--color-sand-light)] mb-3">
+                <div className="relative container-custom h-full flex flex-col justify-center items-center text-center text-white pt-14 sm:pt-16">
+                    <p className="text-xs sm:text-sm uppercase tracking-[0.2em] text-[var(--color-sand-light)] mb-2 sm:mb-3">
                         {dictionary.properties.subtitle}
                     </p>
-                    <h1 className="font-serif text-4xl md:text-5xl font-medium text-white mb-4">
+                    <h1 className="font-serif text-[clamp(1.75rem,5vw,3rem)] font-medium text-white mb-2 sm:mb-4">
                         {dictionary.properties.title}
                     </h1>
-                    <p className="text-lg text-white/80">
+                    <p className="hidden sm:block text-lg text-white/80">
                         {dictionary.properties.heroText}
                     </p>
                 </div>
