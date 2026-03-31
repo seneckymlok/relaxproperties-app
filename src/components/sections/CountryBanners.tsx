@@ -2,14 +2,9 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { FreeMode } from "swiper/modules";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 import type { Dictionary } from "@/lib/dictionaries";
 import type { PublicProperty } from "@/lib/data-access";
-
-import "swiper/css";
-import "swiper/css/free-mode";
 
 interface CountryBannersProps {
     lang?: string;
@@ -122,25 +117,13 @@ export default function CountryBanners({ lang = 'sk', dictionary, properties = [
     return (
         <section className="relative z-0 py-[clamp(1.5rem,4vw,3.5rem)] bg-[var(--color-surface)]">
             <div ref={sectionRef} className="container-custom">
-                {/* Mobile: Swipeable Carousel */}
-                <div className="md:hidden -mx-[var(--container-px)] px-[var(--container-px)]">
-                    <Swiper
-                        modules={[FreeMode]}
-                        slidesPerView={1.5}
-                        spaceBetween={12}
-                        freeMode
-                        breakpoints={{
-                            480: { slidesPerView: 2, spaceBetween: 16 },
-                            640: { slidesPerView: 2.5, spaceBetween: 16 },
-                        }}
-                        className="countries-swiper"
-                    >
-                        {countries.map((country) => (
-                            <SwiperSlide key={country.id} className="!h-auto">
-                                <CountryCard country={country} />
-                            </SwiperSlide>
-                        ))}
-                    </Swiper>
+                {/* Mobile: Swipeable Carousel (Native CSS) */}
+                <div className="md:hidden flex overflow-x-auto snap-x snap-mandatory scrollbar-hide space-x-3 sm:space-x-4 pb-4 -mx-[var(--container-px)] px-[var(--container-px)]">
+                    {countries.map((country) => (
+                        <div key={country.id} className="w-[75vw] sm:w-[45vw] flex-shrink-0 snap-center">
+                            <CountryCard country={country} />
+                        </div>
+                    ))}
                 </div>
 
                 {/* Desktop: Grid */}

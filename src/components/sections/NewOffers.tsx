@@ -2,14 +2,9 @@
 
 import Link from "next/link";
 import PropertyCard from "@/components/ui/PropertyCard";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { FreeMode } from "swiper/modules";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 import MagneticButton from "@/components/ui/MagneticButton";
 import type { Dictionary } from "@/lib/dictionaries";
-
-import "swiper/css";
-import "swiper/css/free-mode";
 
 interface NewOffersProperty {
     id: string;
@@ -49,45 +44,10 @@ export default function NewOffers({ lang = 'sk', dictionary, properties = [] }: 
                     </h2>
                 </div>
 
-                {/* Mobile: Horizontal Swipeable Carousel */}
-                <div className="md:hidden -mx-[var(--container-px)] px-[var(--container-px)]">
-                    <Swiper
-                        modules={[FreeMode]}
-                        slidesPerView={1.15}
-                        spaceBetween={12}
-                        freeMode
-                        breakpoints={{
-                            480: { slidesPerView: 1.5, spaceBetween: 16 },
-                            640: { slidesPerView: 2.1, spaceBetween: 16 },
-                        }}
-                        className="new-offers-swiper"
-                    >
-                        {newOffers.map((property) => (
-                            <SwiperSlide key={property.id} className="!h-auto">
-                                <PropertyCard
-                                    id={property.id}
-                                    title={property.title}
-                                    location={property.location}
-                                    price={property.priceFormatted}
-                                    beds={property.beds}
-                                    baths={property.baths}
-                                    area={property.area}
-                                    images={property.images}
-                                    featured={property.featured}
-                                    previewTags={property.previewTags}
-                                    lang={lang}
-                                    dictionary={dictionary}
-                                    compact
-                                />
-                            </SwiperSlide>
-                        ))}
-                    </Swiper>
-                </div>
-
-                {/* Desktop: Grid */}
-                <div ref={gridRef} className="hidden md:grid grid-cols-2 lg:grid-cols-4 gap-6">
+                {/* Mobile: Horizontal Swipeable Carousel (Native CSS) */}
+                <div className="md:hidden flex overflow-x-auto snap-x snap-mandatory scrollbar-hide space-x-4 pb-4 -mx-[var(--container-px)] px-[var(--container-px)]">
                     {newOffers.map((property) => (
-                        <div key={property.id} data-reveal>
+                        <div key={property.id} className="w-[85vw] sm:w-[60vw] flex-shrink-0 snap-center flex flex-col">
                             <PropertyCard
                                 id={property.id}
                                 title={property.title}
@@ -101,7 +61,28 @@ export default function NewOffers({ lang = 'sk', dictionary, properties = [] }: 
                                 previewTags={property.previewTags}
                                 lang={lang}
                                 dictionary={dictionary}
-                                compact
+                            />
+                        </div>
+                    ))}
+                </div>
+
+                {/* Desktop: Grid */}
+                <div ref={gridRef} className="hidden md:grid grid-cols-2 lg:grid-cols-4 gap-6">
+                    {newOffers.map((property) => (
+                        <div key={property.id} data-reveal className="flex flex-col h-full">
+                            <PropertyCard
+                                id={property.id}
+                                title={property.title}
+                                location={property.location}
+                                price={property.priceFormatted}
+                                beds={property.beds}
+                                baths={property.baths}
+                                area={property.area}
+                                images={property.images}
+                                featured={property.featured}
+                                previewTags={property.previewTags}
+                                lang={lang}
+                                dictionary={dictionary}
                             />
                         </div>
                     ))}

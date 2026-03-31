@@ -85,10 +85,10 @@ export default function BuyingProcessPage() {
                     <p className="text-sm uppercase tracking-[0.2em] text-[var(--color-sand-light)] mb-3">
                         {t.subtitle}
                     </p>
-                    <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl font-medium text-white mb-6">
+                    <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-medium text-white mb-6">
                         {t.heroTitle}
                     </h1>
-                    <p className="text-lg md:text-xl text-white/80 max-w-2xl">
+                    <p className="text-base sm:text-lg md:text-xl text-white/80 max-w-2xl">
                         {t.heroText}
                     </p>
                 </div>
@@ -203,7 +203,7 @@ export default function BuyingProcessPage() {
                                         className={`grid transition-all duration-300 ease-in-out ${isExpanded ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"}`}
                                     >
                                         <div className="overflow-hidden">
-                                            <div className="px-5 sm:px-6 pb-6 pl-[4.5rem] sm:pl-[5rem]">
+                                            <div className="px-5 sm:px-6 pb-6 pl-5 sm:pl-[5rem]">
                                                 {/* Description paragraphs */}
                                                 <div className="space-y-3">
                                                     {step.description.split('\n\n').map((paragraph: string, pIdx: number) => (
@@ -243,7 +243,7 @@ export default function BuyingProcessPage() {
                 <div className="container-custom">
 
                     {/* Section Header */}
-                    <div className="text-center max-w-2xl mx-auto mb-12 md:mb-16">
+                    <div className="text-center max-w-2xl mx-auto mb-10 md:mb-16">
                         <p className="text-[11px] sm:text-xs uppercase tracking-[0.25em] text-[var(--color-sand-light)] mb-3">
                             {t.subtitle}
                         </p>
@@ -252,59 +252,44 @@ export default function BuyingProcessPage() {
                         </h2>
                     </div>
 
-                    {/* 2×2 borderless grid with cross dividers */}
+                    {/* Advantages grid — 2×2 on desktop, stacked on mobile */}
                     <div className="max-w-5xl mx-auto">
-                        {/* Top row */}
+                        {/* Mobile: single stacked list | Desktop: 2×2 with cross dividers */}
                         <div className="grid grid-cols-1 md:grid-cols-2">
-                            {t.advantages.slice(0, 2).map((adv: { title: string; description: string }, index: number) => (
-                                <div
-                                    key={index}
-                                    className={`group py-8 md:py-10 ${index === 0 ? 'md:pr-10 lg:pr-14 md:border-r border-white/[0.07]' : 'md:pl-10 lg:pl-14'}`}
-                                >
-                                    <div className="flex items-center gap-4 mb-4 md:mb-5">
-                                        <div className="w-11 h-11 flex items-center justify-center rounded-xl bg-[var(--color-teal)]/10 text-[var(--color-teal-light)] group-hover:bg-[var(--color-teal)]/[0.18] transition-colors duration-400">
-                                            {advantageIcons[index]}
-                                        </div>
-                                        <span className="font-serif text-sm tracking-widest text-white/20 uppercase">
-                                            {String(index + 1).padStart(2, '0')}
-                                        </span>
-                                    </div>
-                                    <h3 className="text-lg md:text-xl font-medium text-white mb-3">
-                                        {adv.title}
-                                    </h3>
-                                    <p className="text-sm md:text-[15px] leading-relaxed text-white/50 group-hover:text-white/65 transition-colors duration-400">
-                                        {adv.description}
-                                    </p>
-                                </div>
-                            ))}
-                        </div>
+                            {t.advantages.map((adv: { title: string; description: string }, index: number) => {
+                                // Desktop positioning: items 0,2 get right border + right padding; items 1,3 get left padding
+                                const isLeftCol = index % 2 === 0;
+                                const isTopRow = index < 2;
+                                const desktopClasses = isLeftCol
+                                    ? 'md:pr-10 lg:pr-14 md:border-r md:border-white/[0.07]'
+                                    : 'md:pl-10 lg:pl-14';
+                                // Desktop: top row gets bottom border (horizontal divider)
+                                const desktopDivider = isTopRow ? 'md:border-b md:border-white/[0.07]' : '';
+                                // Mobile: all but last item get bottom border
+                                const mobileDivider = index < 3 ? 'border-b border-white/[0.07] md:border-b-0' : '';
 
-                        {/* Horizontal divider */}
-                        <div className="border-t border-white/[0.07]" />
-
-                        {/* Bottom row */}
-                        <div className="grid grid-cols-1 md:grid-cols-2">
-                            {t.advantages.slice(2, 4).map((adv: { title: string; description: string }, index: number) => (
-                                <div
-                                    key={index}
-                                    className={`group py-8 md:py-10 ${index === 0 ? 'md:pr-10 lg:pr-14 md:border-r border-white/[0.07]' : 'md:pl-10 lg:pl-14'}`}
-                                >
-                                    <div className="flex items-center gap-4 mb-4 md:mb-5">
-                                        <div className="w-11 h-11 flex items-center justify-center rounded-xl bg-[var(--color-teal)]/10 text-[var(--color-teal-light)] group-hover:bg-[var(--color-teal)]/[0.18] transition-colors duration-400">
-                                            {advantageIcons[index + 2]}
+                                return (
+                                    <div
+                                        key={index}
+                                        className={`group py-6 md:py-10 text-center md:text-left ${desktopClasses} ${desktopDivider} ${mobileDivider}`}
+                                    >
+                                        <div className="flex items-center justify-center md:justify-start gap-4 mb-3 md:mb-5">
+                                            <div className="hidden md:flex w-11 h-11 items-center justify-center rounded-xl bg-[var(--color-teal)]/10 text-[var(--color-teal-light)] group-hover:bg-[var(--color-teal)]/[0.18] transition-colors duration-400">
+                                                {advantageIcons[index]}
+                                            </div>
+                                            <span className="font-serif text-sm tracking-widest text-white/20 uppercase">
+                                                {String(index + 1).padStart(2, '0')}
+                                            </span>
                                         </div>
-                                        <span className="font-serif text-sm tracking-widest text-white/20 uppercase">
-                                            {String(index + 3).padStart(2, '0')}
-                                        </span>
+                                        <h3 className="text-lg md:text-xl font-medium text-white mb-2 md:mb-3">
+                                            {adv.title}
+                                        </h3>
+                                        <p className="text-sm md:text-[15px] leading-relaxed text-white/50 group-hover:text-white/65 transition-colors duration-400 max-w-sm mx-auto md:mx-0 md:max-w-none">
+                                            {adv.description}
+                                        </p>
                                     </div>
-                                    <h3 className="text-lg md:text-xl font-medium text-white mb-3">
-                                        {adv.title}
-                                    </h3>
-                                    <p className="text-sm md:text-[15px] leading-relaxed text-white/50 group-hover:text-white/65 transition-colors duration-400">
-                                        {adv.description}
-                                    </p>
-                                </div>
-                            ))}
+                                );
+                            })}
                         </div>
                     </div>
                 </div>
@@ -327,9 +312,9 @@ export default function BuyingProcessPage() {
                         {t.faq.map((faq: { q: string; a: string }, index: number) => (
                             <details
                                 key={index}
-                                className="group p-6 bg-white rounded-xl border border-[var(--color-border)] cursor-pointer hover:shadow-md transition-shadow"
+                                className="group p-4 sm:p-6 bg-white rounded-xl border border-[var(--color-border)] cursor-pointer hover:shadow-md transition-shadow"
                             >
-                                <summary className="flex items-center justify-between font-medium text-[var(--color-secondary)] list-none">
+                                <summary className="flex items-center justify-between font-medium text-sm sm:text-base text-[var(--color-secondary)] list-none">
                                     {faq.q}
                                     <svg
                                         className="w-5 h-5 text-[var(--color-muted)] group-open:rotate-180 transition-transform flex-shrink-0 ml-4"
@@ -353,18 +338,18 @@ export default function BuyingProcessPage() {
                 SECTION 6: Full-Width CTA Band
                 ============================================= */}
             <section className="py-[clamp(3rem,5.5vw,7rem)] bg-[var(--color-primary)]">
-                <div className="container-custom text-center px-4 sm:px-6">
-                    <h2 className="font-serif text-3xl md:text-4xl text-white mb-6">
+                <div className="container-custom text-center">
+                    <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl text-white mb-4 sm:mb-6">
                         {t.readyTitle}
                     </h2>
-                    <p className="text-lg text-white/80 mb-8 max-w-2xl mx-auto">
+                    <p className="text-base sm:text-lg text-white/80 mb-6 sm:mb-8 max-w-2xl mx-auto">
                         {t.readyText}
                     </p>
-                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                    <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
                         <MagneticButton strength={0.15}>
                             <Link
                                 href={`/${validLang}/contact`}
-                                className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white text-[var(--color-primary)] font-medium rounded-full hover:bg-white/90 transition-colors"
+                                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3.5 sm:py-4 bg-white text-[var(--color-primary)] font-medium rounded-full hover:bg-white/90 transition-colors"
                             >
                                 {t.contactUs}
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -375,7 +360,7 @@ export default function BuyingProcessPage() {
                         <MagneticButton strength={0.15}>
                             <Link
                                 href={`/${validLang}/properties?country=${selectedCountry}`}
-                                className="inline-flex items-center justify-center px-8 py-4 border border-white/40 text-white font-medium rounded-full hover:bg-white/10 transition-colors"
+                                className="w-full sm:w-auto inline-flex items-center justify-center px-6 sm:px-8 py-3.5 sm:py-4 border border-white/40 text-white font-medium rounded-full hover:bg-white/10 transition-colors"
                             >
                                 {t.viewProperties} {country.name}
                             </Link>

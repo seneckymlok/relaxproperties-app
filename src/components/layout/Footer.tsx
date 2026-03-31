@@ -181,12 +181,12 @@ export default function Footer({ lang, dictionary }: FooterProps) {
                         </p>
                         <div className="flex flex-col items-center gap-2 md:flex-row md:gap-5">
                             <div className="flex items-center gap-4">
-                                <Link href={`/${lang}/privacy`} className="text-[11px] text-white/20 hover:text-white/40 transition-colors duration-200">
-                                    {lang === 'sk' ? 'Ochrana súkromia' : lang === 'cz' ? 'Ochrana soukromí' : 'Privacy Policy'}
+                                <Link href={`/${lang}/privacy-policy`} className="text-[11px] text-white/20 hover:text-white/40 transition-colors duration-200">
+                                    {lang === 'sk' ? 'Zásady ochrany osobných údajov' : lang === 'cz' ? 'Zásady ochrany osobních údajů' : 'Privacy Policy'}
                                 </Link>
                                 <span className="text-white/[0.08]">·</span>
-                                <Link href={`/${lang}/terms`} className="text-[11px] text-white/20 hover:text-white/40 transition-colors duration-200">
-                                    {lang === 'sk' ? 'Obchodné podmienky' : lang === 'cz' ? 'Obchodní podmínky' : 'Terms & Conditions'}
+                                <Link href={`/${lang}/cookie-policy`} className="text-[11px] text-white/20 hover:text-white/40 transition-colors duration-200">
+                                    {lang === 'sk' ? 'Zásady cookies' : lang === 'cz' ? 'Zásady cookies' : 'Cookie Policy'}
                                 </Link>
                             </div>
                             <div className="hidden md:block">

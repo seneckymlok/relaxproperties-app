@@ -1,5 +1,14 @@
 @import "tailwindcss";
 
+/* Utility: hide scrollbar for horizontal scroll containers */
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+
 /* Dual range slider — fully reset native styling */
 .range-slider input[type="range"] {
     -webkit-appearance: none;

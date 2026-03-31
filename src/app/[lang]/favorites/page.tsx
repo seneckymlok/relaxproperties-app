@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useFavorites } from "@/contexts/FavoritesContext";
 import PropertyCard from "@/components/ui/PropertyCard";
 import Link from "next/link";
+import MagneticButton from "@/components/ui/MagneticButton";
 
 interface FavoriteProperty {
     id: string;
@@ -46,7 +47,7 @@ export default function FavoritesPage() {
     return (
         <>
             {/* Hero Section */}
-            <section className="relative h-64 md:h-80 bg-[var(--color-primary)]">
+            <section className="relative h-80 sm:h-96 md:h-[400px] bg-[var(--color-primary)]">
                 <div
                     className="absolute inset-0 bg-cover bg-center opacity-30"
                     style={{
@@ -58,7 +59,7 @@ export default function FavoritesPage() {
                     <p className="text-sm uppercase tracking-[0.2em] text-[var(--color-sand-light)] mb-3">
                         Moje obľúbené
                     </p>
-                    <h1 className="font-serif text-4xl md:text-5xl font-medium text-white mb-4">
+                    <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl font-medium text-white mb-4">
                         Obľúbené nehnuteľnosti
                     </h1>
                     <p className="text-lg text-white/80">
@@ -91,27 +92,29 @@ export default function FavoritesPage() {
                             ))}
                         </div>
                     ) : (
-                        <div className="text-center py-20">
-                            <div className="w-24 h-24 mx-auto mb-6 flex items-center justify-center bg-white rounded-full border border-[var(--color-border)]">
-                                <svg className="w-12 h-12 text-[var(--color-muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+                        <div className="text-center py-16 sm:py-24 px-4">
+                            <div className="w-24 h-24 mx-auto mb-8 flex items-center justify-center bg-white rounded-full border border-[var(--color-border)]">
+                                <svg className="w-10 h-10 sm:w-12 sm:h-12 text-[var(--color-muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
                                 </svg>
                             </div>
-                            <h2 className="font-serif text-2xl text-[var(--color-secondary)] mb-4">
+                            <h2 className="font-serif text-2xl md:text-3xl text-[var(--color-secondary)] mb-4 leading-tight">
                                 Zatiaľ nemáte žiadne obľúbené
                             </h2>
-                            <p className="text-[var(--color-muted)] mb-8 max-w-md mx-auto">
+                            <p className="text-[var(--color-muted)] mb-8 max-w-sm sm:max-w-md mx-auto leading-relaxed text-sm sm:text-base">
                                 Kliknite na ikonu srdca pri nehnuteľnostiach, ktoré sa vám páčia, a uložte si ich sem pre rýchly prístup.
                             </p>
-                            <Link
-                                href="/properties"
-                                className="inline-flex items-center gap-2 px-8 py-4 bg-[var(--color-primary)] text-white font-medium rounded-lg hover:bg-[var(--color-primary-dark)] transition-colors"
-                            >
-                                Prehliadať nehnuteľnosti
-                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                                </svg>
-                            </Link>
+                            <MagneticButton strength={0.15}>
+                                <Link
+                                    href={`/${lang}/properties`}
+                                    className="inline-flex w-full sm:w-auto items-center justify-center gap-2 px-8 py-4 bg-[var(--color-primary)] text-white font-medium rounded-full hover:bg-[var(--color-primary-dark)] transition-colors"
+                                >
+                                    Prehliadať nehnuteľnosti
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                                    </svg>
+                                </Link>
+                            </MagneticButton>
                         </div>
                     )}
                 </div>

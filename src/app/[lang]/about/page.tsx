@@ -119,10 +119,10 @@ export default async function AboutPage({
                     <p className="text-sm uppercase tracking-[0.2em] text-[var(--color-sand-light)] mb-3">
                         {t.subtitle}
                     </p>
-                    <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl font-medium text-white mb-6">
+                    <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-medium text-white mb-6">
                         {t.heroTitle}
                     </h1>
-                    <p className="text-lg md:text-xl text-white/80 max-w-2xl">
+                    <p className="text-base sm:text-lg md:text-xl text-white/80 max-w-2xl">
                         {t.heroText}
                     </p>
                 </div>
@@ -131,7 +131,7 @@ export default async function AboutPage({
             {/* =============================================
                 INTRO — Two paragraphs + Google reviews badge
                 ============================================= */}
-            <section className="py-[clamp(4rem,7vw,9rem)] bg-white">
+            <section className="py-[clamp(3rem,7vw,9rem)] bg-white">
                 <div className="container-custom">
                     <div className="relative max-w-4xl mx-auto text-center">
                         {/* Decorative oversized quotation mark */}
@@ -151,22 +151,22 @@ export default async function AboutPage({
                         </p>
 
                         {/* Google Reviews badge */}
-                        <div className="mt-10 inline-flex items-center gap-3 px-6 py-3 bg-[var(--color-surface)] rounded-full border border-[var(--color-border)]">
+                        <div className="mt-10 inline-flex flex-col sm:flex-row items-center gap-1.5 sm:gap-3 px-5 sm:px-6 py-2.5 sm:py-3 bg-[var(--color-surface)] rounded-2xl sm:rounded-full border border-[var(--color-border)]">
                             <div className="flex gap-0.5">
                                 {[...Array(5)].map((_, i) => (
-                                    <svg key={i} className="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
+                                    <svg key={i} className="w-4 h-4 sm:w-5 sm:h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
                                         <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                                     </svg>
                                 ))}
                             </div>
-                            <span className="text-sm font-medium text-[var(--color-secondary)]">
+                            <span className="text-xs sm:text-sm font-medium text-[var(--color-secondary)] text-center">
                                 {t.googleReviews}
                             </span>
                         </div>
                     </div>
 
                     {/* Partner types strip */}
-                    <div className="mt-16 md:mt-20 flex flex-col items-center">
+                    <div className="mt-10 md:mt-20 flex flex-col items-center">
                         <p className="text-xs uppercase tracking-[0.25em] text-[var(--color-muted)] mb-5">
                             {t.partnersLabel}
                         </p>
@@ -203,25 +203,25 @@ export default async function AboutPage({
                         {t.whyUsIntro}
                     </p>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6 max-w-5xl mx-auto">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6 max-w-5xl mx-auto">
                         {(t.whyUs as { title: string; description: string }[]).map((item, index) => (
                             <div
                                 key={index}
-                                className="group relative overflow-hidden rounded-2xl bg-white/[0.07] backdrop-blur-sm border border-white/10 p-8 md:p-9 hover:bg-white/[0.12] hover:border-white/20 transition-all duration-300"
+                                className="group relative overflow-hidden rounded-2xl bg-white/[0.07] backdrop-blur-sm border border-white/10 p-5 md:p-9 hover:bg-white/[0.12] hover:border-white/20 transition-all duration-300"
                             >
                                 {/* Decorative number */}
-                                <span className="absolute top-4 right-6 font-serif text-[6rem] leading-none text-white/[0.04] select-none pointer-events-none" aria-hidden="true">
+                                <span className="absolute top-3 right-5 md:top-4 md:right-6 font-serif text-[4rem] md:text-[6rem] leading-none text-white/[0.04] select-none pointer-events-none" aria-hidden="true">
                                     {String(index + 1).padStart(2, '0')}
                                 </span>
 
-                                <div className="relative w-14 h-14 mb-5 flex items-center justify-center bg-white/10 text-[var(--color-sand-light)] rounded-2xl group-hover:scale-110 transition-transform duration-300">
+                                <div className="relative w-11 h-11 md:w-14 md:h-14 mb-4 md:mb-5 flex items-center justify-center bg-white/10 text-[var(--color-sand-light)] rounded-xl md:rounded-2xl group-hover:scale-110 transition-transform duration-300">
                                     {whyUsIcons[index]}
                                 </div>
 
-                                <h3 className="relative text-lg md:text-xl font-medium text-white mb-3">
+                                <h3 className="relative text-base md:text-xl font-medium text-white mb-2 md:mb-3">
                                     {item.title}
                                 </h3>
-                                <p className="relative text-white/65 leading-relaxed">
+                                <p className="relative text-sm md:text-base text-white/65 leading-relaxed">
                                     {item.description}
                                 </p>
                             </div>
@@ -245,42 +245,42 @@ export default async function AboutPage({
                         </h2>
                     </div>
 
-                    <div className="max-w-5xl mx-auto space-y-5">
+                    <div className="max-w-5xl mx-auto space-y-3 md:space-y-5">
                         {/* Featured first service — full-width, horizontal layout */}
-                        <div className="group relative overflow-hidden rounded-2xl bg-[var(--color-primary)] p-8 md:p-10 md:flex md:items-center md:gap-10 transition-all duration-300 hover:shadow-xl">
-                            <span className="absolute top-4 right-6 md:right-10 font-serif text-[8rem] md:text-[10rem] leading-none text-white/[0.04] select-none pointer-events-none" aria-hidden="true">
+                        <div className="group relative overflow-hidden rounded-2xl bg-[var(--color-primary)] p-5 md:p-10 md:flex md:items-center md:gap-10 transition-all duration-300 hover:shadow-xl">
+                            <span className="absolute top-3 right-5 md:top-4 md:right-10 font-serif text-[5rem] md:text-[10rem] leading-none text-white/[0.04] select-none pointer-events-none" aria-hidden="true">
                                 01
                             </span>
-                            <div className="relative shrink-0 w-16 h-16 mb-5 md:mb-0 flex items-center justify-center bg-white/10 text-white rounded-2xl group-hover:scale-110 transition-transform duration-300">
+                            <div className="relative shrink-0 w-12 h-12 md:w-16 md:h-16 mb-4 md:mb-0 flex items-center justify-center bg-white/10 text-white rounded-xl md:rounded-2xl group-hover:scale-110 transition-transform duration-300">
                                 {serviceIcons[0]}
                             </div>
                             <div className="relative">
-                                <h3 className="text-xl md:text-2xl font-medium text-white mb-2">
+                                <h3 className="text-lg md:text-2xl font-medium text-white mb-1.5 md:mb-2">
                                     {(t.services as { title: string; description: string }[])[0].title}
                                 </h3>
-                                <p className="text-white/70 leading-relaxed md:text-lg">
+                                <p className="text-sm md:text-lg text-white/70 leading-relaxed">
                                     {(t.services as { title: string; description: string }[])[0].description}
                                 </p>
                             </div>
                         </div>
 
                         {/* Services 2 & 3 — two columns */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-5">
                             {[1, 2].map((i) => (
                                 <div
                                     key={i}
-                                    className="group relative overflow-hidden rounded-2xl bg-white border border-[var(--color-border)] p-8 hover:border-[var(--color-primary)]/30 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
+                                    className="group relative overflow-hidden rounded-2xl bg-white border border-[var(--color-border)] p-5 md:p-8 hover:border-[var(--color-primary)]/30 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
                                 >
-                                    <span className="absolute top-3 right-5 font-serif text-[6rem] leading-none text-[var(--color-primary)]/[0.04] select-none pointer-events-none" aria-hidden="true">
+                                    <span className="absolute top-3 right-5 font-serif text-[4rem] md:text-[6rem] leading-none text-[var(--color-primary)]/[0.04] select-none pointer-events-none" aria-hidden="true">
                                         {String(i + 1).padStart(2, '0')}
                                     </span>
-                                    <div className="relative w-14 h-14 mb-5 flex items-center justify-center bg-[var(--color-teal)]/10 text-[var(--color-teal)] rounded-2xl group-hover:scale-110 transition-transform duration-300">
+                                    <div className="relative w-11 h-11 md:w-14 md:h-14 mb-4 md:mb-5 flex items-center justify-center bg-[var(--color-teal)]/10 text-[var(--color-teal)] rounded-xl md:rounded-2xl group-hover:scale-110 transition-transform duration-300">
                                         {serviceIcons[i]}
                                     </div>
-                                    <h3 className="relative text-lg font-medium text-[var(--color-secondary)] mb-2">
+                                    <h3 className="relative text-base md:text-lg font-medium text-[var(--color-secondary)] mb-1.5 md:mb-2">
                                         {(t.services as { title: string; description: string }[])[i].title}
                                     </h3>
-                                    <p className="relative text-[var(--color-muted)] leading-relaxed">
+                                    <p className="relative text-sm md:text-base text-[var(--color-muted)] leading-relaxed">
                                         {(t.services as { title: string; description: string }[])[i].description}
                                     </p>
                                 </div>
@@ -288,40 +288,40 @@ export default async function AboutPage({
                         </div>
 
                         {/* Service 4 — full-width detail card */}
-                        <div className="group relative overflow-hidden rounded-2xl bg-white border border-[var(--color-border)] p-8 md:p-10 md:flex md:items-center md:gap-10 hover:border-[var(--color-teal)]/30 hover:shadow-lg transition-all duration-300">
-                            <span className="absolute top-4 right-6 md:right-10 font-serif text-[8rem] md:text-[10rem] leading-none text-[var(--color-primary)]/[0.03] select-none pointer-events-none" aria-hidden="true">
+                        <div className="group relative overflow-hidden rounded-2xl bg-white border border-[var(--color-border)] p-5 md:p-10 md:flex md:items-center md:gap-10 hover:border-[var(--color-teal)]/30 hover:shadow-lg transition-all duration-300">
+                            <span className="absolute top-3 right-5 md:top-4 md:right-10 font-serif text-[5rem] md:text-[10rem] leading-none text-[var(--color-primary)]/[0.03] select-none pointer-events-none" aria-hidden="true">
                                 04
                             </span>
-                            <div className="relative shrink-0 w-16 h-16 mb-5 md:mb-0 flex items-center justify-center bg-[var(--color-teal)]/10 text-[var(--color-teal)] rounded-2xl group-hover:scale-110 transition-transform duration-300">
+                            <div className="relative shrink-0 w-12 h-12 md:w-16 md:h-16 mb-4 md:mb-0 flex items-center justify-center bg-[var(--color-teal)]/10 text-[var(--color-teal)] rounded-xl md:rounded-2xl group-hover:scale-110 transition-transform duration-300">
                                 {serviceIcons[3]}
                             </div>
                             <div className="relative">
-                                <h3 className="text-xl md:text-2xl font-medium text-[var(--color-secondary)] mb-2">
+                                <h3 className="text-lg md:text-2xl font-medium text-[var(--color-secondary)] mb-1.5 md:mb-2">
                                     {(t.services as { title: string; description: string }[])[3].title}
                                 </h3>
-                                <p className="text-[var(--color-muted)] leading-relaxed md:text-lg">
+                                <p className="text-sm md:text-lg text-[var(--color-muted)] leading-relaxed">
                                     {(t.services as { title: string; description: string }[])[3].description}
                                 </p>
                             </div>
                         </div>
 
                         {/* Services 5 & 6 — two columns */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-5">
                             {[4, 5].map((i) => (
                                 <div
                                     key={i}
-                                    className="group relative overflow-hidden rounded-2xl bg-white border border-[var(--color-border)] p-8 hover:border-[var(--color-primary)]/30 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
+                                    className="group relative overflow-hidden rounded-2xl bg-white border border-[var(--color-border)] p-5 md:p-8 hover:border-[var(--color-primary)]/30 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
                                 >
-                                    <span className="absolute top-3 right-5 font-serif text-[6rem] leading-none text-[var(--color-primary)]/[0.04] select-none pointer-events-none" aria-hidden="true">
+                                    <span className="absolute top-3 right-5 font-serif text-[4rem] md:text-[6rem] leading-none text-[var(--color-primary)]/[0.04] select-none pointer-events-none" aria-hidden="true">
                                         {String(i + 1).padStart(2, '0')}
                                     </span>
-                                    <div className="relative w-14 h-14 mb-5 flex items-center justify-center bg-[var(--color-primary)]/10 text-[var(--color-primary)] rounded-2xl group-hover:scale-110 transition-transform duration-300">
+                                    <div className="relative w-11 h-11 md:w-14 md:h-14 mb-4 md:mb-5 flex items-center justify-center bg-[var(--color-primary)]/10 text-[var(--color-primary)] rounded-xl md:rounded-2xl group-hover:scale-110 transition-transform duration-300">
                                         {serviceIcons[i]}
                                     </div>
-                                    <h3 className="relative text-lg font-medium text-[var(--color-secondary)] mb-2">
+                                    <h3 className="relative text-base md:text-lg font-medium text-[var(--color-secondary)] mb-1.5 md:mb-2">
                                         {(t.services as { title: string; description: string }[])[i].title}
                                     </h3>
-                                    <p className="relative text-[var(--color-muted)] leading-relaxed">
+                                    <p className="relative text-sm md:text-base text-[var(--color-muted)] leading-relaxed">
                                         {(t.services as { title: string; description: string }[])[i].description}
                                     </p>
                                 </div>
@@ -338,14 +338,14 @@ export default async function AboutPage({
                 <div className="container-custom">
                     <div className="max-w-5xl mx-auto md:flex md:gap-16 md:items-start">
                         {/* Left — heading + lead text */}
-                        <div className="md:w-2/5 mb-10 md:mb-0 md:sticky md:top-32">
+                        <div className="text-center md:text-left md:w-2/5 mb-8 md:mb-0 md:sticky md:top-32">
                             <p className="text-sm uppercase tracking-[0.2em] text-[var(--color-accent)] mb-3">
                                 {t.visionSubtitle}
                             </p>
-                            <h2 className="font-serif text-3xl md:text-4xl text-[var(--color-secondary)] mb-6">
+                            <h2 className="font-serif text-3xl md:text-4xl text-[var(--color-secondary)] mb-4 md:mb-6">
                                 {t.visionTitle}
                             </h2>
-                            <p className="text-[var(--color-muted)] leading-relaxed text-base md:text-lg">
+                            <p className="text-[var(--color-muted)] leading-relaxed text-sm md:text-lg max-w-md mx-auto md:mx-0 md:max-w-none">
                                 {t.visionText}
                             </p>
                         </div>
@@ -354,14 +354,14 @@ export default async function AboutPage({
                         <div className="md:w-3/5">
                             <div className="space-y-0">
                                 {(t.visionPoints as string[]).map((point: string, index: number) => (
-                                    <div key={index} className="flex gap-5 py-7 border-b border-[var(--color-border)] last:border-b-0">
+                                    <div key={index} className="flex gap-4 md:gap-5 py-5 md:py-7 border-b border-[var(--color-border)] last:border-b-0">
                                         {/* Check icon */}
-                                        <div className="shrink-0 w-10 h-10 mt-0.5 flex items-center justify-center rounded-full bg-[var(--color-teal)]/10 text-[var(--color-teal)]">
-                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                                        <div className="shrink-0 w-8 h-8 md:w-10 md:h-10 mt-0.5 flex items-center justify-center rounded-full bg-[var(--color-teal)]/10 text-[var(--color-teal)]">
+                                            <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                                                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75" />
                                             </svg>
                                         </div>
-                                        <p className="text-[var(--color-foreground)] leading-relaxed text-base md:text-lg pt-1.5">
+                                        <p className="text-[var(--color-foreground)] leading-relaxed text-sm md:text-lg pt-1">
                                             {point}
                                         </p>
                                     </div>
@@ -385,14 +385,15 @@ export default async function AboutPage({
                             {t.teamTitle}
                         </h2>
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                    {/* Horizontal scroll on mobile, 3-col grid on desktop */}
+                    <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory pb-4 md:pb-0 md:grid md:grid-cols-3 md:gap-8 md:overflow-visible max-w-5xl mx-auto scrollbar-hide -mx-4 px-4 md:mx-auto md:px-0">
                         {teamMembers.map((member, index) => (
                             <div
                                 key={index}
-                                className="group bg-white rounded-2xl overflow-hidden border border-[var(--color-border)] hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+                                className="group min-w-[280px] sm:min-w-[300px] md:min-w-0 snap-center flex-shrink-0 md:flex-shrink bg-white rounded-2xl overflow-hidden border border-[var(--color-border)] hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
                             >
-                                <div className="pt-8 px-6 flex justify-center">
-                                    <div className="relative w-36 h-36 rounded-full overflow-hidden border-4 border-white shadow-lg group-hover:shadow-xl transition-shadow">
+                                <div className="pt-6 md:pt-8 px-5 md:px-6 flex justify-center">
+                                    <div className="relative w-28 h-28 md:w-36 md:h-36 rounded-full overflow-hidden border-4 border-white shadow-lg group-hover:shadow-xl transition-shadow">
                                         <Image
                                             src={member.image}
                                             alt={member.name}
@@ -401,14 +402,14 @@ export default async function AboutPage({
                                         />
                                     </div>
                                 </div>
-                                <div className="p-6 pt-4 text-center">
-                                    <h3 className="text-lg font-medium text-[var(--color-secondary)] mb-0.5">
+                                <div className="p-5 md:p-6 pt-3 md:pt-4 text-center">
+                                    <h3 className="text-base md:text-lg font-medium text-[var(--color-secondary)] mb-0.5">
                                         {member.name}
                                     </h3>
-                                    <p className="text-[var(--color-teal)] text-sm font-medium mb-4">
+                                    <p className="text-[var(--color-teal)] text-xs md:text-sm font-medium mb-3 md:mb-4">
                                         {member.role}
                                     </p>
-                                    <div className="space-y-1.5 mb-4 text-sm text-[var(--color-muted)]">
+                                    <div className="space-y-1 md:space-y-1.5 mb-3 md:mb-4 text-xs md:text-sm text-[var(--color-muted)]">
                                         {member.phones.map((phone, idx) => (
                                             <div key={idx}>
                                                 {phone.label && <span className="mr-1 inline-block">{phone.label}</span>}
@@ -423,9 +424,9 @@ export default async function AboutPage({
                                             </a>
                                         </div>
                                     </div>
-                                    <div className="pt-4 border-t border-[var(--color-border)]">
-                                        <p className="text-xs text-[var(--color-muted)] mb-2">{t.teamLanguages}</p>
-                                        <div className="flex justify-center gap-2 text-xl">
+                                    <div className="pt-3 md:pt-4 border-t border-[var(--color-border)]">
+                                        <p className="text-[10px] md:text-xs text-[var(--color-muted)] mb-1.5 md:mb-2">{t.teamLanguages}</p>
+                                        <div className="flex justify-center gap-2 text-lg md:text-xl">
                                             {member.languages.map((memberLang, idx) => (
                                                 <span key={idx} title={memberLang}>
                                                     {memberLang === 'sk' && '🇸🇰'}
@@ -448,17 +449,17 @@ export default async function AboutPage({
                 ============================================= */}
             <section className="py-[clamp(3rem,5.5vw,7rem)] bg-[var(--color-primary)]">
                 <div className="container-custom text-center">
-                    <h2 className="font-serif text-3xl md:text-4xl text-white mb-6">
+                    <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl text-white mb-4 sm:mb-6">
                         {t.ctaTitle}
                     </h2>
-                    <p className="text-lg text-white/80 mb-8 max-w-2xl mx-auto">
+                    <p className="text-base sm:text-lg text-white/80 mb-6 sm:mb-8 max-w-2xl mx-auto">
                         {t.ctaText}
                     </p>
-                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                    <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
                         <MagneticButton strength={0.15}>
                             <Link
                                 href={`/${validLang}/properties`}
-                                className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white text-[var(--color-primary)] font-medium rounded-full hover:bg-white/90 transition-colors"
+                                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3.5 sm:py-4 bg-white text-[var(--color-primary)] font-medium rounded-full hover:bg-white/90 transition-colors"
                             >
                                 {dictionary.common.browseProperties}
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -469,7 +470,7 @@ export default async function AboutPage({
                         <MagneticButton strength={0.15}>
                             <Link
                                 href={`/${validLang}/contact`}
-                                className="inline-flex items-center justify-center px-8 py-4 border border-white/40 text-white font-medium rounded-full hover:bg-white/10 transition-colors"
+                                className="w-full sm:w-auto inline-flex items-center justify-center px-6 sm:px-8 py-3.5 sm:py-4 border border-white/40 text-white font-medium rounded-full hover:bg-white/10 transition-colors"
                             >
                                 {dictionary.common.contactUs}
                             </Link>

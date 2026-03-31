@@ -30,12 +30,7 @@ function getContact(lang: Language) {
     return { name: "Aleš", phone: "+421 911 989 895", phoneRaw: "+421911989895", email: "info@relaxproperties.sk" };
 }
 
-/** Determine if the current page has a full-screen hero behind the header */
-function isHeroRoute(pathname: string | null): boolean {
-    if (!pathname) return false;
-    // Homepage: /sk, /en, /cz (with or without trailing slash)
-    return /^\/(sk|en|cz)\/?$/.test(pathname);
-}
+/* Header uses hero-style (transparent → solid) behavior on ALL pages */
 
 /**
  * Clamp a value between min and max
@@ -62,7 +57,7 @@ export default function Header({ lang, dictionary }: HeaderProps) {
     const rafRef = useRef<number>(0);
 
     const contact = getContact(lang);
-    const isHeroPage = isHeroRoute(pathname);
+    const isHeroPage = true; // same header behavior on every page
 
     // ─── RAF-throttled scroll listener with continuous interpolation ───
     const handleScroll = useCallback(() => {
@@ -111,8 +106,7 @@ export default function Header({ lang, dictionary }: HeaderProps) {
 
     // ─── Interpolated values ───
     // t=0: transparent/hero mode, t=1: solid/scrolled mode
-    // On non-hero pages, always fully solid
-    const t = isHeroPage ? scrollProgress : 1;
+    const t = scrollProgress;
 
     // Background: fully transparent at top → slightly frosted on scroll
     const bgR = 249, bgG = 249, bgB = 247; // --color-background
@@ -123,7 +117,7 @@ export default function Header({ lang, dictionary }: HeaderProps) {
 
     // Padding: generous → compact (desktop)
     const paddingY = lerp(20, 10, t); // px
-    const paddingYMobile = lerp(14, 10, t); // px
+    const paddingYMobile = lerp(10, 6, t); // px
 
     // Shadow: invisible → multi-layered atmospheric
     const shadowOpacity = t;
@@ -183,48 +177,37 @@ export default function Header({ lang, dictionary }: HeaderProps) {
                     <div className="container-custom">
                         <div className="flex items-center justify-between">
                             {/* ─── Logo with crossfade filter ─── */}
-                            <Link href={`/${lang}`} className="block flex-shrink-0 relative">
-                                {isHeroPage ? (
-                                    <div className="relative h-[clamp(1.75rem,2.5vw,2.5rem)] w-[clamp(130px,14vw,170px)]">
-                                        {/* Original logo — fades in on scroll */}
-                                        <Image
-                                            src="/images/relax-logo.png"
-                                            alt="Relax Properties"
-                                            width={180}
-                                            height={45}
-                                            className="h-[clamp(1.75rem,2.5vw,2.5rem)] w-auto absolute inset-0 object-contain object-left"
-                                            style={{
-                                                opacity: t,
-                                                transition: 'opacity 0.15s ease',
-                                            }}
-                                            priority
-                                        />
-                                        {/* White logo variant — visible at top, fades out on scroll */}
-                                        <Image
-                                            src="/images/relax-logo.png"
-                                            alt=""
-                                            width={180}
-                                            height={45}
-                                            className="h-[clamp(1.75rem,2.5vw,2.5rem)] w-auto absolute inset-0 object-contain object-left"
-                                            aria-hidden="true"
-                                            style={{
-                                                opacity: 1 - t,
-                                                filter: `brightness(${logoBrightness}) invert(${logoInvert})`,
-                                                transition: 'opacity 0.15s ease, filter 0.15s ease',
-                                            }}
-                                            priority
-                                        />
-                                    </div>
-                                ) : (
+                            <Link href={`/${lang}`} className="block flex-shrink-0 relative exclude-touch-size">
+                                <div className="relative h-[clamp(1.75rem,2.5vw,2.5rem)] w-[clamp(130px,14vw,170px)]">
+                                    {/* Original logo — fades in on scroll */}
                                     <Image
                                         src="/images/relax-logo.png"
                                         alt="Relax Properties"
                                         width={180}
                                         height={45}
-                                        className="h-[clamp(1.75rem,2.5vw,2.5rem)] w-auto"
+                                        className="h-[clamp(1.75rem,2.5vw,2.5rem)] w-auto absolute inset-0 object-contain object-left"
+                                        style={{
+                                            opacity: t,
+                                            transition: 'opacity 0.15s ease',
+                                        }}
                                         priority
                                     />
-                                )}
+                                    {/* White logo variant — visible at top, fades out on scroll */}
+                                    <Image
+                                        src="/images/relax-logo.png"
+                                        alt=""
+                                        width={180}
+                                        height={45}
+                                        className="h-[clamp(1.75rem,2.5vw,2.5rem)] w-auto absolute inset-0 object-contain object-left"
+                                        aria-hidden="true"
+                                        style={{
+                                            opacity: 1 - t,
+                                            filter: `brightness(${logoBrightness}) invert(${logoInvert})`,
+                                            transition: 'opacity 0.15s ease, filter 0.15s ease',
+                                        }}
+                                        priority
+                                    />
+                                </div>
                             </Link>
 
                             {/* ─── Desktop Navigation — centered ─── */}
@@ -337,7 +320,7 @@ export default function Header({ lang, dictionary }: HeaderProps) {
 
                             {/* ─── Mobile Menu Toggle ─── */}
                             <button
-                                className="md:hidden w-11 h-11 flex items-center justify-center rounded-full transition-colors"
+                                className="md:hidden exclude-touch-size w-9 h-9 flex items-center justify-center rounded-full transition-colors"
                                 style={{
                                     color: isHeroPage
                                         ? `rgba(${lerp(255, 26, t)}, ${lerp(255, 26, t)}, ${lerp(255, 26, t)}, 1)`
