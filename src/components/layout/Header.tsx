@@ -57,7 +57,17 @@ export default function Header({ lang, dictionary }: HeaderProps) {
     const rafRef = useRef<number>(0);
 
     const contact = getContact(lang);
-    const isHeroPage = true; // same header behavior on every page
+    // Pages with dark hero images get the white-to-colored logo transition.
+    // Pages with white backgrounds at top should show the colored logo immediately.
+    const whiteTopPatterns = ['/properties/', '/cookie-policy', '/privacy-policy', '/blog/'];
+    const isHeroPage = !whiteTopPatterns.some(p => {
+        if (p === '/properties/' || p === '/blog/') {
+            // Match /xx/properties/SOMETHING and /xx/blog/SOMETHING (detail pages), not the listing
+            const segments = pathname?.replace(/^\/[a-z]{2}/, '').split('/').filter(Boolean) || [];
+            return segments[0] === p.replace(/\//g, '') && segments.length > 1;
+        }
+        return pathname?.includes(p);
+    });
 
     // ─── RAF-throttled scroll listener with continuous interpolation ───
     const handleScroll = useCallback(() => {
@@ -122,10 +132,12 @@ export default function Header({ lang, dictionary }: HeaderProps) {
     // Shadow: invisible → multi-layered atmospheric
     const shadowOpacity = t;
 
-    // Logo filter: white at top → original on scroll
-    // brightness(0) invert(1) = pure white; brightness(1) invert(0) = original
-    const logoBrightness = lerp(0, 1, t);
-    const logoInvert = lerp(1, 0, t);
+    // Logo: on hero pages, white at top → original on scroll.
+    // On white-bg pages, always show original colored logo.
+    const logoOriginalOpacity = isHeroPage ? t : 1;
+    const logoWhiteOpacity = isHeroPage ? 1 - t : 0;
+    const logoBrightness = isHeroPage ? lerp(0, 1, t) : 1;
+    const logoInvert = isHeroPage ? lerp(1, 0, t) : 0;
 
     const navLinks = [
         { href: `/${lang}/properties`, label: dictionary.nav.properties },
@@ -187,12 +199,12 @@ export default function Header({ lang, dictionary }: HeaderProps) {
                                         height={45}
                                         className="h-[clamp(1.75rem,2.5vw,2.5rem)] w-auto absolute inset-0 object-contain object-left"
                                         style={{
-                                            opacity: t,
+                                            opacity: logoOriginalOpacity,
                                             transition: 'opacity 0.15s ease',
                                         }}
                                         priority
                                     />
-                                    {/* White logo variant — visible at top, fades out on scroll */}
+                                    {/* White logo variant — visible at top on hero pages, fades out on scroll */}
                                     <Image
                                         src="/images/relax-logo.png"
                                         alt=""
@@ -201,7 +213,7 @@ export default function Header({ lang, dictionary }: HeaderProps) {
                                         className="h-[clamp(1.75rem,2.5vw,2.5rem)] w-auto absolute inset-0 object-contain object-left"
                                         aria-hidden="true"
                                         style={{
-                                            opacity: 1 - t,
+                                            opacity: logoWhiteOpacity,
                                             filter: `brightness(${logoBrightness}) invert(${logoInvert})`,
                                             transition: 'opacity 0.15s ease, filter 0.15s ease',
                                         }}
@@ -429,7 +441,7 @@ export default function Header({ lang, dictionary }: HeaderProps) {
                         <div className="space-y-2.5">
                             <a
                                 href="tel:+421911819152"
-                                className="flex items-center gap-2.5 text-[13px] text-[var(--color-foreground)] hover:text-[var(--color-teal)] transition-colors"
+                                className="flex items-center gap-2.5 text-[13px] text-[var(--color-teal)] md:text-[var(--color-foreground)] hover:text-[var(--color-teal)] transition-colors"
                             >
                                 <svg className="w-4 h-4 text-[var(--color-teal)] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
@@ -439,7 +451,7 @@ export default function Header({ lang, dictionary }: HeaderProps) {
                             </a>
                             <a
                                 href={`tel:${contact.phoneRaw}`}
-                                className="flex items-center gap-2.5 text-[13px] text-[var(--color-foreground)] hover:text-[var(--color-teal)] transition-colors"
+                                className="flex items-center gap-2.5 text-[13px] text-[var(--color-teal)] md:text-[var(--color-foreground)] hover:text-[var(--color-teal)] transition-colors"
                             >
                                 <svg className="w-4 h-4 text-[var(--color-teal)] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
@@ -449,7 +461,7 @@ export default function Header({ lang, dictionary }: HeaderProps) {
                             </a>
                             <a
                                 href={`mailto:${contact.email}`}
-                                className="flex items-center gap-2.5 text-[13px] text-[var(--color-foreground)] hover:text-[var(--color-teal)] transition-colors"
+                                className="flex items-center gap-2.5 text-[13px] text-[var(--color-teal)] md:text-[var(--color-foreground)] hover:text-[var(--color-teal)] transition-colors"
                             >
                                 <svg className="w-4 h-4 text-[var(--color-teal)] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />

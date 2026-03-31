@@ -190,7 +190,7 @@ export default function PropertyCard({
           </p>
 
           {/* Title */}
-          <h3 className={`font-medium text-[var(--color-secondary)] ${compact ? "text-sm" : "text-sm sm:text-base"} mb-1.5 group-hover:text-[var(--color-teal)] transition-colors line-clamp-1`}>
+          <h3 className={`font-medium text-[var(--color-teal)] md:text-[var(--color-secondary)] ${compact ? "text-sm" : "text-sm sm:text-base"} mb-1.5 group-hover:text-[var(--color-teal)] transition-colors line-clamp-1`}>
             {title}
           </h3>
 

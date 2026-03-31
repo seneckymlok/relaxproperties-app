@@ -406,20 +406,20 @@ export default async function AboutPage({
                                     <h3 className="text-base md:text-lg font-medium text-[var(--color-secondary)] mb-0.5">
                                         {member.name}
                                     </h3>
-                                    <p className="text-[var(--color-teal)] text-xs md:text-sm font-medium mb-3 md:mb-4">
+                                    <p className="text-[var(--color-accent)] text-xs md:text-sm font-medium mb-3 md:mb-4">
                                         {member.role}
                                     </p>
-                                    <div className="space-y-1 md:space-y-1.5 mb-3 md:mb-4 text-xs md:text-sm text-[var(--color-muted)]">
+                                    <div className="flex flex-col gap-0.5 md:gap-1.5 mb-3 md:mb-4 text-xs md:text-sm text-[var(--color-muted)]">
                                         {member.phones.map((phone, idx) => (
                                             <div key={idx}>
                                                 {phone.label && <span className="mr-1 inline-block">{phone.label}</span>}
-                                                <a href={`tel:${phone.number.replace(/\s/g, '')}`} className="hover:text-[var(--color-teal)] transition-colors">
+                                                <a href={`tel:${phone.number.replace(/\s/g, '')}`} className="text-[var(--color-teal)] md:text-[var(--color-muted)] hover:text-[var(--color-teal)] transition-colors">
                                                     {phone.number}
                                                 </a>
                                             </div>
                                         ))}
                                         <div>
-                                            <a href={`mailto:${member.email}`} className="hover:text-[var(--color-teal)] transition-colors">
+                                            <a href={`mailto:${member.email}`} className="text-[var(--color-teal)] md:text-[var(--color-muted)] hover:text-[var(--color-teal)] transition-colors">
                                                 {member.email}
                                             </a>
                                         </div>

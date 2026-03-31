@@ -165,10 +165,10 @@ function HomepageHeroSliderSection() {
                     return (
                         <div
                             key={slotIndex}
-                            className="bg-white rounded-2xl border border-[var(--color-border)] overflow-hidden"
+                            className="bg-white rounded-2xl border border-[var(--color-border)]"
                         >
                             {/* Preview */}
-                            <div className="relative h-44 bg-[var(--color-surface)]">
+                            <div className="relative h-44 bg-[var(--color-surface)] rounded-t-2xl overflow-hidden">
                                 {selectedProp && imageUrl ? (
                                     <>
                                         <img
@@ -216,7 +216,7 @@ function HomepageHeroSliderSection() {
                                 </button>
 
                                 {openDropdown === slotIndex && (
-                                    <div className="absolute left-3 right-3 top-full mt-1 bg-white border border-[var(--color-border)] rounded-xl shadow-lg z-50 max-h-64 overflow-hidden flex flex-col">
+                                    <div className="absolute left-0 right-0 top-full mt-1 bg-white border border-[var(--color-border)] rounded-xl shadow-xl z-[60] max-h-64 overflow-hidden flex flex-col">
                                         <div className="p-2 border-b border-[var(--color-border)]">
                                             <input
                                                 type="text"

@@ -483,5 +483,20 @@
         "ctaTitle": "Looking for a Seaside Property?",
         "ctaText": "Browse our selection of properties in the most beautiful coastal destinations.",
         "ctaButton": "Browse Properties"
+    },
+    "cookies": {
+        "title": "We use cookies",
+        "description": "We use cookies to improve your browsing experience, analyze traffic, and personalize content.",
+        "learnMore": "Learn more",
+        "acceptAll": "Accept all",
+        "rejectAll": "Reject",
+        "customize": "Customize",
+        "savePreferences": "Save preferences",
+        "essential": "Essential",
+        "essentialDesc": "Required for the website to function properly. Cannot be disabled.",
+        "analytics": "Analytics",
+        "analyticsDesc": "Help us understand how you use our website.",
+        "marketing": "Marketing",
+        "marketingDesc": "Used to show you relevant advertisements."
     }
 }

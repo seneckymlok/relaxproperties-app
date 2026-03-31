@@ -474,23 +474,67 @@ export default function HeroSearch({ lang = 'sk', dictionary, priceRange }: Hero
     return (
         <>
             {/* =============================================
-                MOBILE: Frosted Glass Search Trigger
+                MOBILE: Inline Filter Panel (below hero image)
                 ============================================= */}
-            <div className="md:hidden absolute bottom-[clamp(1.5rem,4vh,2.5rem)] left-0 right-0 z-30 px-[clamp(1rem,4vw,1.5rem)] hero-mobile-trigger">
-                <button
-                    onClick={() => setIsMobileModalOpen(true)}
-                    className="w-full flex items-center justify-center gap-3 bg-white/15 backdrop-blur-md text-white px-6 py-4 rounded-full font-medium active:scale-[0.98] transition-all border border-white/20 shadow-lg"
-                >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
-                    <span className="tracking-wide">{t.searchProperties}</span>
-                    {activeFiltersCount > 0 && (
-                        <span className="w-5 h-5 flex items-center justify-center bg-[var(--color-accent)] text-white text-[10px] font-semibold rounded-full">
-                            {activeFiltersCount}
-                        </span>
-                    )}
-                </button>
+            <div className="md:hidden flex-1 z-30 relative bg-[var(--color-surface)]">
+                <div className="mx-4 -mt-5 bg-white rounded-xl shadow-[0_4px_24px_rgba(0,0,0,0.10),0_1.5px_6px_rgba(0,0,0,0.06)] px-5 pt-5 pb-5 flex flex-col justify-center gap-3">
+                    {/* Country */}
+                    <div>
+                        <label className="block text-[10px] uppercase tracking-[0.15em] text-[var(--color-muted)] mb-1.5 font-medium">
+                            {t.country}
+                        </label>
+                        <CustomSelect
+                            options={countries}
+                            value={filters.country}
+                            onChange={(value) => handleFilterChange("country", value)}
+                            placeholder={t.allCountries}
+                            searchable
+                            alphabetical
+                        />
+                    </div>
+
+                    {/* Property Type */}
+                    <div>
+                        <label className="block text-[10px] uppercase tracking-[0.15em] text-[var(--color-muted)] mb-1.5 font-medium">
+                            {t.propertyType}
+                        </label>
+                        <CustomSelect
+                            options={propertyTypes}
+                            value={filters.propertyType}
+                            onChange={(value) => handleFilterChange("propertyType", value)}
+                            placeholder={t.allTypes}
+                            searchable
+                            alphabetical
+                        />
+                    </div>
+
+                    {/* Actions row */}
+                    <div className="flex items-center gap-3 mt-1">
+                        <button
+                            onClick={handleSearch}
+                            className="flex-1 bg-[var(--color-primary)] text-white py-3.5 rounded-full font-medium active:scale-[0.98] transition-all flex items-center justify-center gap-2.5 shadow-lg shadow-[var(--color-primary)]/15"
+                        >
+                            <svg className="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                            {t.search}
+                        </button>
+                        <button
+                            onClick={() => setIsMobileModalOpen(true)}
+                            className="flex items-center gap-1.5 text-sm text-[var(--color-muted)] hover:text-[var(--color-primary)] transition-colors whitespace-nowrap px-2"
+                        >
+                            <svg className="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75" />
+                            </svg>
+                            {t.moreFilters}
+                            {activeFiltersCount > 0 && (
+                                <span className="w-5 h-5 flex items-center justify-center bg-[var(--color-accent)] text-white text-[10px] font-semibold rounded-full">
+                                    {activeFiltersCount}
+                                </span>
+                            )}
+                        </button>
+                    </div>
+                </div>
             </div>
 
             {/* =============================================

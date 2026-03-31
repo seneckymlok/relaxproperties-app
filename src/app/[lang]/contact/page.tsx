@@ -95,11 +95,11 @@ export default async function ContactPage({
                                             </svg>
                                             <p className="text-sm font-medium text-[var(--color-secondary)]">{t.companyInfo.phoneLabel}</p>
                                         </div>
-                                        <div className="space-y-3 pl-7">
+                                        <div className="space-y-2 sm:space-y-3 pl-7">
                                             {t.companyInfo.phones.map((phone: { name: string; number: string; raw: string }, i: number) => (
-                                                <div key={i} className="flex items-center justify-between text-sm">
+                                                <div key={i} className="flex items-center justify-between gap-4 text-sm">
                                                     <span className="text-[var(--color-foreground)]">{phone.name}</span>
-                                                    <a href={`tel:${phone.raw}`} className="text-[var(--color-primary)] hover:text-[var(--color-teal)] transition-colors font-medium">{phone.number}</a>
+                                                    <a href={`tel:${phone.raw}`} className="text-[var(--color-teal)] md:text-[var(--color-primary)] hover:text-[var(--color-teal)] transition-colors font-medium">{phone.number}</a>
                                                 </div>
                                             ))}
                                         </div>
@@ -115,7 +115,7 @@ export default async function ContactPage({
                                         </div>
                                         <div className="space-y-2 pl-7">
                                             {t.companyInfo.emails.map((email: string, i: number) => (
-                                                <a key={i} href={`mailto:${email}`} className="block text-sm text-[var(--color-primary)] hover:text-[var(--color-teal)] transition-colors">
+                                                <a key={i} href={`mailto:${email}`} className="block text-sm text-[var(--color-teal)] md:text-[var(--color-primary)] hover:text-[var(--color-teal)] transition-colors">
                                                     {email}
                                                 </a>
                                             ))}

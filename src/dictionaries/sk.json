@@ -572,5 +572,20 @@
         "ctaTitle": "Hľadáte nehnuteľnosť pri mori?",
         "ctaText": "Prehliadnite našu ponuku nehnuteľností v najkrajších prímorských destináciách.",
         "ctaButton": "Prehliadať nehnuteľnosti"
+    },
+    "cookies": {
+        "title": "Používame cookies",
+        "description": "Používame cookies na zlepšenie vášho zážitku z prehliadania, analýzu návštevnosti a personalizáciu obsahu.",
+        "learnMore": "Zistiť viac",
+        "acceptAll": "Prijať všetky",
+        "rejectAll": "Odmietnuť",
+        "customize": "Prispôsobiť",
+        "savePreferences": "Uložiť preferencie",
+        "essential": "Nevyhnutné",
+        "essentialDesc": "Potrebné na správne fungovanie webu. Nedajú sa vypnúť.",
+        "analytics": "Analytické",
+        "analyticsDesc": "Pomáhajú nám pochopiť, ako používate náš web.",
+        "marketing": "Marketingové",
+        "marketingDesc": "Používané na zobrazenie relevantných reklám."
     }
 }

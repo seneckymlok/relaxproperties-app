@@ -56,7 +56,7 @@ export default function Pagination({
             <button
                 onClick={() => onPageChange(currentPage - 1)}
                 disabled={currentPage === 1}
-                className="flex items-center justify-center w-10 h-10 rounded-lg border border-[var(--color-border)] text-[var(--color-foreground)] hover:border-[var(--color-teal)] hover:text-[var(--color-teal)] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-[var(--color-border)] disabled:hover:text-[var(--color-foreground)] transition-colors"
+                className="flex items-center justify-center w-10 h-10 rounded-lg border border-[var(--color-teal)] md:border-[var(--color-border)] text-[var(--color-teal)] md:text-[var(--color-foreground)] hover:border-[var(--color-teal)] hover:text-[var(--color-teal)] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-[var(--color-border)] disabled:hover:text-[var(--color-foreground)] transition-colors"
                 aria-label="Predchádzajúca strana"
             >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -80,7 +80,7 @@ export default function Pagination({
                             onClick={() => onPageChange(page as number)}
                             className={`w-10 h-10 rounded-lg text-sm font-medium transition-colors ${currentPage === page
                                     ? "bg-[var(--color-primary)] text-white"
-                                    : "border border-[var(--color-border)] text-[var(--color-foreground)] hover:border-[var(--color-teal)] hover:text-[var(--color-teal)]"
+                                    : "border border-[var(--color-teal)] md:border-[var(--color-border)] text-[var(--color-teal)] md:text-[var(--color-foreground)] hover:border-[var(--color-teal)] hover:text-[var(--color-teal)]"
                                 }`}
                             aria-current={currentPage === page ? "page" : undefined}
                         >
@@ -94,7 +94,7 @@ export default function Pagination({
             <button
                 onClick={() => onPageChange(currentPage + 1)}
                 disabled={currentPage === totalPages}
-                className="flex items-center justify-center w-10 h-10 rounded-lg border border-[var(--color-border)] text-[var(--color-foreground)] hover:border-[var(--color-teal)] hover:text-[var(--color-teal)] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-[var(--color-border)] disabled:hover:text-[var(--color-foreground)] transition-colors"
+                className="flex items-center justify-center w-10 h-10 rounded-lg border border-[var(--color-teal)] md:border-[var(--color-border)] text-[var(--color-teal)] md:text-[var(--color-foreground)] hover:border-[var(--color-teal)] hover:text-[var(--color-teal)] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-[var(--color-border)] disabled:hover:text-[var(--color-foreground)] transition-colors"
                 aria-label="Ďalšia strana"
             >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

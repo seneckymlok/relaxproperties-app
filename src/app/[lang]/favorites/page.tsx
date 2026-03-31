@@ -25,14 +25,21 @@ export default function FavoritesPage() {
     const pathname = usePathname();
     const lang = (pathname?.split('/')[1] || 'sk') as 'sk' | 'en' | 'cz';
     const [allProperties, setAllProperties] = useState<FavoriteProperty[]>([]);
+    const [loadingProperties, setLoadingProperties] = useState(true);
     const [heroImage, setHeroImage] = useState("https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1920&q=80");
 
     // Fetch properties and hero image on mount
     useEffect(() => {
         fetch('/api/properties')
             .then(res => res.json())
-            .then(data => setAllProperties(data.properties || []))
-            .catch(() => setAllProperties([]));
+            .then(data => {
+                setAllProperties(data.properties || []);
+                setLoadingProperties(false);
+            })
+            .catch(() => {
+                setAllProperties([]);
+                setLoadingProperties(false);
+            });
 
         fetch('/api/page-heroes?page=favorites')
             .then(res => res.json())
@@ -73,7 +80,14 @@ export default function FavoritesPage() {
             {/* Content */}
             <section className="py-[clamp(2.5rem,5vw,5rem)] bg-[var(--color-surface)]">
                 <div className="container-custom">
-                    {favoriteProperties.length > 0 ? (
+                    {loadingProperties ? (
+                        <div className="text-center py-20 sm:py-32">
+                            <svg className="w-8 h-8 animate-spin mx-auto text-[var(--color-primary)]" fill="none" viewBox="0 0 24 24">
+                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" />
+                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                            </svg>
+                        </div>
+                    ) : favoriteProperties.length > 0 ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                             {favoriteProperties.map((property) => (
                                 <PropertyCard

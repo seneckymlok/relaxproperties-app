@@ -243,20 +243,16 @@ export default async function PropertyDetailPage({ params }: PropertyDetailPageP
             {/* Main Content */}
             <section className="bg-[var(--color-background)]" style={{ paddingTop: '5.5rem', paddingBottom: '3rem' }}>
                 {/* Floating Breadcrumb — inline, elegant */}
-                <div className="container-custom pt-5 pb-4">
-                    <nav className="flex items-center gap-1.5 text-[11px] sm:text-xs text-[var(--color-muted)] overflow-x-auto no-scrollbar">
+                <div className="container-custom pt-2 pb-4">
+                    <nav className="flex items-baseline gap-1.5 text-[11px] sm:text-xs text-[var(--color-muted)] overflow-x-auto scrollbar-hide">
                         <Link href={`/${lang}`} className="hover:text-[var(--color-teal)] transition-colors whitespace-nowrap">
                             {t.home}
                         </Link>
-                        <svg className="w-3 h-3 text-[var(--color-border-dark)] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                        </svg>
+                        <span className="text-[var(--color-border-dark)]">&rsaquo;</span>
                         <Link href={`/${lang}/properties`} className="hover:text-[var(--color-teal)] transition-colors whitespace-nowrap">
                             {t.properties}
                         </Link>
-                        <svg className="w-3 h-3 text-[var(--color-border-dark)] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                        </svg>
+                        <span className="text-[var(--color-border-dark)]">&rsaquo;</span>
                         <span className="text-[var(--color-foreground)] truncate max-w-[260px] sm:max-w-xs">{property.title}</span>
                     </nav>
                 </div>
@@ -464,7 +460,7 @@ export default async function PropertyDetailPage({ params }: PropertyDetailPageP
                                     <div className="space-y-3">
                                         <a
                                             href={`tel:${agentContact.phone1Raw}`}
-                                            className="flex items-center gap-3 text-sm text-[var(--color-foreground)] hover:text-[var(--color-teal)] transition-colors font-medium"
+                                            className="flex items-center gap-3 text-sm text-[var(--color-teal)] md:text-[var(--color-foreground)] hover:text-[var(--color-teal)] transition-colors font-medium"
                                         >
                                             <svg className="w-4 h-4 text-[var(--color-primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
                                                 <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
@@ -473,7 +469,7 @@ export default async function PropertyDetailPage({ params }: PropertyDetailPageP
                                         </a>
                                         <a
                                             href={`tel:${agentContact.phone2Raw}`}
-                                            className="flex items-center gap-3 text-sm text-[var(--color-foreground)] hover:text-[var(--color-teal)] transition-colors"
+                                            className="flex items-center gap-3 text-sm text-[var(--color-teal)] md:text-[var(--color-foreground)] hover:text-[var(--color-teal)] transition-colors"
                                         >
                                             <svg className="w-4 h-4 text-[var(--color-primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
                                                 <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
@@ -482,7 +478,7 @@ export default async function PropertyDetailPage({ params }: PropertyDetailPageP
                                         </a>
                                         <a
                                             href={`mailto:${agentContact.email}`}
-                                            className="flex items-center gap-3 text-sm text-[var(--color-foreground)] hover:text-[var(--color-teal)] transition-colors"
+                                            className="flex items-center gap-3 text-sm text-[var(--color-teal)] md:text-[var(--color-foreground)] hover:text-[var(--color-teal)] transition-colors"
                                         >
                                             <svg className="w-4 h-4 text-[var(--color-primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
                                                 <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />

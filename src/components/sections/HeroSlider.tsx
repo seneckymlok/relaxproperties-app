@@ -42,6 +42,7 @@ export default function HeroSlider({ lang = 'sk', dictionary, featuredProperties
     const [isMobile, setIsMobile] = useState(false);
     const [swiperInstance, setSwiperInstance] = useState<SwiperType | null>(null);
     const contentRefs = useRef<(HTMLDivElement | null)[]>([]);
+    const progressRef = useRef<HTMLDivElement>(null);
 
     // Compute dynamic price range from all properties
     const priceRange = (() => {
@@ -153,38 +154,41 @@ export default function HeroSlider({ lang = 'sk', dictionary, featuredProperties
         const contentEl = contentRefs.current[currentSlide];
         if (!contentEl) return;
 
-        // Text elements: fade + slide up
+        // Text elements: gentle fade with minimal lift
         const textElements = contentEl.querySelectorAll("[data-hero-animate='text']");
         gsap.fromTo(
             textElements,
-            { y: 40, opacity: 0 },
+            { y: 12, opacity: 0 },
             {
                 y: 0,
                 opacity: 1,
-                duration: 0.8,
-                stagger: 0.1,
-                ease: "power3.out",
-                delay: 0.15,
+                duration: 0.6,
+                stagger: 0.08,
+                ease: "power2.out",
+                delay: 0.1,
             }
         );
 
-        // Glass elements (CTA button): slide up only, NO opacity change
-        // This keeps backdrop-blur visible instantly without a fade delay
+        // Glass elements (CTA button): slide only, NO opacity change
+        // Animating opacity breaks backdrop-blur (invisible at opacity:0)
         const glassElements = contentEl.querySelectorAll("[data-hero-animate='glass']");
         gsap.fromTo(
             glassElements,
-            { y: 30 },
+            { y: 8 },
             {
                 y: 0,
-                duration: 0.8,
-                ease: "power3.out",
-                delay: 0.35,
+                duration: 0.5,
+                ease: "power2.out",
+                delay: 0.25,
             }
         );
     }, [currentSlide, showIntro]);
 
     return (
-        <section className="relative z-40 h-[100dvh] min-h-[100dvh] md:min-h-[600px] md:h-screen w-full overflow-visible bg-[var(--color-secondary)]">
+        <section className="relative z-40 flex flex-col md:block h-[100dvh] min-h-[100dvh] md:min-h-[600px] md:h-screen w-full overflow-visible bg-[var(--color-secondary)]">
+            {/* Image carousel area — shorter on mobile to make room for inline filters */}
+            <div className="relative h-[63dvh] md:h-full flex-shrink-0 overflow-hidden">
+
             {/* Intro Photo Overlay */}
             {!introRemoved && (
                 <div
@@ -211,7 +215,13 @@ export default function HeroSlider({ lang = 'sk', dictionary, featuredProperties
                 }}
                 loop
                 onSwiper={setSwiperInstance}
-                onSlideChange={(swiper) => setCurrentSlide(swiper.realIndex)}
+                onSlideChange={(swiper) => {
+                    setCurrentSlide(swiper.realIndex);
+                    if (progressRef.current) progressRef.current.style.width = '0%';
+                }}
+                onAutoplayTimeLeft={(_s, _t, pct) => {
+                    if (progressRef.current) progressRef.current.style.width = `${(1 - pct) * 100}%`;
+                }}
                 className={`w-full h-full transition-opacity duration-700 ${showIntro ? "opacity-0" : "opacity-100"}`}
             >
                 {slides.map((slide, index) => (
@@ -233,15 +243,15 @@ export default function HeroSlider({ lang = 'sk', dictionary, featuredProperties
                         {/* Content — fades in when intro ends, animates per-element on slide change */}
                         <div
                             ref={(el) => { contentRefs.current[index] = el; }}
-                            className="absolute inset-0 z-20 flex items-end pb-[clamp(10rem,22vh,15rem)] md:pb-[clamp(12rem,38vh,20rem)] transition-opacity duration-500 ease-in-out"
+                            className="absolute inset-0 z-20 flex items-end pb-14 md:pb-[clamp(12rem,38vh,20rem)] transition-opacity duration-500 ease-in-out"
                             style={{
                                 opacity: showIntro ? 0 : 1,
                                 transitionDelay: showIntro ? '0ms' : '200ms',
                             }}
                         >
                             <div className="container-custom">
-                                {/* Location tag */}
-                                <div data-hero-animate="text" className="flex items-center gap-2 mb-[clamp(1.25rem,2vw,1.5rem)]" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.7), 0 2px 12px rgba(0,0,0,0.5), 0 4px 24px rgba(0,0,0,0.3)' }}>
+                                {/* Location tag — desktop only */}
+                                <div data-hero-animate="text" className="hidden md:flex items-center gap-2 mb-[clamp(1.25rem,2vw,1.5rem)]" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.7), 0 2px 12px rgba(0,0,0,0.5), 0 4px 24px rgba(0,0,0,0.3)' }}>
                                     <svg className="w-4 h-4 text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5} style={{ filter: 'drop-shadow(0 1px 4px rgba(0,0,0,0.6))' }}>
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
@@ -254,6 +264,11 @@ export default function HeroSlider({ lang = 'sk', dictionary, featuredProperties
                                         </>
                                     )}
                                 </div>
+
+                                {/* Property title — mobile only */}
+                                <h1 data-hero-animate="text" className="md:hidden font-serif text-white text-[clamp(1.375rem,5.5vw,1.75rem)] leading-[1.15] mb-3 max-w-[320px]" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.7), 0 2px 12px rgba(0,0,0,0.5), 0 4px 24px rgba(0,0,0,0.3)' }}>
+                                    {slide.title}
+                                </h1>
 
                                 {/* CTA Button with magnetic effect — uses 'glass' animation (no opacity) */}
                                 <div data-hero-animate="glass">
@@ -275,6 +290,17 @@ export default function HeroSlider({ lang = 'sk', dictionary, featuredProperties
                     </SwiperSlide>
                 ))}
             </Swiper>
+
+            {/* Slide progress bar — mobile */}
+            <div className={`md:hidden absolute bottom-0 left-0 right-0 z-40 h-[2px] bg-white/15 transition-opacity duration-700 ${showIntro ? 'opacity-0' : 'opacity-100'}`}>
+                <div
+                    ref={progressRef}
+                    className="h-full bg-white/70"
+                    style={{ width: '0%' }}
+                />
+            </div>
+
+            </div>{/* end image carousel area */}
 
             {/* Hero Search Component — always visible */}
             <HeroSearch lang={lang} dictionary={dictionary} priceRange={priceRange} />

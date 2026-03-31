@@ -478,5 +478,20 @@
         "ctaTitle": "Hledáte nemovitost u moře?",
         "ctaText": "Prohlédněte si naši nabídku nemovitostí v nejkrásnějších přímořských destinacích.",
         "ctaButton": "Prohlížet nemovitosti"
+    },
+    "cookies": {
+        "title": "Používáme cookies",
+        "description": "Používáme cookies ke zlepšení vašeho zážitku z prohlížení, analýze návštěvnosti a personalizaci obsahu.",
+        "learnMore": "Zjistit více",
+        "acceptAll": "Přijmout vše",
+        "rejectAll": "Odmítnout",
+        "customize": "Přizpůsobit",
+        "savePreferences": "Uložit preference",
+        "essential": "Nezbytné",
+        "essentialDesc": "Potřebné pro správné fungování webu. Nelze je vypnout.",
+        "analytics": "Analytické",
+        "analyticsDesc": "Pomáhají nám pochopit, jak používáte náš web.",
+        "marketing": "Marketingové",
+        "marketingDesc": "Používané k zobrazení relevantních reklam."
     }
 }

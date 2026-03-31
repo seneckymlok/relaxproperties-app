@@ -5,6 +5,8 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import SmoothScrollProvider from "@/components/providers/SmoothScrollProvider";
 import { FavoritesProvider } from "@/contexts/FavoritesContext";
+import { CookieConsentProvider } from "@/contexts/CookieConsentContext";
+import CookieConsentBanner from "@/components/ui/CookieConsentBanner";
 import { getDictionary } from "@/lib/dictionaries";
 import type { Language } from "@/lib/data-access";
 
@@ -52,9 +54,12 @@ export default async function RootLayout({
       <body className={`${dmSans.variable} ${libreBaskerville.variable} ${instrumentSerif.variable} antialiased`}>
         <SmoothScrollProvider>
           <FavoritesProvider>
-            <Header lang={validLang} dictionary={dictionary} />
-            <main>{children}</main>
-            <Footer lang={validLang} dictionary={dictionary} />
+            <CookieConsentProvider>
+              <Header lang={validLang} dictionary={dictionary} />
+              <main>{children}</main>
+              <Footer lang={validLang} dictionary={dictionary} />
+              <CookieConsentBanner lang={validLang} dictionary={dictionary} />
+            </CookieConsentProvider>
           </FavoritesProvider>
         </SmoothScrollProvider>
       </body>

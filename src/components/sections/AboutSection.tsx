@@ -2,14 +2,9 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { FreeMode } from "swiper/modules";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 import MagneticButton from "@/components/ui/MagneticButton";
 import type { Dictionary } from "@/lib/dictionaries";
-
-import "swiper/css";
-import "swiper/css/free-mode";
 
 interface AboutSectionProps {
     lang?: string;
@@ -91,12 +86,12 @@ export default function AboutSection({ lang = 'sk', dictionary }: AboutSectionPr
                     </p>
 
                     {/* Phone */}
-                    <div className="space-y-1.5 mb-3">
+                    <div className="flex flex-col gap-0.5 mb-2.5">
                         {member.phones.map((phone, idx) => (
                             <a
                                 key={idx}
                                 href={`tel:${phone.number.replace(/\s/g, '')}`}
-                                className="flex items-center justify-center gap-2 py-1 text-sm text-[var(--color-foreground)] hover:text-[var(--color-accent)] transition-colors"
+                                className="flex items-center justify-center gap-2 py-0.5 text-sm text-[var(--color-teal)] md:text-[var(--color-foreground)] hover:text-[var(--color-teal)] transition-colors"
                             >
                                 <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
@@ -109,7 +104,7 @@ export default function AboutSection({ lang = 'sk', dictionary }: AboutSectionPr
                     {/* Email */}
                     <a
                         href={`mailto:${member.email}`}
-                        className="text-xs sm:text-sm text-[var(--color-muted)] hover:text-[var(--color-accent)] transition-colors"
+                        className="text-xs sm:text-sm text-[var(--color-teal)] md:text-[var(--color-muted)] hover:text-[var(--color-teal)] transition-colors inline-block pb-1"
                     >
                         {member.email}
                     </a>
@@ -143,25 +138,13 @@ export default function AboutSection({ lang = 'sk', dictionary }: AboutSectionPr
                     </p>
                 </div>
 
-                {/* Mobile: Swipeable carousel at all sizes */}
-                <div className="md:hidden mb-[clamp(1.5rem,3vw,2rem)] -mx-[var(--container-px)] px-[var(--container-px)]">
-                    <Swiper
-                        modules={[FreeMode]}
-                        slidesPerView={1.15}
-                        spaceBetween={12}
-                        freeMode
-                        breakpoints={{
-                            480: { slidesPerView: 1.5, spaceBetween: 16 },
-                            640: { slidesPerView: 2, spaceBetween: 16 },
-                        }}
-                        className="team-swiper"
-                    >
-                        {teamMembers.map((member, index) => (
-                            <SwiperSlide key={index} className="!h-auto">
-                                <TeamMemberCard member={member} />
-                            </SwiperSlide>
-                        ))}
-                    </Swiper>
+                {/* Mobile: Native scroll carousel */}
+                <div className="md:hidden flex overflow-x-auto snap-x snap-mandatory scrollbar-hide space-x-4 pb-4 -mx-[var(--container-px)] px-[var(--container-px)] mb-[clamp(1.5rem,3vw,2rem)]">
+                    {teamMembers.map((member, index) => (
+                        <div key={index} className="w-[75vw] sm:w-[45vw] flex-shrink-0 snap-center">
+                            <TeamMemberCard member={member} />
+                        </div>
+                    ))}
                 </div>
 
                 {/* Desktop: Grid */}
