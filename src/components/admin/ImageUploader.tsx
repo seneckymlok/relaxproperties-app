@@ -36,12 +36,12 @@ export default function ImageUploader({ images, onChange, onUploadingChange, her
 
         for (const file of Array.from(files)) {
             try {
-                const formData = new FormData();
-                formData.append("file", file);
-
                 const res = await fetch("/api/admin/upload", {
                     method: "POST",
-                    body: formData,
+                    headers: {
+                        "X-File-Type": file.type || "application/octet-stream"
+                    },
+                    body: file,
                 });
 
                 if (res.ok) {

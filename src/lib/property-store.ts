@@ -4,6 +4,7 @@
  */
 
 import { getAdminClient } from './supabase';
+import { unstable_cache } from 'next/cache';
 
 // ============================================
 // TYPE DEFINITIONS
@@ -188,6 +189,16 @@ export async function getPublishedProperties(): Promise<PropertyRecord[]> {
     if (error) throw new Error(`Failed to fetch published properties: ${error.message}`);
     return (data || []) as PropertyRecord[];
 }
+
+/**
+ * Cached version of getPublishedProperties — revalidates every 60s.
+ * Use this for public-facing pages to avoid hitting Supabase on every request.
+ */
+export const getCachedPublishedProperties = unstable_cache(
+    getPublishedProperties,
+    ['published-properties'],
+    { revalidate: 60 }
+);
 
 /**
  * Get a single property by ID

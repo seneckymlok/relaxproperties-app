@@ -7,7 +7,7 @@ import { getPageHero } from "@/lib/page-hero-store";
 // Loading fallback for Suspense
 function LoadingFallback() {
     return (
-        <section className="py-12 md:py-16">
+        <section className="py-[clamp(2rem,4vw,4rem)]">
             <div className="container-custom">
                 <div className="flex flex-col lg:flex-row gap-8">
                     <aside className="lg:w-72 flex-shrink-0">
@@ -65,7 +65,7 @@ export default async function PropertiesPage({
                         backgroundImage: `url('${heroImage}')`,
                     }}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-primary)] via-transparent to-transparent" />
+                {/* Removed filter per user request */}
                 <div className="relative container-custom h-full flex flex-col justify-center items-center text-center text-white pt-16">
                     <p className="text-sm uppercase tracking-[0.2em] text-[var(--color-sand-light)] mb-3">
                         {dictionary.properties.subtitle}

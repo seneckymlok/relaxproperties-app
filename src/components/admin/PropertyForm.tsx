@@ -1054,6 +1054,71 @@ export default function PropertyForm({ initialData, mode }: PropertyFormProps) {
                                 <Checkbox label="Hory" checked={form.mountains} onChange={v => updateField("mountains", v)} />
                             </div>
                         </div>
+
+                        {/* Preview Tags Picker */}
+                        <div className="pt-6 border-t border-[var(--color-border)]">
+                            <h3 className="text-xs font-semibold uppercase tracking-wider text-[var(--color-muted)] mb-1">Štítky na náhľade (max. 3)</h3>
+                            <p className="text-[11px] text-[var(--color-muted)] mb-4">Vyberte maximálne 3 vlastnosti, ktoré sa zobrazia na kartičke nehnuteľnosti v zozname.</p>
+                            {(() => {
+                                // Build list of available tags from enabled features
+                                const availableTags: { key: string; label: string }[] = [];
+                                if (form.pool) availableTags.push({ key: "pool", label: "Bazén" });
+                                if (form.garden) availableTags.push({ key: "garden", label: "Záhrada" });
+                                if (form.balcony) availableTags.push({ key: "balcony", label: "Balkón" });
+                                if (form.terasa) availableTags.push({ key: "terrace", label: "Terasa" });
+                                if (form.parking_spot) availableTags.push({ key: "parking", label: "Parkovanie" });
+                                if (form.sea_view) availableTags.push({ key: "sea_view", label: "Výhľad na more" });
+                                if (form.first_line) availableTags.push({ key: "first_line", label: "Prvá línia" });
+                                if (form.new_build) availableTags.push({ key: "new_build", label: "Novostavba" });
+                                if (form.new_project) availableTags.push({ key: "new_project", label: "Nový projekt" });
+                                if (form.luxury) availableTags.push({ key: "luxury", label: "Luxus" });
+                                if (form.golf) availableTags.push({ key: "golf", label: "Golf" });
+                                if (form.mountains) availableTags.push({ key: "mountains", label: "Hory" });
+                                if (form.near_airport) availableTags.push({ key: "near_airport", label: "Blízko letiska" });
+                                if (form.near_beach) availableTags.push({ key: "near_beach", label: "Blízko pláže" });
+                                if (form.lodzia) availableTags.push({ key: "loggia", label: "Lodžia" });
+                                if (form.cellar) availableTags.push({ key: "cellar", label: "Pivnica" });
+                                if (form.grand_garden) availableTags.push({ key: "grand_garden", label: "Veľká záhrada" });
+                                if (form.near_golf) availableTags.push({ key: "near_golf", label: "Blízko golfu" });
+
+                                if (availableTags.length === 0) {
+                                    return <p className="text-xs text-[var(--color-muted)] italic">Najskôr zaškrtnite aspoň jednu vlastnosť vyššie.</p>;
+                                }
+
+                                return (
+                                    <div className="flex flex-wrap gap-2">
+                                        {availableTags.map(({ key, label }) => {
+                                            const isSelected = form.preview_tags.includes(key);
+                                            const isMaxed = form.preview_tags.length >= 3 && !isSelected;
+                                            return (
+                                                <button
+                                                    key={key}
+                                                    type="button"
+                                                    disabled={isMaxed}
+                                                    onClick={() => {
+                                                        if (isSelected) {
+                                                            updateField("preview_tags", form.preview_tags.filter((t: string) => t !== key));
+                                                        } else {
+                                                            updateField("preview_tags", [...form.preview_tags, key]);
+                                                        }
+                                                    }}
+                                                    className={`px-3 py-1.5 text-xs font-medium rounded-lg border transition-all ${
+                                                        isSelected
+                                                            ? "bg-[var(--color-primary)] text-white border-[var(--color-primary)]"
+                                                            : isMaxed
+                                                                ? "bg-[var(--color-surface)] text-[var(--color-muted)]/50 border-[var(--color-border)] cursor-not-allowed opacity-40"
+                                                                : "bg-white text-[var(--color-foreground)] border-[var(--color-border)] hover:border-[var(--color-primary)] hover:text-[var(--color-primary)]"
+                                                    }`}
+                                                >
+                                                    {isSelected && <span className="mr-1">✓</span>}
+                                                    {label}
+                                                </button>
+                                            );
+                                        })}
+                                    </div>
+                                );
+                            })()}
+                        </div>
                     </div>
                 )}
 
@@ -1314,18 +1379,30 @@ export default function PropertyForm({ initialData, mode }: PropertyFormProps) {
                             <h3 className="text-xs font-semibold uppercase tracking-wider text-[var(--color-muted)] mb-4">Export & Publikovanie</h3>
                             <div className="space-y-5">
                                 <Toggle label="Odporúčaná nehnuteľnosť" checked={form.featured} onChange={v => updateField("featured", v)} description="Zobrazí sa na hlavnej stránke a bude zvýraznená v zozname" />
-                                <Select
-                                    label="Export nastavenia"
-                                    value={form.export_target}
-                                    onChange={v => updateField("export_target", v)}
-                                    options={[
-                                        { value: "", label: "— Neexportovať —" },
-                                        { value: "softreal", label: "Softreal (CZ portály)" },
-                                    ]}
-                                />
-                                <p className="text-[11px] text-[var(--color-muted)] mt-1.5 font-medium">
-                                    Pri publikovaní sa nehnuteľnosť automaticky odošle na vybraný portál (vyžaduje CZ preklad)
-                                </p>
+                                <div>
+                                    <label className="block text-[13px] font-semibold text-[var(--color-foreground)] mb-2">Export na portály</label>
+                                    <div className="space-y-2">
+                                        <Toggle
+                                            label="SK portály (nehnuteľnosti.sk)"
+                                            checked={form.export_target.split(',').filter(Boolean).includes('sk')}
+                                            onChange={(checked) => {
+                                                const current = new Set(form.export_target.split(',').filter(Boolean));
+                                                if (checked) current.add('sk'); else current.delete('sk');
+                                                updateField("export_target", Array.from(current).join(','));
+                                            }}
+                                        />
+                                        <Toggle
+                                            label="CZ portály (Softreal)"
+                                            checked={form.export_target.split(',').filter(Boolean).includes('softreal')}
+                                            onChange={(checked) => {
+                                                const current = new Set(form.export_target.split(',').filter(Boolean));
+                                                if (checked) current.add('softreal'); else current.delete('softreal');
+                                                updateField("export_target", Array.from(current).join(','));
+                                            }}
+                                            description="Vyžaduje CZ preklad"
+                                        />
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

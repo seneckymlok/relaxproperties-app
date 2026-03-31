@@ -71,27 +71,9 @@ async function applyWatermark(imageBuffer: Buffer, mimeType: string): Promise<{ 
         blend: 'over',
     }]);
 
-    // Output in the appropriate format
-    let outputBuffer: Buffer;
-    let ext: string;
-
-    if (mimeType === 'image/png') {
-        outputBuffer = await composited.png({ quality: 90 }).toBuffer();
-        ext = 'png';
-    } else if (mimeType === 'image/webp') {
-        outputBuffer = await composited.webp({ quality: 85 }).toBuffer();
-        ext = 'webp';
-    } else if (mimeType === 'image/avif') {
-        // AVIF compositing can be slow, output as WebP
-        outputBuffer = await composited.webp({ quality: 85 }).toBuffer();
-        ext = 'webp';
-    } else {
-        // Default: JPEG
-        outputBuffer = await composited.jpeg({ quality: 85, mozjpeg: true }).toBuffer();
-        ext = 'jpg';
-    }
-
-    return { buffer: outputBuffer, ext };
+    // Always output WebP for best performance
+    const outputBuffer = await composited.webp({ quality: 82 }).toBuffer();
+    return { buffer: outputBuffer, ext: 'webp' };
 }
 
 /**
@@ -104,16 +86,36 @@ export async function POST(request: NextRequest) {
     }
 
     try {
-        const formData = await request.formData();
-        const file = formData.get('file') as File | null;
+        const contentType = request.headers.get('content-type') || '';
+        let arrayBuffer: ArrayBuffer;
+        let fileType: string;
+        let fileSize: number;
+        let skipWatermark = false;
 
-        if (!file) {
-            return NextResponse.json({ error: 'No file provided' }, { status: 400 });
+        if (contentType.includes('multipart/form-data')) {
+            const formData = await request.formData();
+            const file = formData.get('file') as File | null;
+            if (!file) {
+                return NextResponse.json({ error: 'No file provided' }, { status: 400 });
+            }
+            arrayBuffer = await file.arrayBuffer();
+            fileType = file.type;
+            fileSize = file.size;
+            skipWatermark = formData.get('skip_watermark') === '1';
+        } else {
+            arrayBuffer = await request.arrayBuffer();
+            fileType = request.headers.get('x-file-type') || contentType;
+            fileSize = arrayBuffer.byteLength;
+            skipWatermark = request.headers.get('x-skip-watermark') === '1';
+
+            if (fileSize === 0) {
+                return NextResponse.json({ error: 'No file provided' }, { status: 400 });
+            }
         }
 
         // Validate file type
         const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/avif'];
-        if (!allowedTypes.includes(file.type)) {
+        if (!allowedTypes.includes(fileType)) {
             return NextResponse.json(
                 { error: 'Nepovolený typ súboru. Povolené: JPG, PNG, WebP, AVIF' },
                 { status: 400 }
@@ -121,36 +123,25 @@ export async function POST(request: NextRequest) {
         }
 
         // Validate file size (max 10MB)
-        if (file.size > 10 * 1024 * 1024) {
+        if (fileSize > 10 * 1024 * 1024) {
             return NextResponse.json(
                 { error: 'Súbor je príliš veľký. Maximum je 10MB' },
                 { status: 400 }
             );
         }
 
-        // Read file into buffer
-        const arrayBuffer = await file.arrayBuffer();
         const inputBuffer = Buffer.from(arrayBuffer);
-
-        // Check if watermark should be skipped (e.g. hero images are pre-cropped client-side)
-        const skipWatermark = formData.get('skip_watermark') === '1';
 
         let finalBuffer: Buffer;
         let ext: string;
 
         if (skipWatermark) {
-            // Determine extension from mime type
-            const extMap: Record<string, string> = {
-                'image/png': 'png',
-                'image/webp': 'webp',
-                'image/avif': 'webp',
-                'image/jpeg': 'jpg',
-            };
-            ext = extMap[file.type] || 'jpg';
-            finalBuffer = inputBuffer;
+            // Convert to WebP even without watermark
+            finalBuffer = await sharp(inputBuffer).webp({ quality: 82 }).toBuffer();
+            ext = 'webp';
         } else {
             // Apply watermark
-            const result = await applyWatermark(inputBuffer, file.type);
+            const result = await applyWatermark(inputBuffer, fileType);
             finalBuffer = result.buffer;
             ext = result.ext;
         }

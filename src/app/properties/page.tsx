@@ -14,7 +14,7 @@ function LoadingFallback() {
                     </div>
                 </div>
             </section>
-            <section className="py-12 md:py-16">
+            <section className="py-[clamp(2rem,4vw,4rem)]">
                 <div className="container-custom">
                     <div className="animate-pulse space-y-4">
                         <div className="h-8 bg-gray-200 rounded w-48"></div>

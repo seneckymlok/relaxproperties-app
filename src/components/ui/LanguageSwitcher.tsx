@@ -92,7 +92,7 @@ export default function LanguageSwitcher({ isScrolled = false, onLanguageChange 
                             key={lang.code}
                             onClick={() => handleLanguageChange(lang)}
                             className={`w-full flex items-center gap-3 px-4 py-3 text-sm text-left transition-colors hover:bg-[var(--color-surface)] ${currentLang.code === lang.code
-                                ? "bg-[var(--color-primary)]/5 text-[var(--color-primary)]"
+                                ? "bg-[var(--color-teal)]/5 text-[var(--color-teal)]"
                                 : "text-[var(--color-foreground)]"
                                 }`}
                         >

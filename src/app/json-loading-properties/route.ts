@@ -145,7 +145,8 @@ function toPortalItem(p: PropertyRecord) {
 
 export async function GET() {
     try {
-        const records = await getPublishedProperties();
+        const allRecords = await getPublishedProperties();
+        const records = allRecords.filter(p => p.export_target?.includes('sk'));
         const feed = records.map(toPortalItem);
 
         return NextResponse.json(feed, {

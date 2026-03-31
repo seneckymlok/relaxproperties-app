@@ -4,6 +4,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { FreeMode } from "swiper/modules";
+import { useScrollReveal } from "@/hooks/useScrollReveal";
+import MagneticButton from "@/components/ui/MagneticButton";
 import type { Dictionary } from "@/lib/dictionaries";
 
 import "swiper/css";
@@ -58,18 +60,20 @@ export default function AboutSection({ lang = 'sk', dictionary }: AboutSectionPr
     const sectionSubtitle = dictionary?.about?.subtitle || (lang === 'en' ? 'About Us' : lang === 'cz' ? 'O nás' : 'O nás');
     const sectionTitle = dictionary?.about?.heroTitle || (lang === 'en' ? 'Your Trusted Partner for Seaside Properties' : lang === 'cz' ? 'Váš spolehlivý partner pro nemovitosti u moře' : 'Váš Spolehlivý Partner pre Nehnuteľnosti pri Mori');
     const sectionDescription = lang === 'en'
-        ? 'Welcome to Relax Properties, one of the leading Slovak real estate agencies specializing in premium seaside properties for over 15 years.'
+        ? 'At Relax Properties, we help ensure your property purchase is safe, smooth, and stress-free. We handle every deal through your eyes – verifying ownership rights, all legal requirements, and collaborating with trusted experts in the given location. Get in touch with us today and we will prepare a property offer tailored exactly to your needs.'
         : lang === 'cz'
-            ? 'Vítejte v Relax Properties, jedné z předních slovenských realitních kanceláří, která se více než 15 let specializuje na prodej prémiových nemovitostí u moře.'
-            : 'Vitajte v Relax Properties, jednej z popredných slovenských realitných kancelárií, ktorá sa už viac ako 15 rokov špecializuje na predaj prémiových nehnuteľností pri mori.';
+            ? 'V Relax Properties vám pomáháme, aby koupě vaší nemovitosti proběhla bezpečně, hladce a bez stresu. Každý obchod řešíme vašima očima – prověřujeme vlastnická práva, všechny právní náležitosti a spolupracujeme s ověřenými odborníky v dané lokalitě. Spojte se s námi ještě dnes a my vám připravíme nabídku nemovitostí přizpůsobenou přesně vašim potřebám.'
+            : 'V Relax Properties vám pomáhame, aby kúpa vašej nehnuteľnosti prebehla bezpečne, hladko a bez stresu. Každý obchod riešime vašimi očami – preverujeme vlastnícke práva, všetky právne náležitosti a spolupracujeme s overenými odborníkmi v danej lokalite. Spojte sa s nami ešte dnes a my vám pripravíme ponuku nehnuteľností prispôsobenú presne vašim potrebám.';
     const communicationLabel = lang === 'en' ? 'Communication:' : lang === 'cz' ? 'Komunikace:' : 'Komunikácia:';
     const learnMoreLabel = lang === 'en' ? 'Learn more about us' : lang === 'cz' ? 'Zjistit více o nás' : 'Zistiť viac o nás';
+    const headerRef = useScrollReveal<HTMLDivElement>({ y: 40 });
+    const teamRef = useScrollReveal<HTMLDivElement>({ stagger: 0.15, delay: 0.1 });
 
     function TeamMemberCard({ member }: { member: typeof teamMembers[0] }) {
         return (
             <div className="bg-white rounded-2xl overflow-hidden shadow-[var(--shadow-sm)] hover:shadow-[var(--shadow-lg)] transition-all duration-300 hover:-translate-y-1 h-full">
                 <div className="pt-8 px-6 flex justify-center">
-                    <div className="relative w-28 h-28 sm:w-32 sm:h-32 rounded-full overflow-hidden ring-2 ring-[var(--color-accent)]/20 ring-offset-4 ring-offset-white">
+                    <div className="relative w-[clamp(6rem,18vw,8rem)] h-[clamp(6rem,18vw,8rem)] rounded-full overflow-hidden ring-2 ring-[var(--color-accent)]/20 ring-offset-4 ring-offset-white">
                         <Image
                             src={member.image}
                             alt={member.name}
@@ -78,8 +82,8 @@ export default function AboutSection({ lang = 'sk', dictionary }: AboutSectionPr
                         />
                     </div>
                 </div>
-                <div className="p-5 sm:p-6 pt-4 text-center">
-                    <h3 className="text-base sm:text-lg font-medium text-[var(--color-secondary)] mb-0.5">
+                <div className="p-[clamp(1.125rem,3vw,1.5rem)] pt-4 text-center">
+                    <h3 className="text-[clamp(0.9375rem,2vw,1.125rem)] font-medium text-[var(--color-secondary)] mb-0.5">
                         {member.name}
                     </h3>
                     <p className="text-[var(--color-accent)] text-xs sm:text-sm font-medium mb-4 tracking-wide">
@@ -92,7 +96,7 @@ export default function AboutSection({ lang = 'sk', dictionary }: AboutSectionPr
                             <a
                                 key={idx}
                                 href={`tel:${phone.number.replace(/\s/g, '')}`}
-                                className="flex items-center justify-center gap-2 py-1 text-sm text-[var(--color-foreground)] hover:text-[var(--color-primary)] transition-colors"
+                                className="flex items-center justify-center gap-2 py-1 text-sm text-[var(--color-foreground)] hover:text-[var(--color-accent)] transition-colors"
                             >
                                 <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
@@ -105,7 +109,7 @@ export default function AboutSection({ lang = 'sk', dictionary }: AboutSectionPr
                     {/* Email */}
                     <a
                         href={`mailto:${member.email}`}
-                        className="text-xs sm:text-sm text-[var(--color-muted)] hover:text-[var(--color-primary)] transition-colors"
+                        className="text-xs sm:text-sm text-[var(--color-muted)] hover:text-[var(--color-accent)] transition-colors"
                     >
                         {member.email}
                     </a>
@@ -127,20 +131,20 @@ export default function AboutSection({ lang = 'sk', dictionary }: AboutSectionPr
     }
 
     return (
-        <section className="py-10 sm:py-12 md:py-16 lg:py-20 bg-[var(--color-primary)]">
-            <div className="container-custom px-4 sm:px-6">
+        <section className="py-[clamp(2.5rem,5vw,5rem)] bg-[var(--color-primary)]">
+            <div className="container-custom">
                 {/* Header — light text on dark bg */}
-                <div className="text-center max-w-[42rem] mx-auto mb-10 sm:mb-12 md:mb-16">
-                    <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl text-white mb-4 sm:mb-6">
+                <div ref={headerRef} className="text-center max-w-[42rem] mx-auto mb-[clamp(2.5rem,4vw,4rem)]">
+                    <h2 data-reveal className="font-serif text-[clamp(1.5rem,3vw,2.25rem)] text-white mb-[clamp(1rem,2vw,1.5rem)]">
                         {sectionTitle}
                     </h2>
-                    <p className="text-white/60 text-sm sm:text-base md:text-lg leading-relaxed max-w-2xl mx-auto">
+                    <p data-reveal className="text-white/60 text-[clamp(0.875rem,1.8vw,1.125rem)] leading-relaxed max-w-2xl mx-auto">
                         {sectionDescription}
                     </p>
                 </div>
 
-                {/* Mobile: Swipeable Carousel */}
-                <div className="md:hidden -mx-4 px-4 mb-8">
+                {/* Mobile: Swipeable carousel at all sizes */}
+                <div className="md:hidden mb-[clamp(1.5rem,3vw,2rem)] -mx-[var(--container-px)] px-[var(--container-px)]">
                     <Swiper
                         modules={[FreeMode]}
                         slidesPerView={1.15}
@@ -150,8 +154,7 @@ export default function AboutSection({ lang = 'sk', dictionary }: AboutSectionPr
                             480: { slidesPerView: 1.5, spaceBetween: 16 },
                             640: { slidesPerView: 2, spaceBetween: 16 },
                         }}
-                        className="team-swiper !overflow-visible"
-                        style={{ overflow: 'visible' }}
+                        className="team-swiper"
                     >
                         {teamMembers.map((member, index) => (
                             <SwiperSlide key={index} className="!h-auto">
@@ -162,23 +165,27 @@ export default function AboutSection({ lang = 'sk', dictionary }: AboutSectionPr
                 </div>
 
                 {/* Desktop: Grid */}
-                <div className="hidden md:grid grid-cols-3 gap-8 mb-12">
+                <div ref={teamRef} className="hidden md:grid grid-cols-3 gap-8 mb-12">
                     {teamMembers.map((member, index) => (
-                        <TeamMemberCard key={index} member={member} />
+                        <div key={index} data-reveal>
+                            <TeamMemberCard member={member} />
+                        </div>
                     ))}
                 </div>
 
                 {/* CTA */}
                 <div className="text-center">
-                    <Link
-                        href={`/${lang}/about`}
-                        className="group inline-flex items-center gap-2.5 text-white/80 font-medium hover:text-white transition-colors tracking-wide text-sm"
-                    >
-                        {learnMoreLabel}
-                        <svg className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                        </svg>
-                    </Link>
+                    <MagneticButton strength={0.15}>
+                        <Link
+                            href={`/${lang}/about`}
+                            className="group inline-flex items-center gap-2.5 text-white/80 font-medium hover:text-white transition-colors tracking-wide text-sm"
+                        >
+                            {learnMoreLabel}
+                            <svg className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                            </svg>
+                        </Link>
+                    </MagneticButton>
                 </div>
             </div>
         </section>

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { getDictionary } from "@/lib/dictionaries";
 import type { Language } from "@/lib/data-access";
 import { getPageHero } from "@/lib/page-hero-store";
+import MagneticButton from "@/components/ui/MagneticButton";
 
 // Team members data
 const teamMembers = [
@@ -67,6 +68,27 @@ const serviceIcons = [
     </svg>,
 ];
 
+// Why Us icons
+const whyUsIcons = [
+    // Building/house — complete service
+    <svg key="w1" className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 21v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21m0 0h4.5V3.545M12.75 21h7.5V10.75M2.25 21h1.5m18 0h-18M2.25 9l4.5-1.636M18.75 3l-1.5.545m0 6.205l3 1m1.5.5l-1.5-.5M6.75 7.364V3h-3v18m3-13.636l10.5-3.819" />
+    </svg>,
+    // Eye/transparency — transparency
+    <svg key="w2" className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+    </svg>,
+    // Heart/user — individual approach
+    <svg key="w3" className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+    </svg>,
+    // Globe — local market knowledge
+    <svg key="w4" className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418" />
+    </svg>,
+];
+
 export default async function AboutPage({
     params,
 }: {
@@ -93,7 +115,6 @@ export default async function AboutPage({
                     className="absolute inset-0 bg-cover bg-center opacity-30"
                     style={{ backgroundImage: `url('${heroImage}')` }}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-primary)] via-transparent to-transparent" />
                 <div className="relative container-custom h-full flex flex-col justify-center items-center text-center text-white pt-16">
                     <p className="text-sm uppercase tracking-[0.2em] text-[var(--color-sand-light)] mb-3">
                         {t.subtitle}
@@ -108,10 +129,9 @@ export default async function AboutPage({
             </section>
 
             {/* =============================================
-                INTRO — Editorial opening statement
-                Massive white space + decorative quotation mark
+                INTRO — Two paragraphs + Google reviews badge
                 ============================================= */}
-            <section className="py-24 md:py-36 bg-white">
+            <section className="py-[clamp(4rem,7vw,9rem)] bg-white">
                 <div className="container-custom">
                     <div className="relative max-w-4xl mx-auto text-center">
                         {/* Decorative oversized quotation mark */}
@@ -125,6 +145,24 @@ export default async function AboutPage({
                         <p className="relative text-xl md:text-2xl leading-relaxed md:leading-relaxed text-[var(--color-foreground)] font-light">
                             {t.intro}
                         </p>
+
+                        <p className="relative mt-6 text-base md:text-lg leading-relaxed text-[var(--color-muted)]">
+                            {t.introSecondary}
+                        </p>
+
+                        {/* Google Reviews badge */}
+                        <div className="mt-10 inline-flex items-center gap-3 px-6 py-3 bg-[var(--color-surface)] rounded-full border border-[var(--color-border)]">
+                            <div className="flex gap-0.5">
+                                {[...Array(5)].map((_, i) => (
+                                    <svg key={i} className="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                    </svg>
+                                ))}
+                            </div>
+                            <span className="text-sm font-medium text-[var(--color-secondary)]">
+                                {t.googleReviews}
+                            </span>
+                        </div>
                     </div>
 
                     {/* Partner types strip */}
@@ -149,37 +187,43 @@ export default async function AboutPage({
             </section>
 
             {/* =============================================
-                GOALS — Dark manifesto section
-                Large serif numbers + goal text, dividers between
+                WHY US — 2x2 card grid with icons
                 ============================================= */}
-            <section className="py-20 md:py-28 bg-[var(--color-primary)]">
+            <section className="py-[clamp(3rem,5.5vw,7rem)] bg-[var(--color-primary)]">
                 <div className="container-custom">
-                    <div className="text-center max-w-2xl mx-auto mb-16 md:mb-20">
+                    <div className="text-center max-w-2xl mx-auto mb-6 md:mb-8">
                         <p className="text-sm uppercase tracking-[0.2em] text-[var(--color-sand-light)] mb-3">
-                            {t.goalsSubtitle}
+                            {t.whyUsSubtitle}
                         </p>
                         <h2 className="font-serif text-3xl md:text-4xl text-white">
-                            {t.goalsTitle}
+                            {t.whyUsTitle}
                         </h2>
                     </div>
+                    <p className="text-center text-white/60 text-base md:text-lg max-w-2xl mx-auto mb-14 md:mb-18">
+                        {t.whyUsIntro}
+                    </p>
 
-                    <div className="max-w-4xl mx-auto">
-                        {(t.goals as string[]).map((goal: string, index: number) => (
-                            <div key={index}>
-                                {/* Divider line (before each item except first) */}
-                                {index > 0 && (
-                                    <div className="w-full h-px bg-white/10 my-0" />
-                                )}
-                                <div className="flex items-start gap-6 md:gap-10 py-7 md:py-9">
-                                    {/* Large serif number */}
-                                    <span className="shrink-0 font-serif text-4xl md:text-5xl text-[var(--color-sand)]/40 leading-none w-14 md:w-16 text-right select-none tabular-nums">
-                                        {String(index + 1).padStart(2, '0')}
-                                    </span>
-                                    {/* Goal text */}
-                                    <p className="text-white/85 text-base md:text-lg leading-relaxed pt-1 md:pt-2">
-                                        {goal}
-                                    </p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6 max-w-5xl mx-auto">
+                        {(t.whyUs as { title: string; description: string }[]).map((item, index) => (
+                            <div
+                                key={index}
+                                className="group relative overflow-hidden rounded-2xl bg-white/[0.07] backdrop-blur-sm border border-white/10 p-8 md:p-9 hover:bg-white/[0.12] hover:border-white/20 transition-all duration-300"
+                            >
+                                {/* Decorative number */}
+                                <span className="absolute top-4 right-6 font-serif text-[6rem] leading-none text-white/[0.04] select-none pointer-events-none" aria-hidden="true">
+                                    {String(index + 1).padStart(2, '0')}
+                                </span>
+
+                                <div className="relative w-14 h-14 mb-5 flex items-center justify-center bg-white/10 text-[var(--color-sand-light)] rounded-2xl group-hover:scale-110 transition-transform duration-300">
+                                    {whyUsIcons[index]}
                                 </div>
+
+                                <h3 className="relative text-lg md:text-xl font-medium text-white mb-3">
+                                    {item.title}
+                                </h3>
+                                <p className="relative text-white/65 leading-relaxed">
+                                    {item.description}
+                                </p>
                             </div>
                         ))}
                     </div>
@@ -190,7 +234,7 @@ export default async function AboutPage({
                 SERVICES — Bento grid with hierarchy
                 First service full-width featured, then 2-col pairs
                 ============================================= */}
-            <section className="py-20 md:py-28 bg-[var(--color-surface)]">
+            <section className="py-[clamp(3rem,5.5vw,7rem)] bg-[var(--color-surface)]">
                 <div className="container-custom">
                     <div className="text-center max-w-2xl mx-auto mb-16">
                         <p className="text-sm uppercase tracking-[0.2em] text-[var(--color-accent)] mb-3">
@@ -204,7 +248,6 @@ export default async function AboutPage({
                     <div className="max-w-5xl mx-auto space-y-5">
                         {/* Featured first service — full-width, horizontal layout */}
                         <div className="group relative overflow-hidden rounded-2xl bg-[var(--color-primary)] p-8 md:p-10 md:flex md:items-center md:gap-10 transition-all duration-300 hover:shadow-xl">
-                            {/* Decorative large number background */}
                             <span className="absolute top-4 right-6 md:right-10 font-serif text-[8rem] md:text-[10rem] leading-none text-white/[0.04] select-none pointer-events-none" aria-hidden="true">
                                 01
                             </span>
@@ -231,7 +274,7 @@ export default async function AboutPage({
                                     <span className="absolute top-3 right-5 font-serif text-[6rem] leading-none text-[var(--color-primary)]/[0.04] select-none pointer-events-none" aria-hidden="true">
                                         {String(i + 1).padStart(2, '0')}
                                     </span>
-                                    <div className="relative w-14 h-14 mb-5 flex items-center justify-center bg-[var(--color-primary)]/10 text-[var(--color-primary)] rounded-2xl group-hover:scale-110 transition-transform duration-300">
+                                    <div className="relative w-14 h-14 mb-5 flex items-center justify-center bg-[var(--color-teal)]/10 text-[var(--color-teal)] rounded-2xl group-hover:scale-110 transition-transform duration-300">
                                         {serviceIcons[i]}
                                     </div>
                                     <h3 className="relative text-lg font-medium text-[var(--color-secondary)] mb-2">
@@ -244,12 +287,12 @@ export default async function AboutPage({
                             ))}
                         </div>
 
-                        {/* Service 4 — full-width detail card (the complex one) */}
-                        <div className="group relative overflow-hidden rounded-2xl bg-white border border-[var(--color-border)] p-8 md:p-10 md:flex md:items-center md:gap-10 hover:border-[var(--color-primary)]/30 hover:shadow-lg transition-all duration-300">
+                        {/* Service 4 — full-width detail card */}
+                        <div className="group relative overflow-hidden rounded-2xl bg-white border border-[var(--color-border)] p-8 md:p-10 md:flex md:items-center md:gap-10 hover:border-[var(--color-teal)]/30 hover:shadow-lg transition-all duration-300">
                             <span className="absolute top-4 right-6 md:right-10 font-serif text-[8rem] md:text-[10rem] leading-none text-[var(--color-primary)]/[0.03] select-none pointer-events-none" aria-hidden="true">
                                 04
                             </span>
-                            <div className="relative shrink-0 w-16 h-16 mb-5 md:mb-0 flex items-center justify-center bg-[var(--color-primary)]/10 text-[var(--color-primary)] rounded-2xl group-hover:scale-110 transition-transform duration-300">
+                            <div className="relative shrink-0 w-16 h-16 mb-5 md:mb-0 flex items-center justify-center bg-[var(--color-teal)]/10 text-[var(--color-teal)] rounded-2xl group-hover:scale-110 transition-transform duration-300">
                                 {serviceIcons[3]}
                             </div>
                             <div className="relative">
@@ -289,9 +332,50 @@ export default async function AboutPage({
             </section>
 
             {/* =============================================
+                VISION — Editorial trust section
+                ============================================= */}
+            <section className="py-[clamp(3rem,5.5vw,7rem)] bg-white">
+                <div className="container-custom">
+                    <div className="max-w-5xl mx-auto md:flex md:gap-16 md:items-start">
+                        {/* Left — heading + lead text */}
+                        <div className="md:w-2/5 mb-10 md:mb-0 md:sticky md:top-32">
+                            <p className="text-sm uppercase tracking-[0.2em] text-[var(--color-accent)] mb-3">
+                                {t.visionSubtitle}
+                            </p>
+                            <h2 className="font-serif text-3xl md:text-4xl text-[var(--color-secondary)] mb-6">
+                                {t.visionTitle}
+                            </h2>
+                            <p className="text-[var(--color-muted)] leading-relaxed text-base md:text-lg">
+                                {t.visionText}
+                            </p>
+                        </div>
+
+                        {/* Right — vision points */}
+                        <div className="md:w-3/5">
+                            <div className="space-y-0">
+                                {(t.visionPoints as string[]).map((point: string, index: number) => (
+                                    <div key={index} className="flex gap-5 py-7 border-b border-[var(--color-border)] last:border-b-0">
+                                        {/* Check icon */}
+                                        <div className="shrink-0 w-10 h-10 mt-0.5 flex items-center justify-center rounded-full bg-[var(--color-teal)]/10 text-[var(--color-teal)]">
+                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75" />
+                                            </svg>
+                                        </div>
+                                        <p className="text-[var(--color-foreground)] leading-relaxed text-base md:text-lg pt-1.5">
+                                            {point}
+                                        </p>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* =============================================
                 TEAM — Circular photos, lift effect
                 ============================================= */}
-            <section className="py-20 md:py-28 bg-white">
+            <section className="py-[clamp(3rem,5.5vw,7rem)] bg-[var(--color-surface)]">
                 <div className="container-custom">
                     <div className="text-center max-w-2xl mx-auto mb-16">
                         <p className="text-sm uppercase tracking-[0.2em] text-[var(--color-accent)] mb-3">
@@ -305,7 +389,7 @@ export default async function AboutPage({
                         {teamMembers.map((member, index) => (
                             <div
                                 key={index}
-                                className="group bg-[var(--color-surface)] rounded-2xl overflow-hidden border border-[var(--color-border)] hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+                                className="group bg-white rounded-2xl overflow-hidden border border-[var(--color-border)] hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
                             >
                                 <div className="pt-8 px-6 flex justify-center">
                                     <div className="relative w-36 h-36 rounded-full overflow-hidden border-4 border-white shadow-lg group-hover:shadow-xl transition-shadow">
@@ -313,7 +397,7 @@ export default async function AboutPage({
                                             src={member.image}
                                             alt={member.name}
                                             fill
-                                            className="object-cover transition-transform duration-700 group-hover:scale-110"
+                                            className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
                                         />
                                     </div>
                                 </div>
@@ -321,20 +405,20 @@ export default async function AboutPage({
                                     <h3 className="text-lg font-medium text-[var(--color-secondary)] mb-0.5">
                                         {member.name}
                                     </h3>
-                                    <p className="text-[var(--color-primary)] text-sm font-medium mb-4">
+                                    <p className="text-[var(--color-teal)] text-sm font-medium mb-4">
                                         {member.role}
                                     </p>
                                     <div className="space-y-1.5 mb-4 text-sm text-[var(--color-muted)]">
                                         {member.phones.map((phone, idx) => (
                                             <div key={idx}>
                                                 {phone.label && <span className="mr-1 inline-block">{phone.label}</span>}
-                                                <a href={`tel:${phone.number.replace(/\s/g, '')}`} className="hover:text-[var(--color-primary)] transition-colors">
+                                                <a href={`tel:${phone.number.replace(/\s/g, '')}`} className="hover:text-[var(--color-teal)] transition-colors">
                                                     {phone.number}
                                                 </a>
                                             </div>
                                         ))}
                                         <div>
-                                            <a href={`mailto:${member.email}`} className="hover:text-[var(--color-primary)] transition-colors">
+                                            <a href={`mailto:${member.email}`} className="hover:text-[var(--color-teal)] transition-colors">
                                                 {member.email}
                                             </a>
                                         </div>
@@ -362,7 +446,7 @@ export default async function AboutPage({
             {/* =============================================
                 CTA — Dark band with pill buttons
                 ============================================= */}
-            <section className="py-20 md:py-28 bg-[var(--color-primary)]">
+            <section className="py-[clamp(3rem,5.5vw,7rem)] bg-[var(--color-primary)]">
                 <div className="container-custom text-center">
                     <h2 className="font-serif text-3xl md:text-4xl text-white mb-6">
                         {t.ctaTitle}
@@ -371,21 +455,25 @@ export default async function AboutPage({
                         {t.ctaText}
                     </p>
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                        <Link
-                            href={`/${validLang}/properties`}
-                            className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white text-[var(--color-primary)] font-medium rounded-full hover:bg-white/90 transition-colors"
-                        >
-                            {dictionary.common.browseProperties}
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                            </svg>
-                        </Link>
-                        <Link
-                            href={`/${validLang}/contact`}
-                            className="inline-flex items-center justify-center px-8 py-4 border border-white/40 text-white font-medium rounded-full hover:bg-white/10 transition-colors"
-                        >
-                            {dictionary.common.contactUs}
-                        </Link>
+                        <MagneticButton strength={0.15}>
+                            <Link
+                                href={`/${validLang}/properties`}
+                                className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white text-[var(--color-primary)] font-medium rounded-full hover:bg-white/90 transition-colors"
+                            >
+                                {dictionary.common.browseProperties}
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                                </svg>
+                            </Link>
+                        </MagneticButton>
+                        <MagneticButton strength={0.15}>
+                            <Link
+                                href={`/${validLang}/contact`}
+                                className="inline-flex items-center justify-center px-8 py-4 border border-white/40 text-white font-medium rounded-full hover:bg-white/10 transition-colors"
+                            >
+                                {dictionary.common.contactUs}
+                            </Link>
+                        </MagneticButton>
                     </div>
                 </div>
             </section>

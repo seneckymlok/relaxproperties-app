@@ -16,7 +16,8 @@ import { toRealsoftXml } from '@/lib/export-formatters';
  */
 export async function GET() {
     try {
-        const properties = await getPublishedProperties();
+        const allProperties = await getPublishedProperties();
+        const properties = allProperties.filter(p => p.export_target?.includes('sk'));
         const xml = toRealsoftXml(properties);
 
         return new NextResponse(xml, {

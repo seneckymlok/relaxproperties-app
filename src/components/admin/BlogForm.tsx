@@ -321,12 +321,12 @@ export default function BlogForm({ initialData }: BlogFormProps) {
 
         setUploading(true);
         try {
-            const formData = new FormData();
-            formData.append("file", file);
-
             const res = await fetch("/api/admin/upload", {
                 method: "POST",
-                body: formData,
+                headers: {
+                    "X-File-Type": file.type || "application/octet-stream"
+                },
+                body: file,
             });
 
             if (!res.ok) throw new Error("Upload failed");

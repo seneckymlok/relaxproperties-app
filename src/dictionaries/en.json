@@ -62,20 +62,41 @@
     "about": {
         "title": "About Us",
         "subtitle": "About the company",
-        "heroTitle": "Your partner for properties abroad",
-        "heroText": "Comprehensive service when buying foreign properties tailored to individual client requirements.",
-        "intro": "Relax Properties strives to provide comprehensive services tailored to the individual requirements of each client. We cooperate only with selected partners such as lawyers, notaries, tax advisors, developers, and real estate agencies. Our goal is to ensure a smooth process when purchasing property, including comprehensive services provided.",
+        "heroTitle": "Properties Abroad",
+        "heroText": "Czech-Slovak real estate agency specializing in the sale of foreign seaside properties.",
+        "intro": "Relax Properties is a Czech-Slovak real estate agency specializing in the sale of foreign seaside properties. We help clients find apartments, houses, and investment properties tailored to their needs in popular destinations such as Bulgaria, Greece, Croatia, and Spain.",
+        "introSecondary": "Our goal is to ensure a safe, transparent, and worry-free process when buying property abroad. Thanks to years of experience and cooperation with verified partners directly in each country, we provide clients with a complete service — from property selection to legal services and after-sale care.",
+        "googleReviews": "60+ positive 5-star Google reviews",
         "partnersLabel": "We cooperate with",
         "partners": ["Lawyers", "Notaries", "Tax advisors", "Developers", "Real estate agencies"],
-        "goalsSubtitle": "Our main goals",
-        "goalsTitle": "What we stand for",
-        "goals": [
-            "Provide a quality selection of foreign properties from affordable to premium properties in the most sought-after international locations",
-            "Ensure a smooth, problem-free, and secure process when buying/selling foreign properties",
-            "Our properties undergo selling price verification, ensuring our clients purchase at the best market price",
-            "We approach each client individually with maximum empathy and a high standard of assistance and services",
-            "Our main goal is client satisfaction and protection of their finances when purchasing property abroad",
-            "Our client can reach out to us at any time even after the purchase itself — we are here for them the entire time"
+        "whyUsSubtitle": "Why us",
+        "whyUsTitle": "Why choose us?",
+        "whyUsIntro": "We build on values and a transparent approach that make us a reliable partner on your real estate journey.",
+        "whyUs": [
+            {
+                "title": "Complete service under one roof",
+                "description": "From the initial consultation and thorough understanding of your needs, through market analysis and property selection, to complete legal services, key handover, and after-sale care. We give every client our full attention."
+            },
+            {
+                "title": "Transparency and fairness",
+                "description": "We communicate openly and directly. Every step of the process is set up clearly and understandably. We always keep you informed about each and every step. With us, you don't have to worry about hidden fees or unexpected surprises."
+            },
+            {
+                "title": "Individual approach",
+                "description": "Every client and every property has its own story. That's why we approach everyone personally and design solutions tailored to your needs, goals, and expectations."
+            },
+            {
+                "title": "Local market expertise",
+                "description": "We actively monitor and analyze the real estate market. We work with colleagues directly in each country who know the local environment, prices, language, and legislation. This allows us to provide you with accurate and relevant information, saving you time and money."
+            }
+        ],
+        "visionSubtitle": "Our vision",
+        "visionTitle": "We always stand on your side",
+        "visionText": "Our goal is to be your trusted partner when buying property — we always stand on your side, see the deal through your eyes, and ensure the entire process is safe and in compliance with legislation.",
+        "visionPoints": [
+            "Every sale begins with a thorough verification of ownership rights and all legal requirements.",
+            "We cooperate with local experts in each location to ensure the deal is completely safe and risk-free.",
+            "When buying property, you are never alone — we guide you through every step and make sure all your interests are fully protected."
         ],
         "servicesSubtitle": "Our services",
         "servicesTitle": "What we provide for you",
@@ -108,8 +129,8 @@
         "teamSubtitle": "Our Team",
         "teamTitle": "Meet Us",
         "teamLanguages": "Languages spoken:",
-        "ctaTitle": "Ready to find your dream home?",
-        "ctaText": "Contact us and let's start looking for a property that will fulfill your dreams."
+        "ctaTitle": "Trust the professionals",
+        "ctaText": "Enjoy a stress-free real estate process — safe and transparent, starting right here with us at Relax Properties."
     },
     "contact": {
         "title": "Contact",
@@ -316,32 +337,68 @@
             "greece": {
                 "name": "Greece",
                 "flag": "🇬🇷",
-                "intro": "Greece attracts with attractive prices and the Golden Visa program for residency permits. Growing tourism sector.",
+                "intro": "Greece offers attractive seaside properties with growing investment potential. The entire purchase process is handled through a lawyer who represents you at every step.",
                 "highlights": [
-                    "Golden Visa",
-                    "Attractive prices",
-                    "Mediterranean climate"
+                    "EU Member",
+                    "Schengen + Euro",
+                    "Tourist potential"
                 ],
                 "process": [
                     {
-                        "title": "AFM Number",
-                        "description": "We'll help you obtain a Greek tax identification number."
-                    },
-                    {
                         "title": "Property Selection",
-                        "description": "Visiting and selecting properties on the mainland or islands."
+                        "description": "Choose a property according to your preferences, or we'll gladly help you with the selection. Once you've chosen, we verify availability and calculate the complete price including all fees associated with buying property in Greece."
                     },
                     {
-                        "title": "Legal Check",
-                        "description": "A lawyer will verify ownership rights and documents."
+                        "title": "Property Viewing",
+                        "description": "There are two ways to view properties: in person during your visit to Greece, or via video call (WhatsApp/Skype). Video viewings are the most popular method — we show you the property, surroundings, and share a recording for your review."
                     },
                     {
-                        "title": "Purchase Agreement",
-                        "description": "Signing the contract at the notary."
+                        "title": "Price Negotiation",
+                        "description": "We compare prices in the area and negotiate the best possible price on your behalf. The agency commission is already included in the property price. The entire process is handled through a lawyer who guarantees the transaction."
                     },
                     {
-                        "title": "Registration",
-                        "description": "Property registration and Golden Visa application."
+                        "title": "Greek Tax Number & Bank Account",
+                        "description": "The first step after selecting your property is obtaining a Greek tax identification number (similar to a national ID number). This is required for purchasing property, opening a bank account, signing contracts, and transferring utilities."
+                    },
+                    {
+                        "title": "Reservation Deposit & Purchase Price",
+                        "description": "The reservation deposit is 10% of the property price, paid to the lawyer's escrow account. After signing the preliminary contract at the notary, the property is taken off the market. The remaining balance is paid within the following month."
+                    },
+                    {
+                        "title": "Notary Transfer",
+                        "description": "We prepare all contracts and documents in your language and Greek. A licensed Greek lawyer registered with the bar association represents you throughout. All purchase funds are held in the lawyer's escrow and released to the seller only after the property is transferred to your name."
+                    },
+                    {
+                        "title": "Purchase Fees",
+                        "description": "Total fees including taxes are approximately 7% of the property price. The exact amount is determined by the notary based on the property location.",
+                        "items": [
+                            "Preparation of all contracts and documents",
+                            "Representation at all authorities",
+                            "Tax number registration and issuance",
+                            "Legal property check (title deed, building permits, no debts or liens)",
+                            "Lawyer fees: approx. 1.5% of property price",
+                            "Notary fees: approx. 2% of property price",
+                            "Property transfer tax: approx. 3.5% of property price",
+                            "Signature verification fees at notary",
+                            "Bank transfer fees: approx. 0.1% of property price"
+                        ]
+                    },
+                    {
+                        "title": "You Become the Owner",
+                        "description": "During the notary process, all ownership rights are transferred to you. The cadastre records the transfer based on the Notarial Act. As a bonus, you receive property insurance for 1 year free of charge and property cleaning before your arrival."
+                    },
+                    {
+                        "title": "Ownership Costs",
+                        "description": "Running costs include water and electricity (paid monthly, similar to home country rates). Annual property tax depends on property size — as a new owner, you are exempt for the first year.",
+                        "items": [
+                            "Water & electricity — monthly payments based on consumption",
+                            "Internet and TV connection",
+                            "Annual property tax (first year exempt)"
+                        ]
+                    },
+                    {
+                        "title": "Renting Your Property",
+                        "description": "We can help you arrange professional property management for rentals, including cleaning, linen changes, and guest services. Rental income varies based on property level, location, and rental period length — but it is certainly worthwhile."
                     }
                 ]
             }

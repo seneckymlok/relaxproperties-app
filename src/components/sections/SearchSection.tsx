@@ -35,7 +35,7 @@ export default function SearchSection() {
     };
 
     return (
-        <div className="relative -mt-20 z-30 container-custom px-4 mb-20">
+        <div className="relative -mt-20 z-30 container-custom mb-20">
             <div className="bg-white rounded-lg shadow-2xl p-6 md:p-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 mb-6">
                     {/* Keyword Search */}
@@ -114,7 +114,7 @@ export default function SearchSection() {
                 {/* Bottom Row: Checkbox + Button */}
                 <div className="flex flex-col md:flex-row items-center justify-between gap-6 pt-4 border-t border-gray-100">
                     <label className="flex items-center gap-3 cursor-pointer group">
-                        <div className={`w-5 h-5 rounded border flex items-center justify-center transition-colors ${filters.seaView ? 'bg-[var(--color-primary)] border-[var(--color-primary)]' : 'border-gray-300 group-hover:border-[var(--color-primary)]'}`}>
+                        <div className={`w-5 h-5 rounded border flex items-center justify-center transition-colors ${filters.seaView ? 'bg-[var(--color-primary)] border-[var(--color-primary)]' : 'border-gray-300 group-hover:border-[var(--color-teal)]'}`}>
                             {filters.seaView && (
                                 <svg className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
                             )}
@@ -125,7 +125,7 @@ export default function SearchSection() {
                             checked={filters.seaView}
                             onChange={(e) => setFilters({ ...filters, seaView: e.target.checked })}
                         />
-                        <span className="text-sm font-medium text-gray-700 group-hover:text-[var(--color-primary)] transition-colors">
+                        <span className="text-sm font-medium text-gray-700 group-hover:text-[var(--color-teal)] transition-colors">
                             Výhľad na more (Sea View)
                         </span>
                     </label>
@@ -133,7 +133,7 @@ export default function SearchSection() {
                     <div className="flex gap-4 w-full md:w-auto">
                         <Link
                             href="/properties" // Link to detailed search page
-                            className="flex-1 md:flex-none text-center px-6 py-3 text-sm font-medium text-gray-500 hover:text-[var(--color-primary)] transition-colors border border-transparent hover:border-gray-200 rounded"
+                            className="flex-1 md:flex-none text-center px-6 py-3 text-sm font-medium text-gray-500 hover:text-[var(--color-teal)] transition-colors border border-transparent hover:border-gray-200 rounded"
                         >
                             Podrobné vyhľadávanie
                         </Link>

@@ -1,14 +1,13 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import CustomSelect from "@/components/ui/CustomSelect";
-import { countries, propertyTypes, bedroomOptions } from "@/lib/data-access";
+import { getFilterOptions, type Language } from "@/lib/data-access";
 import type { Dictionary } from "@/lib/dictionaries";
 
-const PRICE_MIN = 0;
-const PRICE_MAX = 2_000_000;
 const PRICE_STEP = 1_000;
+/* PRICE_MIN / PRICE_MAX are now dynamic — received via props */
 
 function formatPrice(value: number): string {
     if (value >= 1_000_000) {
@@ -21,6 +20,8 @@ function formatPrice(value: number): string {
 
 interface DualRangeSliderProps {
     variant?: "default" | "glass";
+    boundsMin: number;
+    boundsMax: number;
     sliderMin: number;
     sliderMax: number;
     priceMin: string;
@@ -35,6 +36,8 @@ interface DualRangeSliderProps {
 
 function DualRangeSlider({
     variant = "default",
+    boundsMin,
+    boundsMax,
     sliderMin,
     sliderMax,
     priceMin,
@@ -46,8 +49,8 @@ function DualRangeSlider({
     minLabel,
     maxLabel,
 }: DualRangeSliderProps) {
-    const minPercent = ((sliderMin - PRICE_MIN) / (PRICE_MAX - PRICE_MIN)) * 100;
-    const maxPercent = ((sliderMax - PRICE_MIN) / (PRICE_MAX - PRICE_MIN)) * 100;
+    const minPercent = ((sliderMin - boundsMin) / (boundsMax - boundsMin)) * 100;
+    const maxPercent = ((sliderMax - boundsMin) / (boundsMax - boundsMin)) * 100;
 
     const isGlass = variant === "glass";
     const inputClass = isGlass
@@ -104,17 +107,17 @@ function DualRangeSlider({
                     />
                     <input
                         type="range"
-                        min={PRICE_MIN}
-                        max={PRICE_MAX}
+                        min={boundsMin}
+                        max={boundsMax}
                         step={PRICE_STEP}
                         value={sliderMin}
                         onChange={(e) => onSliderMinChange(Number(e.target.value))}
-                        style={{ zIndex: sliderMin > PRICE_MAX - PRICE_STEP * 5 ? 5 : 3 }}
+                        style={{ zIndex: sliderMin > boundsMax - PRICE_STEP * 5 ? 5 : 3 }}
                     />
                     <input
                         type="range"
-                        min={PRICE_MIN}
-                        max={PRICE_MAX}
+                        min={boundsMin}
+                        max={boundsMax}
                         step={PRICE_STEP}
                         value={sliderMax}
                         onChange={(e) => onSliderMaxChange(Number(e.target.value))}
@@ -122,8 +125,8 @@ function DualRangeSlider({
                     />
                 </div>
                 <div className={`flex justify-between text-[11px] mt-0.5 ${labelColor}`}>
-                    <span>{formatPrice(sliderMin)}</span>
-                    <span>{formatPrice(sliderMax)}</span>
+                    <span>{formatPrice(boundsMin)}</span>
+                    <span>{formatPrice(boundsMax)}</span>
                 </div>
             </div>
         </div>
@@ -133,13 +136,22 @@ function DualRangeSlider({
 interface HeroSearchProps {
     lang?: string;
     dictionary?: Dictionary;
+    priceRange?: { min: number; max: number };
 }
 
-export default function HeroSearch({ lang = 'sk', dictionary }: HeroSearchProps) {
+export default function HeroSearch({ lang = 'sk', dictionary, priceRange }: HeroSearchProps) {
     const router = useRouter();
     const [isExpanded, setIsExpanded] = useState(false);
     const [isMobileModalOpen, setIsMobileModalOpen] = useState(false);
     const advancedRef = useRef<HTMLDivElement>(null);
+
+    // Dynamic price bounds from real property data — fallback to safe defaults
+    const PRICE_MIN = priceRange?.min ?? 0;
+    const PRICE_MAX = priceRange?.max ?? 2_000_000;
+
+    // Localized filter options
+    const filterOptions = useMemo(() => getFilterOptions(lang as Language), [lang]);
+    const { countries, propertyTypes, bedroomOptions } = filterOptions;
 
     // Translations
     const t = {
@@ -203,14 +215,19 @@ export default function HeroSearch({ lang = 'sk', dictionary }: HeroSearchProps)
         }
     }, [isExpanded, isMobile]);
 
-    // Prevent body scroll when mobile modal is open
+    // Prevent body scroll + hide header when mobile modal is open
     useEffect(() => {
         if (isMobileModalOpen) {
             document.body.style.overflow = "hidden";
+            document.body.classList.add('search-modal-open');
         } else {
             document.body.style.overflow = "";
+            document.body.classList.remove('search-modal-open');
         }
-        return () => { document.body.style.overflow = ""; };
+        return () => {
+            document.body.style.overflow = "";
+            document.body.classList.remove('search-modal-open');
+        };
     }, [isMobileModalOpen]);
 
     // Filter state
@@ -223,7 +240,6 @@ export default function HeroSearch({ lang = 'sk', dictionary }: HeroSearchProps)
         propertyId: "",
         seaView: false,
         firstLine: false,
-        seaViewAdvanced: false,
         pool: false,
         newBuild: false,
         newProject: false,
@@ -277,7 +293,6 @@ export default function HeroSearch({ lang = 'sk', dictionary }: HeroSearchProps)
         if (filters.priceMax) params.set("priceMax", filters.priceMax);
         if (filters.seaView) params.set("seaView", "true");
         if (filters.firstLine) params.set("firstLine", "true");
-        if (filters.seaViewAdvanced) params.set("seaViewAdvanced", "true");
         if (filters.pool) params.set("pool", "true");
         if (filters.newBuild) params.set("newBuild", "true");
         if (filters.newProject) params.set("newProject", "true");
@@ -299,7 +314,6 @@ export default function HeroSearch({ lang = 'sk', dictionary }: HeroSearchProps)
             propertyId: "",
             seaView: false,
             firstLine: false,
-            seaViewAdvanced: false,
             pool: false,
             newBuild: false,
             newProject: false,
@@ -316,7 +330,6 @@ export default function HeroSearch({ lang = 'sk', dictionary }: HeroSearchProps)
         filters.propertyType !== "all",
         filters.bedrooms !== "all",
         filters.firstLine,
-        filters.seaViewAdvanced,
         filters.pool,
         filters.newBuild,
         filters.newProject,
@@ -326,11 +339,12 @@ export default function HeroSearch({ lang = 'sk', dictionary }: HeroSearchProps)
         filters.priceMin,
         filters.priceMax,
         filters.seaView,
-        filters.propertyId,
     ].filter(Boolean).length;
 
     // Shared slider props
     const sliderProps = {
+        boundsMin: PRICE_MIN,
+        boundsMax: PRICE_MAX,
         sliderMin,
         sliderMax,
         priceMin: filters.priceMin,
@@ -345,17 +359,15 @@ export default function HeroSearch({ lang = 'sk', dictionary }: HeroSearchProps)
 
     // Toggle Switch Component for mobile
     const ToggleSwitch = ({ checked, onChange, label }: { checked: boolean; onChange: (checked: boolean) => void; label: string }) => (
-        <label className="flex items-center justify-between py-3.5 cursor-pointer">
+        <label className="flex items-center justify-between py-3 cursor-pointer">
             <span className="text-[var(--color-foreground)] text-sm">{label}</span>
             <button
                 type="button"
                 onClick={() => onChange(!checked)}
-                className={`relative w-11 h-6 rounded-full transition-colors duration-200 ${checked ? "bg-[var(--color-primary)]" : "bg-[var(--color-border)]"
-                    }`}
+                className={`exclude-touch-size relative w-[51px] h-[31px] rounded-full transition-colors duration-300 flex-shrink-0 ${checked ? "bg-[var(--color-teal)]" : "bg-[#E5E5E5]"}`}
             >
                 <span
-                    className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow-sm transition-transform duration-200 ${checked ? "translate-x-5" : "translate-x-0"
-                        }`}
+                    className={`absolute top-[2px] left-[2px] w-[27px] h-[27px] rounded-full bg-white shadow-[0_1px_3px_rgba(0,0,0,0.15),0_1px_1px_rgba(0,0,0,0.06)] transition-transform duration-300 ${checked ? "translate-x-[20px]" : "translate-x-0"}`}
                 />
             </button>
         </label>
@@ -363,8 +375,8 @@ export default function HeroSearch({ lang = 'sk', dictionary }: HeroSearchProps)
 
     // Feature labels for advanced filters
     const featureLabels = [
+        { key: "seaView", label: t.seaView },
         { key: "firstLine", label: t.firstLine },
-        { key: "seaViewAdvanced", label: t.seaView },
         { key: "pool", label: t.pool },
         { key: "newBuild", label: t.newBuild },
         { key: "newProject", label: t.newProject },
@@ -405,7 +417,6 @@ export default function HeroSearch({ lang = 'sk', dictionary }: HeroSearchProps)
                 if (f.priceMax) params.set("priceMax", f.priceMax);
                 if (f.seaView) params.set("seaView", "true");
                 if (f.firstLine) params.set("firstLine", "true");
-                if (f.seaViewAdvanced) params.set("seaViewAdvanced", "true");
                 if (f.pool) params.set("pool", "true");
                 if (f.newBuild) params.set("newBuild", "true");
                 if (f.newProject) params.set("newProject", "true");
@@ -427,7 +438,7 @@ export default function HeroSearch({ lang = 'sk', dictionary }: HeroSearchProps)
        MODE TOGGLE — Prominent Tab Control
        ======================================== */
     const ModeToggle = ({ variant = "default" }: { variant?: "default" | "glass" }) => (
-        <div className={variant === "glass" ? "inline-flex flex-row items-center bg-[rgba(15,25,35,0.85)] backdrop-blur-md border border-white/15 rounded-full p-1" : `inline-flex bg-[var(--color-surface)] rounded-full p-1`}>
+        <div className={variant === "glass" ? "inline-flex flex-row items-center bg-[rgba(26,26,24,0.9)] backdrop-blur-md border border-white/12 rounded-full p-1" : `inline-flex bg-[var(--color-surface)] rounded-full p-[3px] border border-[var(--color-border)]/60`}>
             <button
                 onClick={() => setSearchMode('classic')}
                 className={`whitespace-nowrap px-6 py-2 text-sm font-medium rounded-full transition-all duration-200 ${searchMode === 'classic'
@@ -465,7 +476,7 @@ export default function HeroSearch({ lang = 'sk', dictionary }: HeroSearchProps)
             {/* =============================================
                 MOBILE: Frosted Glass Search Trigger
                 ============================================= */}
-            <div className="md:hidden absolute bottom-8 left-0 right-0 z-30 px-4 hero-mobile-trigger">
+            <div className="md:hidden absolute bottom-[clamp(1.5rem,4vh,2.5rem)] left-0 right-0 z-30 px-[clamp(1rem,4vw,1.5rem)] hero-mobile-trigger">
                 <button
                     onClick={() => setIsMobileModalOpen(true)}
                     className="w-full flex items-center justify-center gap-3 bg-white/15 backdrop-blur-md text-white px-6 py-4 rounded-full font-medium active:scale-[0.98] transition-all border border-white/20 shadow-lg"
@@ -490,22 +501,23 @@ export default function HeroSearch({ lang = 'sk', dictionary }: HeroSearchProps)
                     }`}
             >
                 {/* Modal Header */}
-                <div className="sticky top-0 bg-white/95 backdrop-blur-sm border-b border-[var(--color-border)]/50 px-4 py-4 flex items-center justify-between z-10">
+                <div className="sticky top-0 bg-white/95 backdrop-blur-md border-b border-[var(--color-border)]/50 px-5 pt-[max(1rem,env(safe-area-inset-top,1rem))] pb-3 flex items-center justify-between z-10">
                     <h2 className="font-serif text-lg text-[var(--color-secondary)]">{t.filterProperties}</h2>
                     <button
                         onClick={() => setIsMobileModalOpen(false)}
-                        className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-[var(--color-surface)] transition-colors"
+                        className="w-10 h-10 flex items-center justify-center rounded-full bg-[var(--color-surface)] hover:bg-[var(--color-border)] transition-colors active:scale-95"
+                        aria-label="Close"
                     >
-                        <svg className="w-5 h-5 text-[var(--color-muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6 18L18 6M6 6l12 12" />
+                        <svg className="w-5 h-5 text-[var(--color-foreground)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                         </svg>
                     </button>
                 </div>
 
                 {/* Mobile Content */}
-                <div className="overflow-y-auto h-[calc(100%-140px)] px-4 py-6">
+                <div className="overflow-y-auto h-[calc(100%-140px)] px-5 py-5">
                     {/* Mode Toggle */}
-                    <div className="flex justify-center mb-6">
+                    <div className="flex justify-center mb-5">
                         <ModeToggle />
                     </div>
 
@@ -601,28 +613,38 @@ export default function HeroSearch({ lang = 'sk', dictionary }: HeroSearchProps)
                             {/* Reset */}
                             <button
                                 onClick={resetFilters}
-                                className="w-full mt-6 py-3 text-[var(--color-muted)] hover:text-[var(--color-primary)] text-sm transition-colors"
+                                className="w-full mt-6 py-3 text-[var(--color-muted)] hover:text-[var(--color-teal)] text-sm transition-colors"
                             >
                                 {t.resetFilters}
                             </button>
                         </>
                     ) : (
-                        <div className="flex flex-col h-full">
+                        <div>
                             <p className="text-[10px] uppercase tracking-[0.15em] text-[var(--color-muted)] mb-3">
                                 {t.aiMobilePlaceholder}
                             </p>
                             <textarea
                                 value={aiQuery}
-                                onChange={(e) => setAiQuery(e.target.value)}
+                                onChange={(e) => {
+                                    setAiQuery(e.target.value);
+                                    // Auto-resize
+                                    const el = e.target;
+                                    el.style.height = 'auto';
+                                    el.style.height = Math.min(el.scrollHeight, 240) + 'px';
+                                }}
                                 placeholder={t.aiPlaceholder}
-                                className="w-full flex-1 min-h-[120px] p-4 bg-[var(--color-surface)] border border-[var(--color-border)]/50 rounded-xl resize-none text-sm text-[var(--color-foreground)] placeholder:text-[var(--color-muted)] focus:outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]/10 transition-all"
+                                rows={3}
+                                className="w-full p-4 bg-[var(--color-surface)] border border-[var(--color-border)]/50 rounded-xl resize-none text-sm text-[var(--color-foreground)] placeholder:text-[var(--color-muted)] focus:outline-none focus:border-[var(--color-teal)] focus:ring-2 focus:ring-[var(--color-teal)]/10 transition-all leading-relaxed"
                             />
+                            <p className="text-[11px] text-[var(--color-muted)] mt-2.5 leading-relaxed">
+                                {lang === 'en' ? 'Describe your dream property in natural language. Our AI will find the best matches.' : lang === 'cz' ? 'Popište svou vysněnou nemovitost přirozeným jazykem. Naše AI najde nejlepší shody.' : 'Opíšte svoju vysnívanú nehnuteľnosť bežným jazykom. Naše AI nájde najlepšie zhody.'}
+                            </p>
                         </div>
                     )}
                 </div>
 
                 {/* Sticky Footer */}
-                <div className="absolute bottom-0 left-0 right-0 bg-white/95 backdrop-blur-sm border-t border-[var(--color-border)]/50 p-4 safe-area-inset-bottom">
+                <div className="absolute bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-[var(--color-border)]/50 px-5 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom,0.75rem))] safe-area-inset-bottom">
                     {searchMode === 'classic' ? (
                         <button
                             onClick={handleSearch}
@@ -651,7 +673,7 @@ export default function HeroSearch({ lang = 'sk', dictionary }: HeroSearchProps)
             {/* =============================================
                 DESKTOP: Glassmorphic Search Panel
                 ============================================= */}
-            <div className="hidden md:block absolute bottom-16 left-0 right-0 z-50">
+            <div className="hidden md:block absolute bottom-[clamp(1.5rem,5vh,4rem)] left-0 right-0 z-50">
                 <div className="container-custom">
                     <div className="relative max-w-4xl mx-auto">
 
@@ -661,7 +683,7 @@ export default function HeroSearch({ lang = 'sk', dictionary }: HeroSearchProps)
                         </div>
 
                         {/* Main Card */}
-                        <div className="bg-[rgba(15,25,35,0.85)] backdrop-blur-md border border-white/15 rounded-2xl shadow-2xl">
+                        <div className="bg-[rgba(26,26,24,0.88)] backdrop-blur-md border border-white/12 rounded-2xl shadow-2xl">
                             <div className="px-6 py-5">
                                 {searchMode === 'classic' ? (
                                     /* Classic: 3 selectors + sea view + search */
@@ -820,7 +842,7 @@ export default function HeroSearch({ lang = 'sk', dictionary }: HeroSearchProps)
                                 : "mt-0 opacity-0 scale-y-95 pointer-events-none"
                                 }`}
                         >
-                            <div className="bg-[rgba(15,25,35,0.85)] backdrop-blur-md border border-white/15 rounded-2xl shadow-2xl p-5">
+                            <div className="bg-[rgba(26,26,24,0.88)] backdrop-blur-md border border-white/12 rounded-2xl shadow-2xl p-5">
                                 <div className="flex flex-wrap md:flex-nowrap items-start gap-5">
                                     {/* Price Range with Dual Slider */}
                                     <div className="w-full md:w-auto md:min-w-[300px]">

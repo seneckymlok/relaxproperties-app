@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { usePathname } from "next/navigation";
 import { useFavorites } from "@/contexts/FavoritesContext";
 import PropertyCard from "@/components/ui/PropertyCard";
 import Link from "next/link";
@@ -15,10 +16,13 @@ interface FavoriteProperty {
     area: number;
     images: string[];
     featured: boolean;
+    previewTags?: string[];
 }
 
 export default function FavoritesPage() {
     const { favorites } = useFavorites();
+    const pathname = usePathname();
+    const lang = (pathname?.split('/')[1] || 'sk') as 'sk' | 'en' | 'cz';
     const [allProperties, setAllProperties] = useState<FavoriteProperty[]>([]);
     const [heroImage, setHeroImage] = useState("https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1920&q=80");
 
@@ -49,7 +53,7 @@ export default function FavoritesPage() {
                         backgroundImage: `url('${heroImage}')`,
                     }}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-primary)] via-transparent to-transparent" />
+                {/* Removed filter per user request */}
                 <div className="relative container-custom h-full flex flex-col justify-center items-center text-center text-white pt-16">
                     <p className="text-sm uppercase tracking-[0.2em] text-[var(--color-sand-light)] mb-3">
                         Moje obľúbené
@@ -66,7 +70,7 @@ export default function FavoritesPage() {
             </section>
 
             {/* Content */}
-            <section className="py-16 md:py-20 bg-[var(--color-surface)]">
+            <section className="py-[clamp(2.5rem,5vw,5rem)] bg-[var(--color-surface)]">
                 <div className="container-custom">
                     {favoriteProperties.length > 0 ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -81,6 +85,8 @@ export default function FavoritesPage() {
                                     baths={property.baths}
                                     area={property.area}
                                     images={property.images}
+                                    previewTags={property.previewTags}
+                                    lang={lang}
                                 />
                             ))}
                         </div>

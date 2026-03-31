@@ -7,6 +7,7 @@ import { notFound } from "next/navigation";
 import { useParams } from "next/navigation";
 import { getDictionary } from "@/lib/dictionaries";
 import type { Language } from "@/lib/data-access";
+import MagneticButton from "@/components/ui/MagneticButton";
 
 interface BlogPost {
     id: string;
@@ -140,9 +141,9 @@ export default function BlogPostPage() {
                 ) : (
                     <div className="absolute inset-0 bg-[var(--color-primary)]" />
                 )}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-black/20" />
+                {/* Removed dark filter per user request */}
                 <div className="absolute inset-0 flex flex-col justify-end">
-                    <div className="container-custom px-4 sm:px-6" style={{ paddingBottom: '5rem' }}>
+                    <div className="container-custom" style={{ paddingBottom: '5rem' }}>
                         {/* Back + Category row */}
                         <div className="flex items-center gap-4 mb-5">
                             <Link
@@ -183,8 +184,8 @@ export default function BlogPostPage() {
             {/* =============================================
                 Article Content — Premium editorial
                 ============================================= */}
-            <article className="bg-white py-12 md:py-16">
-                <div className="container-custom px-4 sm:px-6">
+            <article className="bg-white py-[clamp(2rem,4vw,4rem)]">
+                <div className="container-custom">
                     <div className="max-w-3xl mx-auto">
                         {/* Lead excerpt with accent border */}
                         <div className="border-l-2 border-[var(--color-accent)] pl-6 mb-10">
@@ -371,8 +372,8 @@ export default function BlogPostPage() {
                 Related Posts — Magazine grid
                 ============================================= */}
             {relatedPosts.length > 0 && (
-                <section className="py-16 md:py-24 bg-[var(--color-surface)]">
-                    <div className="container-custom px-4 sm:px-6">
+                <section className="py-[clamp(2.5rem,5vw,6rem)] bg-[var(--color-surface)]">
+                    <div className="container-custom">
                         <div className="text-center mb-12">
                             <p className="text-sm uppercase tracking-[0.2em] text-[var(--color-accent)] mb-3">
                                 {t.featured}
@@ -391,7 +392,7 @@ export default function BlogPostPage() {
                                                     src={relatedPost.image}
                                                     alt={relatedPost.title}
                                                     fill
-                                                    className="object-cover group-hover:scale-105 transition-transform duration-700"
+                                                    className="object-cover group-hover:scale-[1.03] transition-transform duration-700 ease-out"
                                                 />
                                             ) : (
                                                 <div className="w-full h-full bg-[var(--color-surface)]" />
@@ -424,7 +425,7 @@ export default function BlogPostPage() {
             {/* =============================================
                 CTA — Premium band
                 ============================================= */}
-            <section className="py-16 md:py-24 bg-[var(--color-primary)]">
+            <section className="py-[clamp(2.5rem,5vw,6rem)] bg-[var(--color-primary)]">
                 <div className="container-custom text-center px-4 sm:px-6">
                     <p className="text-sm uppercase tracking-[0.2em] text-[var(--color-sand-light)] mb-4">
                         Relax Properties
@@ -436,21 +437,25 @@ export default function BlogPostPage() {
                         {t.ctaText}
                     </p>
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                        <Link
-                            href={`/${validLang}/properties`}
-                            className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white text-[var(--color-primary)] font-medium rounded-full hover:bg-white/90 transition-colors"
-                        >
-                            {t.ctaButton}
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                            </svg>
-                        </Link>
-                        <Link
-                            href={`/${validLang}/contact`}
-                            className="inline-flex items-center justify-center px-8 py-4 border border-white/30 text-white font-medium rounded-full hover:bg-white/10 transition-colors"
-                        >
-                            {dictionary.common.contactUs}
-                        </Link>
+                        <MagneticButton strength={0.15}>
+                            <Link
+                                href={`/${validLang}/properties`}
+                                className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white text-[var(--color-primary)] font-medium rounded-full hover:bg-white/90 transition-colors"
+                            >
+                                {t.ctaButton}
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                                </svg>
+                            </Link>
+                        </MagneticButton>
+                        <MagneticButton strength={0.15}>
+                            <Link
+                                href={`/${validLang}/contact`}
+                                className="inline-flex items-center justify-center px-8 py-4 border border-white/30 text-white font-medium rounded-full hover:bg-white/10 transition-colors"
+                            >
+                                {dictionary.common.contactUs}
+                            </Link>
+                        </MagneticButton>
                     </div>
                 </div>
             </section>

@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { getDictionary } from "@/lib/dictionaries";
 import type { Language } from "@/lib/data-access";
+import MagneticButton from "@/components/ui/MagneticButton";
 
 interface BlogPost {
     id: string;
@@ -76,7 +77,7 @@ export default function BlogPage() {
                         backgroundImage: `url('${heroImage}')`,
                     }}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-primary)] via-transparent to-transparent" />
+                {/* Removed filter per user request */}
                 <div className="relative container-custom h-full flex flex-col justify-center items-center text-center text-white pt-16">
                     <p className="text-sm uppercase tracking-[0.2em] text-[var(--color-sand-light)] mb-3">
                         {t.subtitle}
@@ -94,8 +95,8 @@ export default function BlogPage() {
                 SECTION 2: Featured Posts
                 ============================================= */}
             {featuredPosts.length > 0 && (
-                <section className="py-16 md:py-20 bg-white">
-                    <div className="container-custom px-4 sm:px-6">
+                <section className="py-[clamp(2.5rem,5vw,5rem)] bg-white">
+                    <div className="container-custom">
                         <p className="text-sm uppercase tracking-[0.2em] text-[var(--color-accent)] mb-3">
                             {t.featured}
                         </p>
@@ -117,7 +118,7 @@ export default function BlogPage() {
                                                     src={post.image}
                                                     alt={post.title}
                                                     fill
-                                                    className="object-cover group-hover:scale-105 transition-transform duration-700"
+                                                    className="object-cover group-hover:scale-[1.03] transition-transform duration-700 ease-out"
                                                 />
                                             ) : (
                                                 <div className="w-full h-full bg-[var(--color-surface)]" />
@@ -151,8 +152,8 @@ export default function BlogPage() {
             {/* =============================================
                 SECTION 3: All Posts + Category Filter
                 ============================================= */}
-            <section className="py-16 md:py-20 bg-[var(--color-background)]">
-                <div className="container-custom px-4 sm:px-6">
+            <section className="py-[clamp(2.5rem,5vw,5rem)] bg-[var(--color-background)]">
+                <div className="container-custom">
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-10">
                         <div>
                             <p className="text-sm uppercase tracking-[0.2em] text-[var(--color-accent)] mb-3">
@@ -169,7 +170,7 @@ export default function BlogPage() {
                                 onClick={() => setActiveCategory("all")}
                                 className={`px-4 py-2 text-sm rounded-full border transition-colors cursor-pointer ${activeCategory === "all"
                                     ? "bg-[var(--color-primary)] text-white border-[var(--color-primary)]"
-                                    : "border-[var(--color-border)] text-[var(--color-foreground)] hover:border-[var(--color-primary)] hover:text-[var(--color-primary)]"
+                                    : "border-[var(--color-border)] text-[var(--color-foreground)] hover:border-[var(--color-teal)] hover:text-[var(--color-teal)]"
                                     }`}
                             >
                                 {t.allCategories}
@@ -180,7 +181,7 @@ export default function BlogPage() {
                                     onClick={() => setActiveCategory(category)}
                                     className={`px-4 py-2 text-sm rounded-full border transition-colors cursor-pointer ${activeCategory === category
                                         ? "bg-[var(--color-primary)] text-white border-[var(--color-primary)]"
-                                        : "border-[var(--color-border)] text-[var(--color-foreground)] hover:border-[var(--color-primary)] hover:text-[var(--color-primary)]"
+                                        : "border-[var(--color-border)] text-[var(--color-foreground)] hover:border-[var(--color-teal)] hover:text-[var(--color-teal)]"
                                         }`}
                                 >
                                     {category}
@@ -211,7 +212,7 @@ export default function BlogPage() {
                                                     src={post.image}
                                                     alt={post.title}
                                                     fill
-                                                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                                                    className="object-cover group-hover:scale-[1.03] transition-transform duration-700 ease-out"
                                                 />
                                             ) : (
                                                 <div className="w-full h-full bg-[var(--color-surface)] flex items-center justify-center">
@@ -245,36 +246,9 @@ export default function BlogPage() {
             </section>
 
             {/* =============================================
-                SECTION 4: Newsletter CTA
+                SECTION 4: Bottom CTA
                 ============================================= */}
-            <section className="py-16 md:py-20 bg-[var(--color-primary)]">
-                <div className="container-custom text-center px-4 sm:px-6">
-                    <h2 className="font-serif text-3xl md:text-4xl text-white mb-4">
-                        {t.newsletterTitle}
-                    </h2>
-                    <p className="text-white/80 mb-8 max-w-xl mx-auto">
-                        {t.newsletterText}
-                    </p>
-                    <form className="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto">
-                        <input
-                            type="email"
-                            placeholder={t.newsletterPlaceholder}
-                            className="flex-1 h-12 px-5 rounded-full border-0 focus:outline-none focus:ring-2 focus:ring-white/30"
-                        />
-                        <button
-                            type="submit"
-                            className="h-12 px-6 bg-white text-[var(--color-primary)] font-medium rounded-full hover:bg-white/90 transition-colors cursor-pointer"
-                        >
-                            {t.newsletterButton}
-                        </button>
-                    </form>
-                </div>
-            </section>
-
-            {/* =============================================
-                SECTION 5: Bottom CTA
-                ============================================= */}
-            <section className="py-16 md:py-20 bg-[var(--color-surface)]">
+            <section className="py-[clamp(2.5rem,5vw,5rem)] bg-[var(--color-surface)]">
                 <div className="container-custom text-center px-4 sm:px-6">
                     <h2 className="font-serif text-2xl md:text-3xl text-[var(--color-secondary)] mb-4">
                         {t.ctaTitle}
@@ -282,15 +256,17 @@ export default function BlogPage() {
                     <p className="text-[var(--color-muted)] mb-8 max-w-xl mx-auto">
                         {t.ctaText}
                     </p>
-                    <Link
-                        href={`/${validLang}/properties`}
-                        className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-[var(--color-primary)] text-white font-medium rounded-full hover:bg-[var(--color-primary-dark)] transition-colors"
-                    >
-                        {t.ctaButton}
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                        </svg>
-                    </Link>
+                    <MagneticButton strength={0.15}>
+                        <Link
+                            href={`/${validLang}/properties`}
+                            className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-[var(--color-primary)] text-white font-medium rounded-full hover:bg-[var(--color-primary-dark)] transition-colors"
+                        >
+                            {t.ctaButton}
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                            </svg>
+                        </Link>
+                    </MagneticButton>
                 </div>
             </section>
         </div>

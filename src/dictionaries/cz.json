@@ -62,20 +62,41 @@
     "about": {
         "title": "O nás",
         "subtitle": "O společnosti",
-        "heroTitle": "Váš partner pro nemovitosti v zahraničí",
-        "heroText": "Komplexní servis při koupi zahraničních nemovitostí podle individuálních požadavků klienta.",
-        "intro": "Společnost Relax Properties se snaží svými službami zajistit komplexní servis podle individuálních požadavků klienta. Spolupracujeme pouze s vybranými partnery jako jsou: advokáti, notáři, daňoví poradci, developeři či realitní kanceláře. Naším cílem je přinášet hladký průběh při koupi nemovitosti včetně komplexních poskytovaných služeb.",
+        "heroTitle": "Nemovitosti v zahraničí",
+        "heroText": "Česko-slovenská realitní kancelář specializující se na prodej zahraničních nemovitostí u moře.",
+        "intro": "Relax Properties je česko-slovenská realitní kancelář specializující se na prodej zahraničních nemovitostí u moře. Pomáháme klientům najít byty, domy a investiční nemovitosti přesně podle jejich představ v oblíbených destinacích jako Bulharsko, Řecko, Chorvatsko a Španělsko.",
+        "introSecondary": "Naším cílem je zajistit bezpečný, transparentní a bezstarostný proces koupě nemovitosti v zahraničí. Díky dlouholetým zkušenostem a spolupráci s ověřenými partnery přímo v jednotlivých zemích poskytujeme klientům kompletní servis – od výběru nemovitosti až po právní služby a poprodejní péči.",
+        "googleReviews": "60+ pozitivních 5hvězdičkových recenzí na Google",
         "partnersLabel": "Spolupracujeme s",
         "partners": ["Advokáti", "Notáři", "Daňoví poradci", "Developeři", "Realitní kanceláře"],
-        "goalsSubtitle": "Naše hlavní cíle",
-        "goalsTitle": "Na čem nám záleží",
-        "goals": [
-            "Poskytnout kvalitní výběr zahraničních nemovitostí od cenově dostupných až po nemovitosti určené pro náročného klienta v těch nejžádanějších zahraničních lokalitách",
-            "Zajistit hladký a bezproblémový bezpečný proces při koupi/prodeji zahraničních nemovitostí",
-            "Naše nemovitosti procházejí ověřením prodejní ceny, čímž se snažíme pro klienta zajistit nákup za nejlepší tržní cenu",
-            "Ke každému klientovi přistupujeme individuálně s maximální mírou empatie a vysokým standardem pomoci a služeb",
-            "Naším hlavním cílem je spokojenost klienta a ochrana jeho financí při koupi nemovitosti v zahraničí",
-            "Náš klient se na nás může kdykoli obrátit i po samotné koupi, jsme tu celý čas pro něj"
+        "whyUsSubtitle": "Proč právě my",
+        "whyUsTitle": "Proč si vybrat právě nás?",
+        "whyUsIntro": "Zakládáme si na hodnotách a transparentním přístupu, díky kterým jsme spolehlivým partnerem na vaší realitní cestě.",
+        "whyUs": [
+            {
+                "title": "Komplexní servis pod jednou střechou",
+                "description": "Od úvodní konzultace a důkladného pochopení vašich potřeb, přes analýzu trhu a výběr vhodné nemovitosti, až po kompletní právní servis, předání klíčů a poprodejní péči. Každému klientovi věnujeme maximální pozornost."
+            },
+            {
+                "title": "Transparentnost a férovost",
+                "description": "Komunikujeme otevřeně a přímo. Všechny kroky v procesu máme nastaveny jasně a srozumitelně. O každém jednom kroku vás vždy informujeme. U nás se nemusíte obávat skrytých poplatků ani nečekaných překvapení."
+            },
+            {
+                "title": "Individuální přístup",
+                "description": "Každý klient i každá nemovitost má svůj vlastní příběh. Proto ke každému přistupujeme osobně a navrhujeme řešení přesně podle vašich potřeb, cílů a představ."
+            },
+            {
+                "title": "Znalost lokálních trhů",
+                "description": "Realitní trh aktivně sledujeme a analyzujeme. Spolupracujeme s kolegy přímo v jednotlivých zemích, kteří znají místní prostředí, ceny, jazyk a legislativu. Díky tomu vám dokážeme poskytnout přesné a relevantní informace, čímž šetříme váš čas i finanční prostředky."
+            }
+        ],
+        "visionSubtitle": "Naše vize",
+        "visionTitle": "Vždy stojíme na vaší straně",
+        "visionText": "Naším cílem je být vaším důvěryhodným partnerem při koupi nemovitosti – vždy stojíme na vaší straně, sledujeme obchod vašima očima a zajišťujeme, aby celý proces proběhl bezpečně a v souladu s legislativou.",
+        "visionPoints": [
+            "Každý prodej začíná důkladným prověřováním vlastnických práv a všech právních náležitostí.",
+            "Spolupracujeme s místními odborníky v dané lokalitě, abychom zajistili, že obchod je zcela bezpečný a bez rizika.",
+            "Při prodeji nemovitosti nikdy nejste sami – provázíme vás každým krokem a staráme se, aby všechny vaše zájmy byly maximálně chráněny."
         ],
         "servicesSubtitle": "Naše služby",
         "servicesTitle": "Co pro vás zajistíme",
@@ -108,8 +129,8 @@
         "teamSubtitle": "Náš tým",
         "teamTitle": "Poznejte nás",
         "teamLanguages": "Komunikace v jazyce:",
-        "ctaTitle": "Připraveni najít váš vysněný domov?",
-        "ctaText": "Kontaktujte nás a začněme spolu hledat nemovitost, která vám splní vaše sny."
+        "ctaTitle": "Svěřte to profesionálům",
+        "ctaText": "Dopřejte si celý realitní proces bez stresu – bezpečný a transparentní, který začíná právě u nás, v Relax Properties."
     },
     "contact": {
         "title": "Kontakt",
@@ -131,11 +152,10 @@
             "phoneLabel": "Tel.:",
             "emailLabel": "Mail:",
             "phones": [
-                { "name": "Mgr. Aleš Dvořák", "number": "+421 911 989 895", "raw": "+421911989895" },
-                { "name": "Mgr. Viera Dvořáková", "number": "+421 911 819 152", "raw": "+421911819152" },
-                { "name": "Bc. Tatiana Tóthová", "number": "+421 911 353 550", "raw": "+421911353550" }
+                { "name": "Mgr. Aleš Dvořák", "number": "+420 739 049 593", "raw": "+420739049593" },
+                { "name": "Mgr. Viera Dvořáková", "number": "+421 911 819 152", "raw": "+421911819152" }
             ],
-            "emails": ["info@relaxproperties.sk", "spanielsko@relaxproperties.sk"]
+            "emails": ["info@relaxproperties.cz", "spanelsko@relaxproperties.cz"]
         },
         "form": {
             "name": "Jméno",
@@ -316,32 +336,68 @@
             "greece": {
                 "name": "Řecko",
                 "flag": "🇬🇷",
-                "intro": "Řecko láká atraktivními cenami a programem Golden Visa pro povolení k pobytu. Rostoucí turistický sektor.",
+                "intro": "Řecko nabízí atraktivní přímořské nemovitosti s rostoucím investičním potenciálem. Celý proces nákupu probíhá prostřednictvím advokáta, který vás ve všech krocích zastupuje.",
                 "highlights": [
-                    "Golden Visa",
-                    "Atraktivní ceny",
-                    "Středomořské klima"
+                    "Člen EU",
+                    "Schengen + Euro",
+                    "Turistický potenciál"
                 ],
                 "process": [
                     {
-                        "title": "AFM číslo",
-                        "description": "Pomůžeme získat řecké daňové číslo."
-                    },
-                    {
                         "title": "Výběr nemovitosti",
-                        "description": "Návštěva a výběr na pevnině nebo ostrovech."
+                        "description": "Vyberte si nemovitost podle vašich preferencí, nebo vám s výběrem rádi poradíme. Ověříme dostupnost a vypočítáme kompletní cenu včetně všech poplatků."
                     },
                     {
-                        "title": "Právní kontrola",
-                        "description": "Advokát ověří vlastnická práva a dokumenty."
+                        "title": "Prohlídka nemovitosti",
+                        "description": "Prohlídku lze realizovat osobně v Řecku, nebo formou video prohlídky přes WhatsApp/Skype. Video prohlídky jsou nejpoužívanější způsob — ukážeme vám nemovitost, okolí a sdílíme s vámi záznam."
                     },
                     {
-                        "title": "Kupní smlouva",
-                        "description": "Podpis smlouvy u notáře."
+                        "title": "Vyjednání ceny",
+                        "description": "Prověříme ceny v podobné lokalitě a vyjednáme co nejlepší cenu ve váš prospěch. Provize realitní kanceláře je již zahrnuta v ceně nemovitosti."
                     },
                     {
-                        "title": "Registrace",
-                        "description": "Zápis do registru a vyřízení Golden Visa."
+                        "title": "Řecké daňové číslo a bankovní účet",
+                        "description": "Prvním krokem je zřízení daňového identifikačního čísla. Je potřebné pro nákup nemovitosti, otevření bankovního účtu, uzavření smluv a převod energií."
+                    },
+                    {
+                        "title": "Rezervační záloha a doplatek",
+                        "description": "Rezervační záloha ve výši 10% z ceny nemovitosti se platí na účet advokáta. Po podpisu smlouvy u notáře se nemovitost stáhne z nabídky. Doplatek se posílá v průběhu dalšího měsíce."
+                    },
+                    {
+                        "title": "Přepis u notáře",
+                        "description": "Připravíme všechny smlouvy a dokumenty ve vašem jazyce i v řečtině. Licencovaný řecký advokát vás zastupuje v celém procesu. Finance jsou v jeho úschově a převedeny prodávajícímu až po přepisu na vaše jméno."
+                    },
+                    {
+                        "title": "Poplatky při nákupu",
+                        "description": "Celkové poplatky včetně daní jsou cca 7% z ceny nemovitosti. Přesnou částku určuje notář.",
+                        "items": [
+                            "Vypracování všech smluv a dokumentů",
+                            "Zastupování na všech úřadech",
+                            "Registrace a vydání daňového čísla",
+                            "Právní kontrola nemovitosti (list vlastnictví, stavební povolení, absence dluhů)",
+                            "Odměna advokáta: cca 1,5% z ceny nemovitosti",
+                            "Notářské poplatky: cca 2% z ceny nemovitosti",
+                            "Daň z převodu nemovitosti: cca 3,5% z ceny nemovitosti",
+                            "Poplatky za ověření podpisů u notáře",
+                            "Bankovní poplatky: cca 0,1% z ceny nemovitosti"
+                        ]
+                    },
+                    {
+                        "title": "Stáváte se vlastníkem",
+                        "description": "Při notářském procesu přecházejí všechna vlastnická práva na vás. Katastr zápis provede na základě notářského aktu. Jako bonus dostanete pojištění nemovitosti na 1 rok zdarma a úklid před vaším příjezdem."
+                    },
+                    {
+                        "title": "Náklady na vlastnictví",
+                        "description": "Běžné poplatky zahrnují vodu a elektřinu (měsíčně). Ročně se platí daň z nemovitosti — jako nový vlastník jste první rok osvobozen.",
+                        "items": [
+                            "Voda a elektřina — měsíční platby dle spotřeby",
+                            "Internetové a TV připojení",
+                            "Roční daň z nemovitosti (první rok osvobození)"
+                        ]
+                    },
+                    {
+                        "title": "Pronájem nemovitosti",
+                        "description": "Pomůžeme vám zajistit profesionální správu nemovitosti pro pronájem včetně kompletního servisu. Přesný příjem závisí na úrovni nemovitosti, poloze a délce pronajímaného období."
                     }
                 ]
             }

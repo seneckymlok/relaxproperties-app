@@ -114,7 +114,7 @@ export default function PhotoGallery({ images, title }: PhotoGalleryProps) {
                     >
                         {images.map((image, index) => (
                             <SwiperSlide key={index}>
-                                <div className="relative aspect-[4/3] rounded-lg overflow-hidden cursor-pointer opacity-60 hover:opacity-100 transition-opacity [.swiper-slide-thumb-active_&]:opacity-100 [.swiper-slide-thumb-active_&]:ring-2 [.swiper-slide-thumb-active_&]:ring-[var(--color-primary)]">
+                                <div className="relative aspect-[4/3] rounded-xl overflow-hidden cursor-pointer opacity-50 hover:opacity-90 transition-all duration-200 [.swiper-slide-thumb-active_&]:opacity-100">
                                     <Image
                                         src={image}
                                         alt={`Thumbnail ${index + 1}`}

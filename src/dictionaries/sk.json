@@ -62,20 +62,41 @@
     "about": {
         "title": "O nás",
         "subtitle": "O spoločnosti",
-        "heroTitle": "Váš partner pre nehnuteľnosti v zahraničí",
-        "heroText": "Komplexný servis pri kúpe zahraničných nehnuteľností podľa individuálnych požiadaviek klienta.",
-        "intro": "Spoločnosť Relax Properties sa snaží svojimi službami zabezpečiť komplexný servis podľa individuálnych požiadaviek klienta. Spolupracujeme len s vybranými partnermi ako sú: advokáti, notári, daňoví poradcovia, developeri či realitné kancelárie. Našim cieľom je prinášať hladký priebeh pri kúpe nehnuteľnosti vrátane komplexných poskytovaných služieb.",
+        "heroTitle": "Nehnuteľnosti v zahraničí",
+        "heroText": "Česko-slovenská realitná kancelária špecializujúca sa na predaj zahraničných nehnuteľností pri mori.",
+        "intro": "Relax Properties je česko-slovenská realitná kancelária špecializujúca sa na predaj zahraničných nehnuteľností pri mori. Pomáhame klientom nájsť apartmány, domy a investičné nehnuteľnosti presne podľa ich predstáv v obľúbených destináciách ako Bulharsko, Grécko, Chorvátsko a Španielsko.",
+        "introSecondary": "Našim cieľom je zabezpečiť bezpečný, transparentný a bezstarostný proces kúpy nehnuteľnosti v zahraničí. Vďaka dlhoročným skúsenostiam a spolupráci s overenými partnermi priamo v jednotlivých krajinách poskytujeme klientom kompletný servis – od výberu nehnuteľnosti až po právne služby a popredajnú starostlivosť.",
+        "googleReviews": "60+ pozitívnych 5-hviezdičkových recenzií na Google",
         "partnersLabel": "Spolupracujeme s",
         "partners": ["Advokáti", "Notári", "Daňoví poradcovia", "Developeri", "Realitné kancelárie"],
-        "goalsSubtitle": "Naše hlavné ciele",
-        "goalsTitle": "Na čom nám záleží",
-        "goals": [
-            "Poskytnúť kvalitný výber zahraničných nehnuteľností od cenovo dostupných až po nehnuteľnosti určené pre náročného klienta v tých najžiadanejších zahraničných lokalitách",
-            "Zabezpečiť hladký a bezproblémový bezpečný proces pri kúpe/predaji zahraničných nehnuteľností",
-            "Naše nehnuteľnosti prechádzajú overením predajnej ceny, čím sa snažíme pre klienta zabezpečiť nákup za najlepšiu trhovú cenu",
-            "Ku každému klientovi pristupujeme individuálne s maximálnou mierou empatie a vysokým štandardom pomoci a služieb",
-            "Našim hlavným cieľom je spokojnosť klienta a ochrana jeho financií pri kúpe nehnuteľnosti v zahraničí",
-            "Náš klient sa na nás môže kedykoľvek obrátiť aj po samotnej kúpe, sme tu celý čas pre neho"
+        "whyUsSubtitle": "Prečo práve my",
+        "whyUsTitle": "Prečo si vybrať práve nás?",
+        "whyUsIntro": "Zakladáme si na hodnotách a transparentnom prístupe, vďaka ktorým sme spoľahlivým partnerom na vašej realitnej ceste.",
+        "whyUs": [
+            {
+                "title": "Komplexný servis pod jednou strechou",
+                "description": "Od úvodnej konzultácie a dôkladného pochopenia vašich potrieb, cez analýzu trhu a výber vhodnej nehnuteľnosti, až po kompletný právny servis, odovzdanie kľúčov a popredajnú starostlivosť. Každému klientovi venujeme maximálnu pozornosť."
+            },
+            {
+                "title": "Transparentnosť a férovosť",
+                "description": "Komunikujeme otvorene a priamo. Všetky kroky v procese máme nastavené jasne a zrozumiteľne. O každom jednom kroku vás vždy informujeme. U nás sa nemusíte obávať skrytých poplatkov ani nečakaných prekvapení."
+            },
+            {
+                "title": "Individuálny prístup",
+                "description": "Každý klient aj každá nehnuteľnosť má svoj vlastný príbeh. Preto ku každému pristupujeme osobne a navrhujeme riešenia presne podľa vašich potrieb, cieľov a predstáv."
+            },
+            {
+                "title": "Znalosť lokálnych trhov",
+                "description": "Realitný trh aktívne sledujeme a analyzujeme. Spolupracujeme s kolegami priamo v jednotlivých krajinách, ktorí poznajú miestne prostredie, ceny, jazyk a legislatívu. Vďaka tomu vám vieme poskytnúť presné a relevantné informácie, čím šetríme váš čas aj finančné prostriedky."
+            }
+        ],
+        "visionSubtitle": "Naša vízia",
+        "visionTitle": "Vždy stojíme na vašej strane",
+        "visionText": "Naším cieľom je byť vaším dôveryhodným partnerom pri kúpe nehnuteľnosti – vždy stojíme na vašej strane, sledujeme obchod vašimi očami a zabezpečujeme, aby celý proces prebehol bezpečne a v súlade s legislatívou.",
+        "visionPoints": [
+            "Každý predaj začína dôkladným preverovaním vlastníckych práv a všetkých právnych náležitostí.",
+            "Spolupracujeme s miestnymi odborníkmi v danej lokalite, aby sme zaistili, že obchod je úplne bezpečný a bez rizika.",
+            "Pri predaji nehnuteľnosti nikdy nie ste sami – sprevádzame vás každým krokom a staráme sa, aby všetky vaše záujmy boli maximálne chránené."
         ],
         "servicesSubtitle": "Naše služby",
         "servicesTitle": "Čo pre vás zabezpečíme",
@@ -108,8 +129,8 @@
         "teamSubtitle": "Náš tím",
         "teamTitle": "Spoznajte nás",
         "teamLanguages": "Komunikácia v jazyku:",
-        "ctaTitle": "Pripravení nájsť váš vysnívaný domov?",
-        "ctaText": "Kontaktujte nás a začnime spolu hľadať nehnuteľnosť, ktorá vám splní vaše sny."
+        "ctaTitle": "Zverte to profesionálom",
+        "ctaText": "Doprajte si celý realitný proces bez stresu – bezpečný a transparentný, ktorý začína práve u nás, v Relax Properties."
     },
     "contact": {
         "title": "Kontakt",
@@ -229,30 +250,57 @@
                 "process": [
                     {
                         "title": "Výber nehnuteľnosti",
-                        "description": "Pomôžeme vám vybrať nehnuteľnosť podľa vašich požiadaviek vrátane obhliadok."
+                        "description": "Vyberte si apartmán podľa Vašich preferencií, prípadne Vám s výberom radi poradíme. Komplexy osobne navštevujeme a veľmi dobre ich poznáme. Pri výbere nehnuteľnosti je veľmi dôležitá poloha, úroveň komplexu, jeho služby a zázemie, ďalším dôležitým faktorom je úroveň starostlivosti manažmentu o komplex a jeho údržby.\n\nV Bulharsku sú dva druhy komplexov. Celoročné a sezónne komplexy. Celoročné sú Vám k dispozícii otvorené celý rok. Sezónne komplexy sú zväčša otvorené od mája do konca septembra (hlavná sezóna). Radi Vám poradíme.\n\nKeď ste si vybrali nehnuteľnosť, overíme dostupnosť apartmánu, prípadne či už nebola náhodou predaná alebo zložená rezervačná záloha. Vypočítame Vám kompletnú cenu nehnuteľnosti vrátane všetkých poplatkov, ktoré sú s kúpou nehnuteľností v Bulharsku spojené. Zodpovieme všetky doplňujúce otázky."
                     },
                     {
-                        "title": "Rezervácia",
-                        "description": "Podpis rezervačnej zmluvy a záloha 2 000 – 5 000 €."
+                        "title": "Obhliadka nehnuteľnosti",
+                        "description": "Sú dve možnosti realizovania obhliadok nehnuteľností.\n\nPrvý spôsob je reálne fyzicky navštíviť nehnuteľnosť, pozrieť si lokalitu, vybavenosť a služby ktoré ponúka okolie. Ak ste v Bulharsku na dovolenke, radi Vám nehnuteľnosť ukážeme osobne.\n\nDruhý spôsob, ktorý je zároveň najviac využívaný, je video obhliadka. Video obhliadka je bezpečný spôsob nákupu nehnuteľností, až 95% nákupu nehnuteľností realizujeme týmto spôsobom.\n\nV prvom rade je to rýchlo meniaca sa ponuka. Realitný trh v Bulharsku je veľmi dynamický a ponuka za dobrú cenu a v dobrom komplexe je rýchlo predaná. Ak by ste vycestovali do Bulharska, môže sa Vám častokrát stať, že nehnuteľnosť, na ktorú ste sa chceli prísť pozrieť osobne už nie je k dispozícii.\n\nPri video obhliadke si spolu dohodneme termín cez aplikáciu WhatsApp, prípadne Skype, cez ktorý Vám ukážeme apartmán, výhľady, čo sa v ňom nachádza, jeho vybavenie a pokojne aj okolie. Počas video obhliadky Vás informujeme v akom je apartmán stave. Následne pripravíme z obhliadky video záznam, ktorý Vám zašleme. Pokiaľ sa Vám apartmán páči, skontrolujeme ho, overíme si v akom je stave, teda funkčnosť jeho príslušenstva (voda, elektrina, nábytok, okná atď.)."
                     },
                     {
-                        "title": "Právna kontrola",
-                        "description": "Náš právnik skontroluje dokumenty a overí históriu nehnuteľnosti."
+                        "title": "Negociácia ceny",
+                        "description": "Každý z nás chce kupovať za čo najvýhodnejšiu cenu a mať z obchodu radosť. Našou snahou je maximalizovať vašu spokojnosť. Preto preveríme ceny nehnuteľností v podobnej lokalite a kvalite a ak je možné o cene rokovať, snažíme sa vždy vyjednať cenu vo Váš prospech.\n\nProvízia realitnej spoločnosti je zahrnutá už v cene nehnuteľnosti. Celý proces kúpy nehnuteľnosti prebieha prostredníctvom advokáta, ktorý Vás vo všetkých krokoch zastupuje a je garantom celej transakcie.\n\nPred samotnou úhradou rezervačnej zálohy vždy preverujeme vlastnícke práva k samotnej nehnuteľnosti."
                     },
                     {
-                        "title": "Podpis zmluvy",
-                        "description": "Kúpna zmluva u notára. Možnosť na diaľku cez splnomocnenie."
+                        "title": "Zaplatenie rezervačnej zálohy a zvyšnej časti kúpnej ceny",
+                        "description": "Rezervačná záloha slúži k rezervácii apartmánu. Po podpise zmluvy o rezervácii, poskytnutí súčinnosti pri kúpe nehnuteľnosti a zaplatení zálohy sa apartmán stiahne z ponuky a ďalej sa neponúka.\n\nCelková cena rezervačnej zálohy je 4.400 € a skladá sa z dvoch častí. Prvá časť je provízia našej realitnej kancelárie v sume 2.400 EUR (2.000 EUR + 20% DPH) a druhá časť sumy 2.000 EUR slúži ako depozit za nehnuteľnosť, ktorá sa posiela na účet zastupujúceho advokáta, ktorý Vás bude zastupovať a ako nezávislý článok garantuje, že celý proces kúpy bude prebiehať v poriadku a vo Váš prospech. Vždy pred uhradením rezervačnej zálohy Vám pošleme preukaz advokáta.\n\nDôležitá informácia — uhradená záloha bankovým prevodom už tvorí časť kúpnej ceny. Všetky financie sú posielané výhradne na špeciálne vytvorený bankový účet advokáta a sú v jeho úschove. Financie sú poukázané predávajúcemu až po prepise nehnuteľnosti na Vaše meno. Tento proces je nastavený z dôvodu vašej ochrany.\n\nZvyšná časť kúpnej ceny sa posiela neskôr v priebehu ďalšieho mesiaca a je už znížená o spomínanú rezervačnú zálohu. Pred uhradením zvyšnej časti za nehnuteľnosť preverujeme všetky nedoplatky (voda, elektrina, údržbový poplatok), prípadne pôžičky či hypotéky — tak, aby bola nehnuteľnosť v deň prepisu u notára bez tiarch."
                     },
                     {
-                        "title": "Prevod vlastníctva",
-                        "description": "Po zaplatení sa nehnuteľnosť prevedie na vaše meno."
+                        "title": "Prepis nehnuteľnosti u notára",
+                        "description": "Naša RK pripraví zmluvy a dokumenty, ktoré budete podpisovať u slovenského notára a ktoré budú v slovenskom a bulharskom jazyku. Pripravíme pre Vás plnú moc právnikovi (táto plná moc sa bude viazať len ku konkrétnemu obchodu) a čestné vyhlásenia (Európsky zákon AML). Tieto dokumenty treba podpísať u slovenského notára s overením podpisu do zahraničia.\n\nV celom procese kúpy nehnuteľnosti Vás na úradoch a všetkých inštitúciách zastupuje licencovaný bulharský advokát s preukazom v advokátskej komore. Spolupracujeme len s overeným advokátom, ktorý sa špecializuje na oblasť práva spojeného s nehnuteľnosťami, kúpou a predajom pre zahraničných občanov či investorov.\n\nCelý proces obchodu riadime výslovne len s advokátom. Lokálny advokát pozná bulharské právo a zaručuje, že transakcia prebehne hladko a transparentne. Financie určené na kúpu nehnuteľnosti sú v jeho advokátskej úschove a sú predávajúcemu poukázané až po prepise nehnuteľnosti na Vaše meno. O každom kroku Vás vždy dopredu informujeme a sme Vám v prípade otázok kedykoľvek k dispozícii."
+                    },
+                    {
+                        "title": "Poplatky pri kúpe nehnuteľnosti",
+                        "description": "Pri kúpe nehnuteľnosti je v Bulharsku potrebné rátať s dvoma druhmi poplatkov. Prvý je za službu advokáta, ktorý Vás zastupuje v celom procese kúpy. Druhý poplatok zahŕňa dane a poplatky miestnej samospráve — notára a notárske poplatky spolu s daňou z prevodu nehnuteľností, ktoré plynú Bulharskému štátu.",
+                        "items": [
+                            "Vypracovanie zmlúv a prekladov",
+                            "Vaše zastupovanie na všetkých úradoch",
+                            "Registrácia a vydanie Bulstat number (Vaše daňové registračné identifikačné číslo v Bulharsku)",
+                            "Prepis elektriny a vody na Vaše meno",
+                            "Advokátska úschova peňazí",
+                            "Cena advokátskych služieb: 500 € (cena špeciálne pre našich klientov)",
+                            "Daň z prevodu nehnuteľnosti vo výške približne 7% z ceny Vašej nehnuteľnosti (presnú čiastku určuje notár v závislosti od lokality)",
+                            "Poplatky za overenie podpisov u notára na Slovensku",
+                            "Bankové poplatky cca 0,1% z ceny nehnuteľností — prevod medzi menami LEV (BGN) a EURO"
+                        ]
+                    },
+                    {
+                        "title": "Stávate sa majiteľom nehnuteľnosti",
+                        "description": "Automaticky pri notárskom procese prechádzajú všetky vlastnícke práva na Vás a stávate sa majiteľom apartmánu. Kataster vykoná na základe Notárskeho aktu zápis.\n\nVáš zastupujúci advokát podpíše s komplexom za Vás Zmluvu o správe a údržbe. Oznámi komplexu nového majiteľa. Následne Vám pošleme kontakty na komplex, spísaný návod ako majiteľovi apartmánu, kde budete mať všetky dôležité informácie na plnohodnotné trávenie pobytu vo Vašej nehnuteľnosti.\n\nAko bonus od nás dostanete navyše Poistenie nehnuteľnosti na 1 rok zdarma a upratanie apartmánu pred Vašim príchodom. Po prepise elektriny na Vaše meno Vás budeme inštruovať a pomôžeme Vám zriadiť elektronický účet, aby ste jednoducho mohli elektrinu uhrádzať cez elektronickú faktúru. Vodu zväčša hradí komplex a na konci roka Vám ju vyúčtuje. Apartmány majú svoje vlastné merače vody a elektriny."
+                    },
+                    {
+                        "title": "Náklady spojené s vlastníctvom apartmánu",
+                        "description": "Apartmánový komplex si účtuje Ročný správcovský a údržbový poplatok. Tento poplatok sa uhrádza 1x za rok. Zahŕňa údržbu a správu komplexu, zelene, bazénov, upratovanie spoločných priestorov a podobne. Každý komplex má stanovenú svoju cenu za správu, ktorá súvisí aj s úrovňou poskytovaných služieb. Treba počítať približne so sumou od 10 € do 20 € za m² (vášho apartmánu).\n\nĎalšie poplatky, s ktorými je potrebné počítať, sú voda a elektrina. Elektrina sa platí mesačne v závislosti od reálnej spotreby. Týchto poplatkov sa netreba obávať, sú nižšie ako na Slovensku.\n\nPoplatky môžu byť takisto účtované za internetové a TV pripojenie. Zvyčajne sa dojednávajú s daným komplexom. Platiť je možné aj za určité stanovené obdobie (napríklad 3 mesiace a podobne).\n\nKaždý rok sa platí daň z nehnuteľnosti, ktorej výška závisí od veľkosti apartmánu. Ako nový majiteľ ste prvý rok od úhrady tejto dane oslobodený."
+                    },
+                    {
+                        "title": "Prenájom apartmánu",
+                        "description": "Záleží len na Vás, či chcete apartmán využívať len pre vlastné potreby alebo ho plánujete aj prenajímať.\n\nPrenájom a starostlivosť o apartmán je ideálne ponechať manažmentu hotela, ktorý sa postará o jeho kompletný servis ako je výmena bielizne, uterákov, hygienické potreby, upratovanie. Komplex Vám zväčša túto službu zabezpečí, vzhľadom na štandardne dlhodobé zmluvy s cestovnými kanceláriami a operátormi.\n\nPresný príjem zo zisku je individuálny, závisí od množstva premenných ako je úroveň komplexu a Vášho apartmánu, množstva poskytovaných služieb, veľkosti apartmánu, dĺžky prenajímaného obdobia a podobne. Určite však nebudete v strate. Svoj apartmán tak môžete využívať na vlastné účely a zároveň Vám bude prinášať určitý príjemný zisk, ktorý celkom iste pokryje investované ročné náklady.\n\nSamozrejme máme kontakty aj na externé spoločnosti, ktoré sa venujú prenájmom a starostlivosti o tento typ nehnuteľností. Radi Vám s tým poradíme."
                     }
                 ]
             },
             "croatia": {
                 "name": "Chorvátsko",
                 "flag": "🇭🇷",
-                "intro": "Chorvátsko je od roku 2023 súčasťou Schengenu a eurozóny. Jadranské pobrežie ponúka vysoký turistický potenciál.",
+                "intro": "Proces kúpy nehnuteľnosti v Chorvátsku si vyžaduje realitné znalosti a skúsenosti z tejto oblasti. Naša realitná kancelária je vždy na strane kupujúceho a všetky kroky smerujú v jeho prospech.",
                 "highlights": [
                     "Schengen + Euro",
                     "Turistický potenciál",
@@ -261,30 +309,64 @@
                 "process": [
                     {
                         "title": "Výber nehnuteľnosti",
-                        "description": "Spoločne nájdeme ideálnu nehnuteľnosť na pobreží alebo v zázemí."
+                        "description": "Pred každým výberom nehnuteľnosti je dobré zvážiť si všetky požiadavky od počtu izieb, lokality až po rozpočet. Vyberte si nehnuteľnosť/apartmán podľa predstáv, preferencií a zvoleného rozpočtu. Výber môžete zveriť aj nám a radi Vám pošleme ponuku šitú na mieru.\n\nProstredníctvom nášho partnera v Chorvátsku preveríme, či je ponuka stále dostupná, prípadne či nebola zložená rezervačná záloha. Odpovieme na všetky vaše otázky."
                     },
                     {
-                        "title": "Predbežná zmluva",
-                        "description": "Zmluva o budúcej kúpnej zmluve so zálohou 10%."
+                        "title": "Obhliadka vybranej nehnuteľnosti",
+                        "description": "Obhliadka nehnuteľnosti prebieha na mieste. Je veľmi dôležité osobne navštíviť zvolenú nehnuteľnosť, detailne si pozrieť stav nehnuteľnosti, vybavenie, polohu, lokalitu a v neposlednom rade služby ktoré táto lokalita ponúka.\n\nAj počas obhliadky sa snažíme byť k dispozícii našim klientom. Pokiaľ nám to umožní čas, zúčastňujeme sa obhliadok osobne. V prípade, že nám to čas neumožní, sme na telefóne a prekladáme všetky Vaše otázky. Aj na diaľku zisťujeme všetky informácie k danej nehnuteľnosti.\n\nProces obhliadky: Ako prvé si spoločne dohodneme termín obhliadky. Pred vycestovaním sa podpíše Obhliadkový formulár. Náš kolega v Chorvátsku Vám ukáže celú nehnuteľnosť a jej okolie. Zodpovie na všetky Vaše otázky, prípadne upozorní na nedostatky."
                     },
                     {
-                        "title": "Právna kontrola",
-                        "description": "Overenie vlastníckych práv a zápisu v katastri."
+                        "title": "Negociácia ceny",
+                        "description": "Každý chceme kupovať za čo najlepšie ceny a mať z obchodu radosť. Preveríme ceny nehnuteľností v podobnej lokalite a kvalite, pokiaľ je priestor na zjednávanie ceny, snažíme sa negociovať cenu vždy vo Váš prospech. Provízia realitnej spoločnosti je zahrnutá už v cene uvedenej nehnuteľnosti.\n\nCelý proces kúpy prebieha prostredníctvom právnika, ktorý Vás zastupuje a je garantom celého obchodu. Po dohode na cene preverujeme vlastnícke práva k samotnej nehnuteľnosti (kolaudačné rozhodnutia, prípadne ťarchy)."
                     },
                     {
-                        "title": "Kúpna zmluva",
-                        "description": "Podpis u notára s úradným prekladom."
+                        "title": "Proces rezervácie a kúpy nehnuteľnosti",
+                        "description": "Pokiaľ ste si vybrali nehnuteľnosť, nasleduje rezervácia, ktorá zabezpečí, že sa nehnuteľnosť nebude ponúkať už ďalej a stiahne sa z realitného trhu.\n\nPre rezerváciu je potrebné: podpísanie zmluvy o spolupráci s našou realitnou kanceláriou a podpísanie rezervačnej zmluvy / Zmluvy o budúcej zmluve s predávajúcim. Pri podpise sa uhrádza rezervačná záloha vo výške 10% z ceny nehnuteľnosti a 50% z realitnej provízie. Uvádzaná cena nehnuteľnosti na našej web stránke už zahŕňa kompletnú realitnú províziu.\n\nPodpis finálnej kúpnopredajnej zmluvy s predávajúcim je realizovaný väčšinou do 30-60 dní. Po podpise finálnej zmluvy je nutné do 8 dní zrealizovať doplatok zostatku kúpnej ceny (zvyšných 90%) spoločne s doplatkom zvyšných 50% provízie realitnej kancelárie.",
+                        "items": [
+                            "Právna kontrola a preverenie dokladov o vlastníctve a kolaudácie/stavebného povolenia",
+                            "Kontrola nehnuteľnosti a jej prípadné zaťaženie (hypotéky a dlhy)",
+                            "Zabezpečenie prekladov do slovenského jazyka pre všetky dokumenty a zmluvy",
+                            "Reprezentácia klienta pred Daňovým úradom v prípade potreby",
+                            "Získanie kolaudačných rozhodnutí k nehnuteľnosti (Novostavby)",
+                            "Prepisy energií na vaše meno (prepis merača vody a elektriny)",
+                            "Prihlásenie nového vlastníka na Miestne dane, odpady",
+                            "Získanie aktuálneho výpisu Lista vlastníctva z Katastra nehnuteľností",
+                            "Poistenie nehnuteľnosti na jeden rok"
+                        ]
                     },
                     {
-                        "title": "Zápis do katastra",
-                        "description": "Nehnuteľnosť zapíšeme na vaše meno. Proces trvá cca 30 dní."
+                        "title": "Právne služby",
+                        "description": "Všetky pripravované zmluvy, ktoré podpisujete, budú vyhotovené v slovenskom a chorvátskom jazyku.\n\nSpolupracujeme len s overeným právnikom, ktorý sa špecializuje na oblasť práva spojeného s nehnuteľnosťami, kúpou a predajom pre zahraničných občanov či investorov. Správny výber právnika je dôležitý ako pre Vás, tak aj pre nás. Pre Vás z dôvodu, že Vás zastupuje a vedie celý Váš obchod vo Vašom mene, nakladá s Vašimi financiami. Pre nás je dôležitý správny výber z hľadiska možného poškodenia dobrého mena našej spoločnosti.\n\nCelý proces obchodu riadime výslovne len s právnikom. Lokálny právnik pozná miestne právo a zaručuje, že celý proces obchodu prejde hladkou a čistou formou."
+                    },
+                    {
+                        "title": "Poplatky ku kúpe nehnuteľnosti",
+                        "description": "Pri kúpe nehnuteľnosti v Chorvátsku je potrebné rátať s dvoma druhmi poplatkov: za právne služby a za Daň z prevodu nehnuteľností.",
+                        "items": [
+                            "Poplatky za právne služby vo výške 1% z ceny nehnuteľnosti + 25% DPH",
+                            "Vypracovanie všetkých zmlúv spĺňajúcu požiadavky miestnej legislatívy",
+                            "Návrh pre IRS (Daňový úrad) na vyrubenie dane z prevodu nehnuteľnosti",
+                            "Registrácia na OIB (Osobné identifikačné číslo)",
+                            "Zastupovanie pred úradmi",
+                            "Zápis vlastníctva do Katastra nehnuteľnosti",
+                            "Daň z prevodu nehnuteľnosti vo výške 3% z ceny nehnuteľnosti (splatná do 15 dní od doručenia rozhodnutia)"
+                        ]
+                    },
+                    {
+                        "title": "Stávate sa majiteľom nehnuteľnosti",
+                        "description": "Poznáte cenu nehnuteľnosti, všetky poplatky pri procese kúpy nehnuteľnosti, prešli ste si celým procesom kúpy — stávate sa majiteľom nehnuteľnosti v Chorvátsku.\n\nS akými ďalšími poplatkami ako vlastník je potrebné počítať počas roka:",
+                        "items": [
+                            "Daň z nehnuteľnosti, platí sa každý rok — poplatok je približne 1-2 €/m² (v závislosti od lokality)",
+                            "Voda a elektrina, ktoré sa platia mesačne",
+                            "Ročný poplatok za odvoz odpadu",
+                            "Poplatky za internetové pripojenie a TV pripojenie"
+                        ]
                     }
                 ]
             },
             "spain": {
                 "name": "Španielsko",
                 "flag": "🇪🇸",
-                "intro": "Španielsko ponúka stabilný právny systém a celoročné slnečné podnebie. Costa Blanca a Costa del Sol patria k najobľúbenejším.",
+                "intro": "Prevod nehnuteľnosti v Španielsku zabezpečuje notár a každá oblasť Španielska má rozdielne poplatky. Ceny nehnuteľností na našej stránke sú vrátane DPH a provízie našej realitnej kancelárie.",
                 "highlights": [
                     "Stabilný právny systém",
                     "Silný prenájom",
@@ -292,56 +374,120 @@
                 ],
                 "process": [
                     {
-                        "title": "NIE číslo",
-                        "description": "Pomôžeme získať španielske daňové identifikačné číslo."
-                    },
-                    {
                         "title": "Výber nehnuteľnosti",
-                        "description": "Nájdeme nehnuteľnosť podľa kritérií a zorganizujeme obhliadky."
+                        "description": "Vyberte si nehnuteľnosť podľa Vašich preferencií, prípadne Vám s výberom poradíme. Radi Vám takisto vypracujeme ponuku na základe Vašich konkrétnych požiadaviek a rozpočtu. Poradíme Vám aj s lokalitou, podľa toho, aký účel by mala nehnuteľnosť spĺňať. Odporúčame si vybrať viacero nehnuteľností, aby ste si mohli jednotlivé realitné ponuky porovnať.\n\nNásledne overíme dostupnosť a zabezpečíme obhliadku."
                     },
                     {
-                        "title": "Arras zmluva",
-                        "description": "Predbežná zmluva so zálohou 10%."
+                        "title": "Obhliadka nehnuteľnosti",
+                        "description": "Obhliadku nehnuteľnosti najprv realizujeme na diaľku prostredníctvom videa, ideálne cez aplikáciu WhatsApp. Ukážeme Vám nehnuteľnosť, aby ste si mohli v prípade záujmu naplánovať cestu do Španielska a reálne si nehnuteľnosť pozrieť. Pokiaľ ste si našli svoju vysnívanú nehnuteľnosť, dáme Vám k lokalite ešte detailnejšie informácie o okolí a podobne."
                     },
                     {
-                        "title": "Escritura",
-                        "description": "Podpis verejnej listiny u notára."
+                        "title": "Zriadenie N.I.E. (número de identificación de Extranjeros)",
+                        "description": "Prvý krok po výbere vysnívanej nehnuteľnosti je zriadenie dokumentu N.I.E. (španielske daňové identifikačné číslo), ktorý je ekvivalentom nášho rodného čísla. Je to identifikačné číslo pre cudzincov, pod ktorým sa nehnuteľnosť registruje.\n\nToto číslo je nevyhnutné pri kúpe alebo predaji nehnuteľnosti, pri otvorení bankového účtu, žiadosti o úver, pri uzavretí zmluvy a prevode elektriny, vody, plynu, poistenia nehnuteľnosti, atď.\n\nNa jeho zriadenie sú potrebné osobné doklady, vyplnený formulár a poplatok v banke vo výške približne 9 €. Dá sa vyžiadať osobne alebo cez splnomocnenie. Vydáva ho cudzinecká polícia alebo iný policajný útvar. Treba požiadať o termín a podľa aktuálneho dopytu trvá jeho vyhotovenie približne 2-4 týždne."
                     },
                     {
-                        "title": "Registrácia",
-                        "description": "Zápis do registra a prevod služieb."
+                        "title": "Zaplatenie rezervačnej zálohy",
+                        "description": "Pred zaplatením rezervačnej zálohy preverujeme vlastnícke práva k danej nehnuteľnosti. Ak je list vlastníctva v poriadku (Nota simple), pristúpi sa k rezervácii podľa zmluvných podmienok.\n\nZaplatí sa tzv. Blokovací depozit (Señal) podľa dohody a následne sa pridelí termín na podpísanie zmluvy o budúcej zmluve (Contrato de Aras). Tento poplatok je väčšinou vo výške 10% z kúpnej ceny (záleží od nehnuteľnosti). Táto suma sa odráta zo zvyšnej čiastky z ceny nehnuteľnosti.\n\nV prípade, že kupujúci odstúpi od zmluvy, stráca celý depozit. No ak odstúpi predávajúci, je povinný vyplatiť dvojnásobok vyplatenej zálohy. Na rezervačnej zmluve je tiež uvedený termín ukončenia kúpneho procesu."
+                    },
+                    {
+                        "title": "Právnik alebo právny zástupca",
+                        "description": "Okrem listu vlastníctva (Nota simple informativa) sa overujú aj iné dokumenty a úhrada faktúr za dodávky služieb. List vlastníctva zabezpečuje ešte pred kúpou priamo notár alebo právny zástupca z katastra nehnuteľností.",
+                        "items": [
+                            "Výpis z listu vlastníctva — Nota simple",
+                            "Potvrdenie o zaplatení dane z nehnuteľností (IBI)",
+                            "Výpis z katastra — Certificado Catastral",
+                            "Kolaudačné rozhodnutie",
+                            "Zaplatené poplatky spojené s užívaním nehnuteľnosti",
+                            "Faktúry za dodávky služieb (voda, elektrika, plyn, kanalizácia, odpad) a ich úhrady"
+                        ]
+                    },
+                    {
+                        "title": "Náklady súvisiace s kúpou nehnuteľnosti",
+                        "description": "Keďže ceny nehnuteľnosti nie sú konečné, treba k ním prirátať zodpovedajúce dane a poplatky. Tieto poplatky sa môžu v rámci jednotlivých autonómnych oblastí Španielska líšiť.",
+                        "items": [
+                            "Novostavba: poplatky 13% - 13,5% (10% DPH, 1% právne služby, 1% notár, 1,25% zápis do registra + právne úkony)",
+                            "Stavba z druhej ruky: poplatky 10% - 10,5% (7% daň z nadobudnutia, 1% právne služby, 1% notár, 1,25% zápis do registra + právne úkony)",
+                            "Pozemok / nové obchodné priestory / nedostavané nehnuteľnosti: poplatky 24% - 24,5% (21% DPH, 1% právne služby, 1% notár, 1,25% zápis do registra + právne úkony)"
+                        ]
+                    },
+                    {
+                        "title": "Ročné náklady na nehnuteľnosti",
+                        "description": "Pri vlastníctve nehnuteľnosti je potrebné rátať s prevádzkovými nákladmi, poplatkami a daňami.\n\nAj keď Vám celý proces kúpy nehnuteľnosti môže zdať komplikovaný, nemusíte sa obávať — budeme Vás o každom kroku informovať vopred a všetko Vám dôkladne vysvetlíme. Taktiež sa na nás môžete obrátiť aj po predaji v prípade ďalších vzniknutých otázok. Radi Vám pomôžeme aj s prípadným prenájmom Vašej nehnuteľnosti.",
+                        "items": [
+                            "1x ročne daň z nehnuteľnosti (IBI) — závisí od lokality a veľkosti nehnuteľnosti (400-1000 €), môže zahŕňať poplatok za odpad",
+                            "1x ročne daň z nehnuteľnosti pre nerezidentov (INR)",
+                            "1x ročne poistenie nehnuteľnosti",
+                            "1x mesačne komunitné poplatky (záhrady, bazén, kurty, fond opráv, spoločné priestory) — nie všetky nehnuteľnosti majú tento poplatok",
+                            "Elektrina, voda, plyn"
+                        ]
                     }
                 ]
             },
             "greece": {
                 "name": "Grécko",
                 "flag": "🇬🇷",
-                "intro": "Grécko láka atraktívnymi cenami a programom Golden Visa pre povolenie na pobyt. Rastúci turistický sektor.",
+                "intro": "Grécko ponúka atraktívne prímorské nehnuteľnosti s rastúcim investičným potenciálom. Celý proces kúpy prebieha prostredníctvom advokáta, ktorý Vás vo všetkých krokoch zastupuje a je garantom celého obchodu.",
                 "highlights": [
-                    "Golden Visa",
-                    "Atraktívne ceny",
-                    "Stredomorské podnebie"
+                    "Člen EÚ",
+                    "Schengen + Euro",
+                    "Turistický potenciál"
                 ],
                 "process": [
                     {
-                        "title": "AFM číslo",
-                        "description": "Pomôžeme získať grécke daňové číslo."
-                    },
-                    {
                         "title": "Výber nehnuteľnosti",
-                        "description": "Návšteva a výber na pevnine alebo ostrovoch."
+                        "description": "Vyberte si nehnuteľnosť podľa vašich preferencií, prípadne Vám s výberom radi poradíme.\n\nKeď ste si vybrali nehnuteľnosť, overíme dostupnosť či je k dispozícii, či už nebola náhodou predaná, alebo zložená rezervačná záloha.\n\nVypočítame Vám kompletnú cenu nehnuteľnosti vrátane všetkých poplatkov, ktoré sú spojené s kúpou nehnuteľností v Grécku. Zodpovieme Vám všetky doplňujúce otázky."
                     },
                     {
-                        "title": "Právna kontrola",
-                        "description": "Advokát overí vlastnícke práva a dokumenty."
+                        "title": "Obhliadka nehnuteľnosti",
+                        "description": "Sú dve možnosti realizovania obhliadok nehnuteľností.\n\nPrvý spôsob je reálne fyzicky navštíviť nehnuteľnosť, prezrieť si lokalitu, vybavenosť a služby, ktoré ponúka okolie. Počas Vašej prítomnosti v Grécku, napríklad aj počas Vašej dovolenky Vám radi nehnuteľnosť ukážeme osobne.\n\nDruhý spôsob momentálne najviac využívaný je video obhliadka. Video obhliadka je bezpečný spôsob nákupu, alebo rezervácie nehnuteľností. V prípade dobrej ponuky nehnuteľností netreba dlho váhať, pretože realitný trh je dynamický a dobrú ponuku si netreba nechať ujsť.\n\nPočas video obhliadky si spolu dohodneme termín ideálne cez aplikáciu WhatsApp, prípadne Skype, cez ktorý Vám ukážeme nehnuteľnosť, výhľady/okolie, čo sa v nej nachádza, vybavenie a podobne. Počas video obhliadky Vás informujeme v akom je nehnuteľnosť stave. Následne pripravíme z obhliadky video, ktoré s vami zdieľame."
                     },
                     {
-                        "title": "Kúpna zmluva",
-                        "description": "Podpis zmluvy u notára."
+                        "title": "Negociácia ceny",
+                        "description": "Každý chceme kupovať za čo najlepšie ceny a mať z obchodu radosť. Našou snahou je, aby ste boli čo najviac spokojní. Preto preveríme ceny nehnuteľností v podobnej lokalite a kvalite, pokiaľ je priestor na zjednávanie ceny, snažíme sa negociovať cenu vždy vo Váš prospech.\n\nProvízia realitnej spoločnosti je zahrnutá už v cene za nehnuteľnosť. Celý proces kúpy nehnuteľnosti prebieha prostredníctvom advokáta, ktorý Vás vo všetkých krokoch zastupuje a je garantom celého obchodu.\n\nPred samotnou úhradou rezervačnej zálohy vždy znovu preverujeme vlastnícke práva samotnej nehnuteľnosti."
                     },
                     {
-                        "title": "Registrácia",
-                        "description": "Zápis do registra a vybavenie Golden Visa."
+                        "title": "Zriadenie gréckeho daňového čísla a bankového účtu",
+                        "description": "Prvý krok po výbere vysnívanej nehnuteľnosti je zriadenie daňového registračného čísla. Je to podobné ako naše rodné číslo, pod ktorým ste evidovaný. V Grécku daňové identifikačné číslo slúži pre cudzincov, pod ktorým ste evidovaný a ktoré slúži napríklad aj k nákupu, alebo predaju nehnuteľnosti.\n\nĎalej je daňové registračné číslo potrebné pri otvorení bankového účtu, žiadosti o úver, pri uzavretí zmluvy, prevode elektriny, vody, plynu, poistení nehnuteľnosti a podobne.\n\nNa jeho zriadenie sú potrebné osobné doklady najlepšie Pas, alebo občiansky preukaz, ďalej je potrebné z Rodného listu uviesť údaje o rodičoch a vyplniť k tomu formulár. Dá sa vyžiadať osobne, alebo cez splnomocnenie. Vydáva ho cudzinecká polícia alebo iný policajný útvar v Grécku."
+                    },
+                    {
+                        "title": "Zaplatenie rezervačnej zálohy a doplatok kúpnej ceny",
+                        "description": "Rezervačná záloha slúži na rezerváciu Vašej vybranej nehnuteľnosti. Po podpise zmluvy o poskytnutí súčinnosti pri kúpe nehnuteľnosti s našou RK sa uzavrie Zmluva o zmluve budúcej podpísaná pred notárom, v ktorej budú uvedené všetky podmienky vrátane ceny za nehnuteľnosť. Po podpísaní tejto zmluvy a zaplatení zálohy sa nehnuteľnosť stiahne z ponuky a ďalej sa už neponúka.\n\nCelková cena rezervačnej zálohy je vo výške 10% z ceny nehnuteľnosti. Rezervačná záloha sa platí na účet advokáta, ktorý Vás bude zastupovať v celom procese kúpy a ako nezávislý článok garantuje, že celý proces kúpy bude prebiehať v poriadku a vo Váš prospech.\n\nDôležitá informácia – uhradená záloha bankovým prevodom už tvorí časť kúpnej ceny. Doplatok kúpnej ceny sa posiela neskôr v priebehu ďalšieho mesiaca a to ponížená už o spomínanú rezervačnú zálohu."
+                    },
+                    {
+                        "title": "Prepis nehnuteľnosti u notára",
+                        "description": "Naša RK pripraví všetky zmluvy a dokumenty, ktoré budete podpisovať v slovenskom a v gréckom jazyku.\n\nV prípade záujmu o zastúpenie a vybavenie celého procesu na diaľku pripravíme pre Vás Plnú moc právnikovi (táto plná moc sa bude viazať len ku konkrétnemu obchodu).\n\nV celom procese kúpy nehnuteľnosti Vás na úradoch a všetkých inštitúciách zastupuje licencovaný grécky advokát s registráciou v advokátskej komore. Spolupracujeme iba s overeným advokátom, ktorý sa špecializuje na oblasť práva spojeného s nehnuteľnosťami, kúpou a predajom pre zahraničných občanov či investorov.\n\nCelý proces obchodu riadime výslovne len s advokátom. Lokálny advokát pozná grécke právo a zaručuje, že celý proces obchodu prejde hladkou a legálnou transparentnou formou. Financie určené na kúpu nehnuteľnosti sú v jeho advokátskej úschove a poukázané sú predávajúcemu až po prepise nehnuteľnosti na Vaše meno."
+                    },
+                    {
+                        "title": "Poplatky pri kúpe nehnuteľnosti",
+                        "description": "Pri kúpe nehnuteľnosti v Grécku je potrebné počítať s dvoma druhmi poplatkov. Prvá je za službu advokáta, ktorý Vás zastupuje v celom procese kúpy. Druhý poplatok zahŕňa dane a poplatky miestnej samospráve.\n\nCelkovo všetky poplatky vrátane daní sú cca 7% z ceny Vašej nehnuteľnosti. Presnú čiastku určuje až notár a je daná v závislosti na lokalite kde sa nehnuteľnosť nachádza.",
+                        "items": [
+                            "Vypracovanie všetkých zmlúv a dokumentov",
+                            "Zastupovanie Vás na všetkých úradoch",
+                            "Registrácia a vydanie daňového registračného čísla",
+                            "Právna kontrola nehnuteľnosti (list vlastníctva, platnosť územného rozhodnutia, stavebného povolenia, absencia dlhov, exekúcií či hypoték)",
+                            "Cena advokátskych služieb: cca 1,5% z ceny nehnuteľnosti",
+                            "Poplatok za notárske služby: cca 2% z ceny nehnuteľnosti",
+                            "Daň z prevodu nehnuteľnosti: cca 3,5% z ceny nehnuteľnosti",
+                            "Poplatky za overenie podpisov u notára v SR",
+                            "Bankové poplatky: cca 0,1% z ceny nehnuteľnosti"
+                        ]
+                    },
+                    {
+                        "title": "Stávate sa majiteľom nehnuteľnosti",
+                        "description": "Automaticky pri notárskom procese prechádzajú všetky vlastnícke práva na Vás a stávate sa majiteľom nehnuteľnosti. Kataster to na základe Notárskeho aktu následne zapíše.\n\nAko bonus od nás dostanete navyše Poistenie nehnuteľnosti na 1 rok zadarmo a upratovanie Vašej nehnuteľnosti pred Vaším príchodom.\n\nPo prepise elektriny na Vaše meno Vás budeme inštruovať a pomôžeme Vám zriadiť elektronický účet, aby ste jednoducho mohli všetky energie uhrádzať cez elektronickú faktúru na diaľku z pohodlia Vášho domova."
+                    },
+                    {
+                        "title": "Náklady spojené s vlastníctvom nehnuteľnosti",
+                        "description": "Poplatky, s ktorými treba počítať, je voda a elektrina. Elektrina sa platí mesačne v závislosti od reálnej spotreby. Nie je potrebné sa obávať poplatkov za vodu a elektrinu, sú podobné ako u nás na Slovensku.\n\nKaždý rok sa platí Daň z nehnuteľnosti, cena je daná v závislosti od veľkosti nehnuteľnosti, pozemku a podobne. Ako nový majiteľ ste prvý rok uchránený od poplatku tejto dane.",
+                        "items": [
+                            "Voda a elektrina — mesačné platby podľa spotreby",
+                            "Internetové pripojenie a TV pripojenie",
+                            "Ročná daň z nehnuteľnosti (prvý rok oslobodený)"
+                        ]
+                    },
+                    {
+                        "title": "Prenájom svojej nehnuteľnosti",
+                        "description": "Prenájom a starostlivosť o Vašu nehnuteľnosť je ideálne vložiť do rúk profesionálov, ktorí sa postarajú o kompletný servis ako: výmenu bielizne, uterákov, hygienické potreby, upratovanie.\n\nPomôžeme Vám zaistiť túto službu. Presný príjem zo zisku je individuálny, závisí od množstva premenných — ako je úroveň nehnuteľnosti, pozícia, lokalita a v neposlednom rade dĺžka prenajímaného obdobia. Určite sa však prenájom oplatí a vy si tak budete môcť užiť svoju nehnuteľnosť a mať z nej aj určitý príjem."
                     }
                 ]
             }

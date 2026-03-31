@@ -4,6 +4,8 @@ import Link from "next/link";
 import PropertyCard from "@/components/ui/PropertyCard";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { FreeMode } from "swiper/modules";
+import { useScrollReveal } from "@/hooks/useScrollReveal";
+import MagneticButton from "@/components/ui/MagneticButton";
 import type { Dictionary } from "@/lib/dictionaries";
 
 import "swiper/css";
@@ -34,19 +36,21 @@ export default function NewOffers({ lang = 'sk', dictionary, properties = [] }: 
     const sectionSubtitle = lang === 'en' ? 'New Listings' : lang === 'cz' ? 'Nové nabídky' : 'Nové v ponuke';
     const sectionTitle = dictionary?.home?.newOffers || (lang === 'en' ? 'Latest Properties' : lang === 'cz' ? 'Nejnovější nemovitosti' : 'Najnovšie nehnuteľnosti');
     const viewAllLabel = lang === 'en' ? 'View all new listings' : lang === 'cz' ? 'Zobrazit všechny nové nabídky' : 'Zobraziť všetky nové ponuky';
+    const headerRef = useScrollReveal<HTMLDivElement>({ y: 40 });
+    const gridRef = useScrollReveal<HTMLDivElement>({ stagger: 0.1, delay: 0.15 });
 
     return (
-        <section className="py-10 sm:py-12 md:py-16 lg:py-20 bg-white">
-            <div className="container-custom px-4 sm:px-6">
+        <section className="py-[clamp(2.5rem,5vw,5rem)] bg-white">
+            <div className="container-custom">
                 {/* Section Header */}
-                <div className="text-center max-w-[42rem] mx-auto mb-10 sm:mb-12 md:mb-16">
-                    <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl text-[var(--color-secondary)]">
+                <div ref={headerRef} className="text-center max-w-[42rem] mx-auto mb-[clamp(2.5rem,4vw,4rem)]">
+                    <h2 data-reveal className="font-serif text-[clamp(1.5rem,3vw,2.25rem)] text-[var(--color-secondary)]">
                         {sectionTitle}
                     </h2>
                 </div>
 
                 {/* Mobile: Horizontal Swipeable Carousel */}
-                <div className="md:hidden -mx-4 px-4">
+                <div className="md:hidden -mx-[var(--container-px)] px-[var(--container-px)]">
                     <Swiper
                         modules={[FreeMode]}
                         slidesPerView={1.15}
@@ -81,38 +85,41 @@ export default function NewOffers({ lang = 'sk', dictionary, properties = [] }: 
                 </div>
 
                 {/* Desktop: Grid */}
-                <div className="hidden md:grid grid-cols-2 lg:grid-cols-4 gap-6">
+                <div ref={gridRef} className="hidden md:grid grid-cols-2 lg:grid-cols-4 gap-6">
                     {newOffers.map((property) => (
-                        <PropertyCard
-                            key={property.id}
-                            id={property.id}
-                            title={property.title}
-                            location={property.location}
-                            price={property.priceFormatted}
-                            beds={property.beds}
-                            baths={property.baths}
-                            area={property.area}
-                            images={property.images}
-                            featured={property.featured}
-                            previewTags={property.previewTags}
-                            lang={lang}
-                            dictionary={dictionary}
-                            compact
-                        />
+                        <div key={property.id} data-reveal>
+                            <PropertyCard
+                                id={property.id}
+                                title={property.title}
+                                location={property.location}
+                                price={property.priceFormatted}
+                                beds={property.beds}
+                                baths={property.baths}
+                                area={property.area}
+                                images={property.images}
+                                featured={property.featured}
+                                previewTags={property.previewTags}
+                                lang={lang}
+                                dictionary={dictionary}
+                                compact
+                            />
+                        </div>
                     ))}
                 </div>
 
                 {/* CTA — refined outline pill */}
-                <div className="mt-10 sm:mt-12 md:mt-16 text-center">
-                    <Link
-                        href={`/${lang}/properties?sort=newest`}
-                        className="group inline-flex items-center justify-center gap-2.5 px-8 sm:px-10 py-3.5 sm:py-4 border border-[var(--color-border-dark)] hover:border-[var(--color-primary)] text-[var(--color-secondary)] hover:text-[var(--color-primary)] font-medium rounded-full transition-all w-full sm:w-auto active:scale-[0.98] tracking-wide text-sm"
-                    >
-                        {viewAllLabel}
-                        <svg className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                        </svg>
-                    </Link>
+                <div className="mt-[clamp(2.5rem,4vw,4rem)] text-center">
+                    <MagneticButton strength={0.2}>
+                        <Link
+                            href={`/${lang}/properties?sort=newest`}
+                            className="group inline-flex items-center justify-center gap-2.5 px-[clamp(1.75rem,5vw,2.5rem)] py-[clamp(0.75rem,1.5vw,1rem)] border border-[var(--color-border-dark)] hover:border-[var(--color-teal)] text-[var(--color-secondary)] hover:text-[var(--color-teal)] font-medium rounded-full transition-all w-full sm:w-auto active:scale-[0.98] tracking-wide text-sm"
+                        >
+                            {viewAllLabel}
+                            <svg className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                            </svg>
+                        </Link>
+                    </MagneticButton>
                 </div>
             </div>
         </section>

@@ -1,14 +1,15 @@
 import type { Metadata } from "next";
-import { Inter, Libre_Baskerville } from "next/font/google";
+import { DM_Sans, Libre_Baskerville, Instrument_Serif } from "next/font/google";
 import "../globals.css";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
+import SmoothScrollProvider from "@/components/providers/SmoothScrollProvider";
 import { FavoritesProvider } from "@/contexts/FavoritesContext";
 import { getDictionary } from "@/lib/dictionaries";
 import type { Language } from "@/lib/data-access";
 
-const inter = Inter({
-  variable: "--font-inter",
+const dmSans = DM_Sans({
+  variable: "--font-dm-sans",
   subsets: ["latin", "latin-ext"],
   display: "swap",
 });
@@ -18,6 +19,14 @@ const libreBaskerville = Libre_Baskerville({
   subsets: ["latin", "latin-ext"],
   display: "swap",
   weight: ["400", "700"],
+  style: ["normal", "italic"],
+});
+
+const instrumentSerif = Instrument_Serif({
+  variable: "--font-instrument-serif",
+  subsets: ["latin"],
+  display: "swap",
+  weight: "400",
   style: ["normal", "italic"],
 });
 
@@ -40,12 +49,14 @@ export default async function RootLayout({
 
   return (
     <html lang={validLang}>
-      <body className={`${inter.variable} ${libreBaskerville.variable} antialiased`}>
-        <FavoritesProvider>
-          <Header lang={validLang} dictionary={dictionary} />
-          <main>{children}</main>
-          <Footer lang={validLang} dictionary={dictionary} />
-        </FavoritesProvider>
+      <body className={`${dmSans.variable} ${libreBaskerville.variable} ${instrumentSerif.variable} antialiased`}>
+        <SmoothScrollProvider>
+          <FavoritesProvider>
+            <Header lang={validLang} dictionary={dictionary} />
+            <main>{children}</main>
+            <Footer lang={validLang} dictionary={dictionary} />
+          </FavoritesProvider>
+        </SmoothScrollProvider>
       </body>
     </html>
   );

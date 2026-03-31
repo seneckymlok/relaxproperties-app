@@ -330,25 +330,106 @@ export default function PropertiesListPage() {
             selectedIds.forEach(id => {
                 const property = properties.find(p => p.id === id);
                 const originalValue = property?.export_target || null;
-                if (originalValue === null && next[id] === undefined) return; // already no export
+                if (originalValue === null && next[id] === undefined) return;
                 next[id] = null;
             });
             return next;
         });
     }, [selectedIds, properties]);
 
-    const bulkEnableExport = useCallback((target: string) => {
+    const bulkToggleExport = useCallback((target: string) => {
         setPendingExports(prev => {
             const next = { ...prev };
+            // Check if ALL selected already have this target — if so, remove it; otherwise add it
+            const allHaveTarget = Array.from(selectedIds).every(id => {
+                const property = properties.find(p => p.id === id);
+                const currentRaw = next[id] !== undefined ? next[id] : (property?.export_target || null);
+                const current = new Set((currentRaw || '').split(',').filter(Boolean));
+                return current.has(target);
+            });
+
             selectedIds.forEach(id => {
                 const property = properties.find(p => p.id === id);
+                const currentRaw = next[id] !== undefined ? next[id] : (property?.export_target || null);
+                const current = new Set((currentRaw || '').split(',').filter(Boolean));
+
+                if (allHaveTarget) current.delete(target);
+                else current.add(target);
+
+                const newValue = current.size > 0 ? Array.from(current).join(',') : null;
                 const originalValue = property?.export_target || null;
-                if (target === originalValue && next[id] === undefined) return;
-                next[id] = target;
+                if (newValue === originalValue) {
+                    delete next[id];
+                } else {
+                    next[id] = newValue;
+                }
             });
             return next;
         });
     }, [selectedIds, properties]);
+
+    const bulkTrash = useCallback(async () => {
+        const count = selectedIds.size;
+        if (!confirm(`Presunúť ${count} nehnuteľností do koša?`)) return;
+        setSaving(true);
+        try {
+            await Promise.all(
+                Array.from(selectedIds).map(id =>
+                    fetch(`/api/admin/properties/${id}`, { method: "DELETE" })
+                )
+            );
+            setProperties(prev => prev.map(p =>
+                selectedIds.has(p.id) ? { ...p, publish_status: 'trashed' as const, export_target: null } : p
+            ));
+            setSelectedIds(new Set());
+        } catch (err) {
+            console.error("Bulk trash error:", err);
+        } finally {
+            setSaving(false);
+        }
+    }, [selectedIds]);
+
+    const bulkRestore = useCallback(async () => {
+        setSaving(true);
+        try {
+            await Promise.all(
+                Array.from(selectedIds).map(id =>
+                    fetch(`/api/admin/properties/${id}`, {
+                        method: "PUT",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ save_mode: "restore" }),
+                    })
+                )
+            );
+            setProperties(prev => prev.map(p =>
+                selectedIds.has(p.id) ? { ...p, publish_status: 'draft' as const } : p
+            ));
+            setSelectedIds(new Set());
+        } catch (err) {
+            console.error("Bulk restore error:", err);
+        } finally {
+            setSaving(false);
+        }
+    }, [selectedIds]);
+
+    const bulkPermanentDelete = useCallback(async () => {
+        const count = selectedIds.size;
+        if (!confirm(`NATRVALO vymazať ${count} nehnuteľností? Táto akcia sa nedá vrátiť!`)) return;
+        setSaving(true);
+        try {
+            await Promise.all(
+                Array.from(selectedIds).map(id =>
+                    fetch(`/api/admin/properties/${id}?permanent=true`, { method: "DELETE" })
+                )
+            );
+            setProperties(prev => prev.filter(p => !selectedIds.has(p.id)));
+            setSelectedIds(new Set());
+        } catch (err) {
+            console.error("Bulk permanent delete error:", err);
+        } finally {
+            setSaving(false);
+        }
+    }, [selectedIds]);
 
     const hasPendingChanges = Object.keys(pendingExports).length > 0;
 
@@ -656,48 +737,100 @@ export default function PropertiesListPage() {
             )}
 
             {/* Bulk Action Bar */}
-            {selectedIds.size > 0 && (
-                <div className="flex items-center gap-3 mb-4 px-5 py-3 bg-[var(--color-primary)]/5 border border-[var(--color-primary)]/20 rounded-2xl">
-                    <span className="text-sm font-semibold text-[var(--color-foreground)]">
-                        {selectedIds.size} vybraných
-                    </span>
-                    <div className="h-5 w-px bg-[var(--color-border)]" />
-                    <button
-                        type="button"
-                        onClick={bulkDisableExport}
-                        className="px-3 py-1.5 text-xs font-semibold bg-red-500/10 text-red-600 hover:bg-red-500/20 rounded-lg transition-colors"
-                    >
-                        Zakázať export
-                    </button>
-                    <button
-                        type="button"
-                        onClick={() => bulkEnableExport("softreal")}
-                        className="px-3 py-1.5 text-xs font-semibold bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 rounded-lg transition-colors"
-                    >
-                        Export → CZ
-                    </button>
-                    <button
-                        type="button"
-                        onClick={() => bulkEnableExport("sk")}
-                        className="px-3 py-1.5 text-xs font-semibold bg-blue-500/10 text-blue-600 hover:bg-blue-500/20 rounded-lg transition-colors"
-                    >
-                        Export → SK
-                    </button>
-                    <button
-                        type="button"
-                        onClick={() => setSelectedIds(new Set())}
-                        className="ml-auto px-3 py-1.5 text-xs text-[var(--color-muted)] hover:text-[var(--color-foreground)] font-semibold transition-colors"
-                    >
-                        Zrušiť výber
-                    </button>
-                </div>
-            )}
+            {selectedIds.size > 0 && (() => {
+                const selected = properties.filter(p => selectedIds.has(p.id));
+                const hasTrashed = selected.some(p => p.publish_status === 'trashed');
+                const hasNonTrashed = selected.some(p => p.publish_status !== 'trashed');
+                return (
+                    <div className="flex items-center flex-wrap gap-2 mb-4 px-5 py-3 bg-[var(--color-primary)]/5 border border-[var(--color-primary)]/20 rounded-2xl">
+                        <span className="text-sm font-semibold text-[var(--color-foreground)]">
+                            {selectedIds.size} vybraných
+                        </span>
+                        <div className="h-5 w-px bg-[var(--color-border)]" />
+
+                        {/* Export toggles — only for non-trashed */}
+                        {hasNonTrashed && (
+                            <>
+                                <button
+                                    type="button"
+                                    onClick={() => bulkToggleExport("sk")}
+                                    disabled={saving}
+                                    className="px-3 py-1.5 text-xs font-semibold bg-blue-500/10 text-blue-600 hover:bg-blue-500/20 rounded-lg transition-colors disabled:opacity-50"
+                                    title="Pridať/odobrať SK export"
+                                >
+                                    SK export
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => bulkToggleExport("softreal")}
+                                    disabled={saving}
+                                    className="px-3 py-1.5 text-xs font-semibold bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 rounded-lg transition-colors disabled:opacity-50"
+                                    title="Pridať/odobrať CZ export"
+                                >
+                                    CZ export
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={bulkDisableExport}
+                                    disabled={saving}
+                                    className="px-3 py-1.5 text-xs font-semibold bg-gray-500/10 text-gray-600 hover:bg-gray-500/20 rounded-lg transition-colors disabled:opacity-50"
+                                >
+                                    Zrušiť export
+                                </button>
+                                <div className="h-5 w-px bg-[var(--color-border)]" />
+                            </>
+                        )}
+
+                        {/* Trash — for non-trashed items */}
+                        {hasNonTrashed && (
+                            <button
+                                type="button"
+                                onClick={bulkTrash}
+                                disabled={saving}
+                                className="px-3 py-1.5 text-xs font-semibold bg-red-500/10 text-red-600 hover:bg-red-500/20 rounded-lg transition-colors disabled:opacity-50"
+                            >
+                                Do koša
+                            </button>
+                        )}
+
+                        {/* Restore & permanent delete — for trashed items */}
+                        {hasTrashed && (
+                            <>
+                                <button
+                                    type="button"
+                                    onClick={bulkRestore}
+                                    disabled={saving}
+                                    className="px-3 py-1.5 text-xs font-semibold bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 rounded-lg transition-colors disabled:opacity-50"
+                                >
+                                    Obnoviť
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={bulkPermanentDelete}
+                                    disabled={saving}
+                                    className="px-3 py-1.5 text-xs font-semibold bg-red-500/10 text-red-600 hover:bg-red-500/20 rounded-lg transition-colors disabled:opacity-50"
+                                >
+                                    Natrvalo vymazať
+                                </button>
+                            </>
+                        )}
+
+                        <button
+                            type="button"
+                            onClick={() => setSelectedIds(new Set())}
+                            className="ml-auto px-3 py-1.5 text-xs text-[var(--color-muted)] hover:text-[var(--color-foreground)] font-semibold transition-colors"
+                        >
+                            Zrušiť výber
+                        </button>
+                    </div>
+                );
+            })()}
 
             {/* Table */}
             <div className="bg-white border border-[var(--color-border)] rounded-2xl overflow-hidden shadow-sm">
                 {loading ? (
-                    <div className="p-12 text-center text-gray-500 text-sm">
-                        <svg className="w-6 h-6 animate-spin mx-auto mb-3 text-gray-600" fill="none" viewBox="0 0 24 24">
+                    <div className="p-12 text-center text-[var(--color-muted)] text-sm">
+                        <svg className="w-6 h-6 animate-spin mx-auto mb-3 text-[var(--color-foreground)]" fill="none" viewBox="0 0 24 24">
                             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" />
                             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                         </svg>
@@ -705,18 +838,18 @@ export default function PropertiesListPage() {
                     </div>
                 ) : filtered.length === 0 ? (
                     <div className="p-12 text-center">
-                        <svg className="w-12 h-12 mx-auto mb-3 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1}>
+                        <svg className="w-12 h-12 mx-auto mb-3 text-[var(--color-secondary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008z" />
                         </svg>
-                        <p className="text-gray-500 text-sm">
+                        <p className="text-[var(--color-muted)] text-sm">
                             {activeFiltersCount > 0 ? "Žiadne výsledky pre vybrané filtre" : "Žiadne nehnuteľnosti"}
                         </p>
                         {activeFiltersCount > 0 ? (
-                            <button onClick={clearAllFilters} className="inline-block mt-3 text-sm text-[#C5A880] hover:underline">
+                            <button onClick={clearAllFilters} className="inline-block mt-3 text-sm text-[var(--color-sand)] hover:underline">
                                 Zrušiť filtre →
                             </button>
                         ) : (
-                            <Link href="/admin/properties/new" className="inline-block mt-3 text-sm text-[#C5A880] hover:underline">
+                            <Link href="/admin/properties/new" className="inline-block mt-3 text-sm text-[var(--color-sand)] hover:underline">
                                 Pridať prvú nehnuteľnosť →
                             </Link>
                         )}
@@ -822,7 +955,7 @@ export default function PropertiesListPage() {
                                                         onClick={() => toggleExport(p.id, "sk")}
                                                         className={`px-2 py-1 text-[11px] font-bold rounded-md transition-all ${exportSet.has('sk')
                                                             ? "bg-[var(--color-secondary)] text-white shadow-sm"
-                                                            : "bg-gray-100 text-gray-400 hover:bg-gray-200 hover:text-gray-600"
+                                                            : "bg-[var(--color-surface)] text-[var(--color-muted)] hover:bg-[var(--color-border)] hover:text-[var(--color-foreground)]"
                                                             } ${isPending ? "ring-1 ring-[var(--color-primary)]" : ""}`}
                                                         title="Export na slovenské portály"
                                                     >
@@ -832,7 +965,7 @@ export default function PropertiesListPage() {
                                                         onClick={() => toggleExport(p.id, "softreal")}
                                                         className={`px-2 py-1 text-[11px] font-bold rounded-md transition-all ${exportSet.has('softreal')
                                                             ? "bg-[var(--color-secondary)] text-white shadow-sm"
-                                                            : "bg-gray-100 text-gray-400 hover:bg-gray-200 hover:text-gray-600"
+                                                            : "bg-[var(--color-surface)] text-[var(--color-muted)] hover:bg-[var(--color-border)] hover:text-[var(--color-foreground)]"
                                                             } ${isPending ? "ring-1 ring-[var(--color-primary)]" : ""}`}
                                                         title="Export na české portály (Softreal)"
                                                     >

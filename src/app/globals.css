@@ -51,7 +51,7 @@
     height: 18px;
     border-radius: 50%;
     background: white;
-    border: 2.5px solid var(--color-primary);
+    border: 2.5px solid var(--color-teal);
     box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 0 0 0 rgba(43,110,110,0);
     cursor: pointer;
     margin-top: -9px;
@@ -66,7 +66,7 @@
     height: 18px;
     border-radius: 50%;
     background: white;
-    border: 2.5px solid var(--color-primary);
+    border: 2.5px solid var(--color-teal);
     box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 0 0 0 rgba(43,110,110,0);
     cursor: pointer;
     position: relative;
@@ -74,21 +74,21 @@
 }
 /* Hover — soft glow */
 .range-slider input[type="range"]::-webkit-slider-thumb:hover {
-    border-color: var(--color-primary-dark);
+    border-color: var(--color-teal-dark);
     box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 0 0 5px rgba(43,110,110,0.1);
 }
 .range-slider input[type="range"]::-moz-range-thumb:hover {
-    border-color: var(--color-primary-dark);
+    border-color: var(--color-teal-dark);
     box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 0 0 5px rgba(43,110,110,0.1);
 }
 /* Active / dragging — stronger glow, slightly larger */
 .range-slider input[type="range"]:active::-webkit-slider-thumb {
-    border-color: var(--color-primary-dark);
+    border-color: var(--color-teal-dark);
     box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 0 0 7px rgba(43,110,110,0.15);
     transform: scale(1.08);
 }
 .range-slider input[type="range"]:active::-moz-range-thumb {
-    border-color: var(--color-primary-dark);
+    border-color: var(--color-teal-dark);
     box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 0 0 7px rgba(43,110,110,0.15);
     transform: scale(1.08);
 }
@@ -104,35 +104,45 @@
 
 :root {
 
-    /* Premium Color Palette — Sand / Dark Green / White */
-    --color-background: #F9F9F7;
-    /* Warm sand-white */
-    --color-surface: #F4F3F0;
-    /* Warm Stone - cards/sections */
+    /* Premium Color Palette — Black / Sand / White / Teal accent */
+    --color-background: #FAFAF8;
+    /* Warm white — like quality linen paper */
+    --color-surface: #F3F1ED;
+    /* Warm stone — section/card alternate bg */
     --color-surface-elevated: #FFFFFF;
 
-    --color-primary: #2B6E6E;
-    /* Dark green — matched to logo */
-    --color-primary-light: #358282;
-    --color-primary-dark: #1F5252;
+    --color-primary: #2E2E2C;
+    /* Warm graphite — primary action, dark sections */
+    --color-primary-light: #424240;
+    --color-primary-dark: #1E1E1C;
 
-    --color-secondary: #1A1A1A;
-    /* Charcoal - softer than black */
-    --color-foreground: #2D2D2D;
-    --color-muted: #6B6B6B;
+    --color-secondary: #1A1A18;
+    /* Deep warm black — headings, strongest text */
+    --color-foreground: #353533;
+    /* Body text — soft warm dark */
+    --color-muted: #8A8A85;
+    /* Warm grey — captions, metadata */
 
-    --color-accent: #2B6E6E;
-    /* Unified — same as primary green, no gold */
-    --color-accent-light: #358282;
-    --color-accent-dark: #1F5252;
+    --color-accent: #C4A882;
+    /* Sand — warm luxury accent, badges, stars, decorative */
+    --color-accent-light: #D4BE9C;
+    --color-accent-dark: #A89272;
+
+    --color-teal: #2B6E6E;
+    /* Teal — text accent ONLY: links, prices, highlights */
+    --color-teal-light: #358282;
+    --color-teal-dark: #1F5252;
 
     --color-sand: #C4A882;
-    /* Warm sand — for subtitles/labels on dark backgrounds */
+    /* Alias for accent — warm sand */
     --color-sand-light: #D4BE9C;
-    /* Lighter sand — hover/highlight variant */
 
-    --color-border: #EDECE9;
-    --color-border-dark: #DDDCD8;
+    --color-border: #E8E6E2;
+    --color-border-dark: #D8D6D2;
+
+    /* Selection */
+    --color-selection-bg: rgba(43, 110, 110, 0.12);
+    --color-selection-text: #1A1A18;
 
     /* Spacing & Radius */
     --radius-sm: 4px;
@@ -153,6 +163,16 @@
 }
 
 /* ============================================
+   SEARCH MODAL — HIDE HEADER ON MOBILE
+   ============================================ */
+
+body.search-modal-open header,
+body.search-modal-open .header-gradient-vignette {
+    visibility: hidden !important;
+    pointer-events: none !important;
+}
+
+/* ============================================
    BASE STYLES
    ============================================ */
 
@@ -167,15 +187,14 @@
         font-family: inherit;
     }
 
-    html {
-        scroll-behavior: smooth;
-    }
+    /* Lenis handles smooth scrolling — no CSS scroll-behavior needed */
 
     body {
-        /* Font variables must be on body (not :root) because Next.js 
-           sets --font-inter and --font-libre-baskerville on <body> via className */
-        --font-sans: var(--font-inter), system-ui, -apple-system, sans-serif;
+        /* Font variables must be on body (not :root) because Next.js
+           sets font CSS vars on <body> via className */
+        --font-sans: var(--font-dm-sans), system-ui, -apple-system, sans-serif;
         --font-serif: var(--font-libre-baskerville), 'Baskerville', 'Georgia', serif;
+        --font-display: var(--font-instrument-serif), 'Georgia', serif;
         font-family: var(--font-sans);
         background-color: var(--color-background);
         color: var(--color-foreground);
@@ -219,16 +238,11 @@
    ============================================ */
 
 .container-custom {
+    --container-px: clamp(1.5rem, 4vw, 3rem);
     width: 100%;
     max-width: 1280px;
     margin: 0 auto;
-    padding: 0 1.5rem;
-}
-
-@media (min-width: 1024px) {
-    .container-custom {
-        padding: 0 2rem;
-    }
+    padding-inline: var(--container-px);
 }
 
 /* Typography utilities */
@@ -360,17 +374,16 @@
     border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Hero Search — white frosted glass (matches CTA button style) */
+/* Hero Search — warm dark glass (matches site's warm black palette) */
 .hero-search-card {
-    background: rgba(255, 255, 255, 0.12);
-    backdrop-filter: blur(12px) saturate(1.3);
-    -webkit-backdrop-filter: blur(12px) saturate(1.3);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(26, 26, 24, 0.88);
+    backdrop-filter: blur(16px) saturate(1.2);
+    -webkit-backdrop-filter: blur(16px) saturate(1.2);
+    border: 1px solid rgba(255, 255, 255, 0.12);
     border-radius: var(--radius-lg);
     box-shadow:
-        0 16px 48px rgba(0, 0, 0, 0.2),
-        0 4px 16px rgba(0, 0, 0, 0.1),
-        inset 0 1px 0 rgba(255, 255, 255, 0.15);
+        0 16px 48px rgba(0, 0, 0, 0.25),
+        0 4px 16px rgba(0, 0, 0, 0.12);
 }
 
 /* Mode toggle pill — centered above card */
@@ -379,10 +392,10 @@
     flex-direction: row;
     align-items: center;
     gap: 0;
-    background: rgba(255, 255, 255, 0.12);
+    background: rgba(26, 26, 24, 0.9);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.12);
     border-radius: var(--radius-full);
     padding: 4px;
 }
@@ -458,8 +471,25 @@
     input:focus,
     textarea:focus {
         outline: none;
-        border-color: var(--color-primary);
-        box-shadow: 0 0 0 3px rgba(28, 63, 67, 0.1);
+        border-color: var(--color-teal);
+        box-shadow: 0 0 0 3px rgba(43, 110, 110, 0.12);
+    }
+
+    /* Text selection — brand teal tint */
+    ::selection {
+        background: var(--color-selection-bg);
+        color: var(--color-selection-text);
+    }
+
+    ::-moz-selection {
+        background: var(--color-selection-bg);
+        color: var(--color-selection-text);
+    }
+
+    /* Keyboard focus ring — teal */
+    :focus-visible {
+        outline: 2px solid var(--color-teal);
+        outline-offset: 2px;
     }
 }
 
@@ -599,6 +629,39 @@
     .hide-scrollbar::-webkit-scrollbar {
         display: none;
     }
+
+    /* Thin scrollbar — hidden by default, appears on hover */
+    .scrollbar-thin {
+        scrollbar-width: thin;
+        scrollbar-color: transparent transparent;
+        transition: scrollbar-color 0.3s ease;
+    }
+
+    .scrollbar-thin:hover {
+        scrollbar-color: var(--color-border-dark) transparent;
+    }
+
+    .scrollbar-thin::-webkit-scrollbar {
+        width: 4px;
+    }
+
+    .scrollbar-thin::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .scrollbar-thin::-webkit-scrollbar-thumb {
+        background: transparent;
+        border-radius: 4px;
+        transition: background 0.3s ease;
+    }
+
+    .scrollbar-thin:hover::-webkit-scrollbar-thumb {
+        background: var(--color-border-dark);
+    }
+
+    .scrollbar-thin:hover::-webkit-scrollbar-thumb:hover {
+        background: var(--color-muted);
+    }
 }
 
 /* ============================================
@@ -663,4 +726,157 @@
 .new-offers-swiper .swiper-pagination-bullet-active,
 .reviews-swiper .swiper-pagination-bullet-active {
     background: var(--color-primary) !important;
+}
+
+/* ============================================
+   HERO TEXT ANIMATIONS
+   ============================================ */
+
+.hero-word {
+    display: inline-block;
+    overflow: hidden;
+}
+
+.hero-word-inner {
+    display: inline-block;
+    transform: translateY(105%);
+    transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hero-word-inner.revealed {
+    transform: translateY(0);
+}
+
+/* ============================================
+   HEADER CONTACT HOVER — TEAL ON SCROLLED
+   ============================================ */
+
+.header-contact-hover {
+    transition: color 0.2s ease;
+}
+
+.header-contact-hover:hover {
+    color: var(--color-teal) !important;
+}
+
+.header-heart-hover {
+    transition: color 0.2s ease;
+}
+
+.header-heart-hover:hover {
+    color: #ef4444 !important; /* red-500 */
+}
+
+/* ============================================
+   NAV LINK HOVER — SLIDING UNDERLINE
+   ============================================ */
+
+.nav-link-hover {
+    position: relative;
+}
+
+.nav-link-hover::after {
+    content: "";
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 100%;
+    height: 1.5px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.nav-link-hover:hover::after {
+    transform: scaleX(1);
+    transform-origin: left;
+}
+
+/* ============================================
+   IMAGE HOVER DISTORTION (CSS scale + brightness)
+   ============================================ */
+
+.image-hover-lift {
+    overflow: hidden;
+    border-radius: var(--radius-lg);
+}
+
+.image-hover-lift img {
+    transition: transform 0.7s cubic-bezier(0.23, 1, 0.32, 1),
+                filter 0.7s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.image-hover-lift:hover img {
+    transform: scale(1.03);
+    filter: brightness(1.05) contrast(1.02);
+}
+
+/* ============================================
+   FAVORITE HEART BURST
+   ============================================ */
+
+@keyframes heartBurst {
+    0% { transform: scale(1); }
+    25% { transform: scale(1.3); }
+    50% { transform: scale(0.95); }
+    75% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+.heart-burst {
+    animation: heartBurst 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+/* ============================================
+   SECTION DIVIDER — SUBTLE HORIZONTAL LINE
+   ============================================ */
+
+.section-divider {
+    width: 60px;
+    height: 1px;
+    background: var(--color-border-dark);
+    margin: 0 auto;
+}
+
+/* ============================================
+   NEXYSTECH FOOTER BRANDING
+   ============================================ */
+
+.nexystech-link {
+    font-family: var(--font-display) !important;
+    font-style: italic;
+    transition: color 0.3s ease;
+}
+
+.nexystech-link:hover {
+    color: #7C3AED !important;
+}
+
+/* ============================================
+   CUSTOM CURSOR DOT (subtle, not intrusive)
+   ============================================ */
+
+@media (hover: hover) and (pointer: fine) {
+    .cursor-dot {
+        position: fixed;
+        width: 8px;
+        height: 8px;
+        background: var(--color-primary);
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 9999;
+        mix-blend-mode: difference;
+        transition: transform 0.15s ease, opacity 0.3s ease;
+        opacity: 0;
+    }
+
+    .cursor-dot.visible {
+        opacity: 1;
+    }
+
+    .cursor-dot.expanded {
+        transform: scale(5);
+        background: white;
+    }
 }

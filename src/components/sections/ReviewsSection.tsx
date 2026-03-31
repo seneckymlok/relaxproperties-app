@@ -2,6 +2,8 @@
 
 import Image from "next/image";
 import { useState, useEffect, useCallback, useRef } from "react";
+import { useScrollReveal } from "@/hooks/useScrollReveal";
+import MagneticButton from "@/components/ui/MagneticButton";
 import type { Dictionary } from "@/lib/dictionaries";
 
 interface Review {
@@ -61,6 +63,7 @@ export default function ReviewsSection({ lang = "sk", dictionary }: ReviewsSecti
     const [isTransitioning, setIsTransitioning] = useState(false);
     const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
     const [isPaused, setIsPaused] = useState(false);
+    const reviewsHeaderRef = useScrollReveal<HTMLDivElement>({ y: 40 });
 
     // Fetch real reviews from API
     useEffect(() => {
@@ -110,6 +113,20 @@ export default function ReviewsSection({ lang = "sk", dictionary }: ReviewsSecti
         return () => clearInterval(timer);
     }, [isPaused, reviews.length]);
 
+    // Desktop grid height lock — prevents page height jumping
+    const desktopGridRef = useRef<HTMLDivElement>(null);
+    const [desktopMinHeight, setDesktopMinHeight] = useState(0);
+
+    useEffect(() => {
+        if (!desktopGridRef.current) return;
+        // Wait for transition to finish, then measure
+        const timer = setTimeout(() => {
+            const h = desktopGridRef.current?.offsetHeight ?? 0;
+            if (h > 0) setDesktopMinHeight(prev => Math.max(prev, h));
+        }, 350);
+        return () => clearTimeout(timer);
+    }, [currentIndex, isTransitioning]);
+
     const sectionSubtitle =
         lang === "en" ? "Reviews" : lang === "cz" ? "Recenze" : "Recenzie";
     const sectionTitle =
@@ -144,9 +161,9 @@ export default function ReviewsSection({ lang = "sk", dictionary }: ReviewsSecti
 
     function ReviewCard({ review }: { review: Review }) {
         return (
-            <div className="relative bg-white rounded-2xl p-6 sm:p-8 shadow-[var(--shadow-sm)] hover:shadow-[var(--shadow-md)] transition-all duration-300 h-full flex flex-col">
+            <div className="relative bg-white rounded-2xl p-[clamp(1.5rem,4vw,2rem)] shadow-[var(--shadow-sm)] hover:shadow-[var(--shadow-md)] transition-all duration-300 h-full flex flex-col">
                 {/* Oversized quote mark */}
-                <span className="absolute top-4 right-6 font-serif text-6xl sm:text-7xl text-[var(--color-accent)]/10 leading-none select-none pointer-events-none">
+                <span className="absolute top-4 right-6 font-serif text-[clamp(3.75rem,8vw,4.5rem)] text-[var(--color-accent)]/10 leading-none select-none pointer-events-none">
                     &ldquo;
                 </span>
 
@@ -164,14 +181,14 @@ export default function ReviewsSection({ lang = "sk", dictionary }: ReviewsSecti
                 </div>
 
                 {/* Quote text */}
-                <p className="text-sm sm:text-base text-[var(--color-foreground)] leading-relaxed mb-6 relative z-10 flex-1">
+                <p className="text-[clamp(0.875rem,2.5vw,1rem)] text-[var(--color-foreground)] leading-relaxed mb-6 relative z-10 flex-1">
                     {review.text}
                 </p>
 
                 {/* Author */}
                 <div className="flex items-center gap-3.5">
                     {review.photo ? (
-                        <div className="relative w-11 h-11 sm:w-12 sm:h-12 rounded-full overflow-hidden ring-2 ring-[var(--color-accent)]/15 ring-offset-2 flex-shrink-0">
+                        <div className="relative w-[clamp(2.75rem,7vw,3rem)] h-[clamp(2.75rem,7vw,3rem)] rounded-full overflow-hidden ring-2 ring-[var(--color-accent)]/15 ring-offset-2 flex-shrink-0">
                             <Image
                                 src={review.photo}
                                 alt={review.name}
@@ -181,14 +198,14 @@ export default function ReviewsSection({ lang = "sk", dictionary }: ReviewsSecti
                             />
                         </div>
                     ) : (
-                        <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-[var(--color-primary)]/10 flex items-center justify-center ring-2 ring-[var(--color-accent)]/15 ring-offset-2 flex-shrink-0">
-                            <span className="text-sm font-semibold text-[var(--color-primary)]">
+                        <div className="w-[clamp(2.75rem,7vw,3rem)] h-[clamp(2.75rem,7vw,3rem)] rounded-full bg-[var(--color-teal)]/10 flex items-center justify-center ring-2 ring-[var(--color-accent)]/15 ring-offset-2 flex-shrink-0">
+                            <span className="text-sm font-semibold text-[var(--color-teal)]">
                                 {getInitials(review.name)}
                             </span>
                         </div>
                     )}
                     <div>
-                        <p className="text-sm sm:text-base font-medium text-[var(--color-secondary)]">
+                        <p className="text-[clamp(0.875rem,2.5vw,1rem)] font-medium text-[var(--color-secondary)]">
                             {review.name}
                         </p>
                         {review.timeAgo && (
@@ -219,11 +236,11 @@ export default function ReviewsSection({ lang = "sk", dictionary }: ReviewsSecti
             : [...reviews.slice(currentIndex), ...reviews.slice(0, VISIBLE_COUNT_DESKTOP - (reviews.length - currentIndex))];
 
     return (
-        <section className="py-10 sm:py-12 md:py-16 lg:py-20 bg-[var(--color-surface)]">
-            <div className="container-custom px-4 sm:px-6">
+        <section className="py-[clamp(2.5rem,5vw,5rem)] bg-[var(--color-surface)]">
+            <div className="container-custom">
                 {/* Header */}
-                <div className="text-center max-w-[42rem] mx-auto mb-10 sm:mb-12 md:mb-16">
-                    <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl text-[var(--color-secondary)] mb-3">
+                <div ref={reviewsHeaderRef} className="text-center max-w-[42rem] mx-auto mb-[clamp(2.5rem,4vw,4rem)]">
+                    <h2 className="font-serif text-[clamp(1.5rem,3vw,2.25rem)] text-[var(--color-secondary)] mb-3">
                         {sectionTitle}
                     </h2>
                     <div className="flex items-center justify-center gap-2 text-[var(--color-muted)]">
@@ -250,19 +267,19 @@ export default function ReviewsSection({ lang = "sk", dictionary }: ReviewsSecti
 
                 {/* Mobile: Single card with fade rotation */}
                 <div
-                    className="md:hidden mb-10"
+                    className="md:hidden mb-[clamp(2rem,4vw,2.5rem)]"
                     onMouseEnter={() => setIsPaused(true)}
                     onMouseLeave={() => setIsPaused(false)}
                     onTouchStart={() => setIsPaused(true)}
                     onTouchEnd={() => setTimeout(() => setIsPaused(false), 3000)}
                 >
-                    <div className="relative min-h-[220px]">
+                    <div className="grid" style={{ gridTemplateColumns: '1fr' }}>
                         {reviews.map((review, idx) => (
                             <div
                                 key={idx}
-                                className={`transition-all duration-500 ${idx === mobileIndex
-                                    ? "opacity-100 translate-y-0"
-                                    : "opacity-0 absolute inset-0 translate-y-2 pointer-events-none"
+                                className={`transition-all duration-500 col-start-1 row-start-1 ${idx === mobileIndex
+                                    ? "opacity-100 translate-y-0 z-10"
+                                    : "opacity-0 translate-y-2 pointer-events-none z-0"
                                     }`}
                             >
                                 <ReviewCard review={review} />
@@ -272,14 +289,14 @@ export default function ReviewsSection({ lang = "sk", dictionary }: ReviewsSecti
 
                     {/* Dots indicator */}
                     {reviews.length > 1 && (
-                        <div className="flex justify-center gap-2 mt-5">
+                        <div className="flex justify-center gap-1.5 mt-4">
                             {reviews.map((_, idx) => (
                                 <button
                                     key={idx}
                                     onClick={() => setMobileIndex(idx)}
-                                    className={`w-2 h-2 rounded-full transition-all duration-300 ${idx === mobileIndex
-                                        ? "bg-[var(--color-primary)] w-6"
-                                        : "bg-[var(--color-border-dark)]"
+                                    className={`exclude-touch-size h-1.5 rounded-full transition-all duration-300 ${idx === mobileIndex
+                                        ? "bg-[var(--color-primary)] w-5"
+                                        : "bg-[var(--color-border-dark)] w-1.5"
                                         }`}
                                     aria-label={`Review ${idx + 1}`}
                                 />
@@ -294,7 +311,11 @@ export default function ReviewsSection({ lang = "sk", dictionary }: ReviewsSecti
                     onMouseEnter={() => setIsPaused(true)}
                     onMouseLeave={() => setIsPaused(false)}
                 >
-                    <div className={`grid grid-cols-3 gap-8 transition-opacity duration-300 ${isTransitioning ? "opacity-0" : "opacity-100"}`}>
+                    <div
+                        ref={desktopGridRef}
+                        className={`grid grid-cols-3 gap-8 transition-opacity duration-300 ${isTransitioning ? "opacity-0" : "opacity-100"}`}
+                        style={desktopMinHeight > 0 ? { minHeight: desktopMinHeight } : undefined}
+                    >
                         {desktopReviews.map((review, idx) => (
                             <ReviewCard key={`${review.name}-${review.timestamp}-${idx}`} review={review} />
                         ))}
@@ -302,14 +323,14 @@ export default function ReviewsSection({ lang = "sk", dictionary }: ReviewsSecti
 
                     {/* Progress dots */}
                     {reviews.length > VISIBLE_COUNT_DESKTOP && (
-                        <div className="flex justify-center gap-2 mt-8">
+                        <div className="flex justify-center gap-1.5 mt-6">
                             {Array.from({ length: reviews.length - VISIBLE_COUNT_DESKTOP + 1 }).map((_, idx) => (
                                 <button
                                     key={idx}
                                     onClick={() => { setCurrentIndex(idx); setIsTransitioning(false); }}
-                                    className={`w-2 h-2 rounded-full transition-all duration-300 ${idx === currentIndex
-                                        ? "bg-[var(--color-primary)] w-6"
-                                        : "bg-[var(--color-border-dark)]"
+                                    className={`exclude-touch-size h-1.5 rounded-full transition-all duration-300 ${idx === currentIndex
+                                        ? "bg-[var(--color-primary)] w-5"
+                                        : "bg-[var(--color-border-dark)] w-1.5"
                                         }`}
                                     aria-label={`Page ${idx + 1}`}
                                 />
@@ -320,22 +341,24 @@ export default function ReviewsSection({ lang = "sk", dictionary }: ReviewsSecti
 
                 {/* View All Link */}
                 <div className="text-center">
-                    <a
-                        href="https://www.google.com/maps/place/?q=place_id:ChIJs9H9jG3tbEcRmxBaz6M7cOw"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="group inline-flex items-center gap-2 text-[var(--color-secondary)] font-medium hover:text-[var(--color-primary)] transition-colors text-sm tracking-wide"
-                    >
-                        {viewAllLabel}
-                        <svg
-                            className="w-4 h-4 transform group-hover:translate-x-1 transition-transform"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
+                    <MagneticButton strength={0.15}>
+                        <a
+                            href="https://www.google.com/maps/place/?q=place_id:ChIJs9H9jG3tbEcRmxBaz6M7cOw"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="group inline-flex items-center gap-2 text-[var(--color-secondary)] font-medium hover:text-[var(--color-teal)] transition-colors text-sm tracking-wide"
                         >
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                        </svg>
-                    </a>
+                            {viewAllLabel}
+                            <svg
+                                className="w-4 h-4 transform group-hover:translate-x-1 transition-transform"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                            >
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                            </svg>
+                        </a>
+                    </MagneticButton>
                 </div>
             </div>
         </section>

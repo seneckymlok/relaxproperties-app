@@ -1,12 +1,14 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, EffectFade } from "swiper/modules";
 import type SwiperType from "swiper";
+import { gsap } from "gsap";
 import HeroSearch from "./HeroSearch";
+import MagneticButton from "@/components/ui/MagneticButton";
 import type { Dictionary } from "@/lib/dictionaries";
 import type { PublicProperty } from "@/lib/data-access";
 
@@ -17,6 +19,7 @@ interface HeroSliderProps {
     lang?: string;
     dictionary?: Dictionary;
     featuredProperties?: PublicProperty[];
+    allProperties?: PublicProperty[];
 }
 
 const countriesMap: Record<string, Record<string, string>> = {
@@ -34,10 +37,25 @@ function translateCountry(country: string, lang: string): string {
     return countriesMap[key]?.[lang] || country;
 }
 
-export default function HeroSlider({ lang = 'sk', dictionary, featuredProperties = [] }: HeroSliderProps) {
+export default function HeroSlider({ lang = 'sk', dictionary, featuredProperties = [], allProperties = [] }: HeroSliderProps) {
     const [currentSlide, setCurrentSlide] = useState(0);
     const [isMobile, setIsMobile] = useState(false);
-    const [, setSwiperInstance] = useState<SwiperType | null>(null);
+    const [swiperInstance, setSwiperInstance] = useState<SwiperType | null>(null);
+    const contentRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+    // Compute dynamic price range from all properties
+    const priceRange = (() => {
+        const prices = allProperties.map(p => p.price).filter(p => p > 0);
+        if (prices.length === 0) return { min: 0, max: 2_000_000 };
+        return {
+            min: Math.floor(Math.min(...prices) / 5000) * 5000,
+            max: Math.ceil(Math.max(...prices) / 5000) * 5000,
+        };
+    })();
+
+    // Intro overlay state
+    const [showIntro, setShowIntro] = useState(true);
+    const [introRemoved, setIntroRemoved] = useState(false);
 
     const viewDetailsLabel = lang === 'en' ? 'View property' : lang === 'cz' ? 'Zobrazit detail' : 'Zobraziť detail';
 
@@ -103,8 +121,87 @@ export default function HeroSlider({ lang = 'sk', dictionary, featuredProperties
         return () => window.removeEventListener("resize", checkMobile);
     }, []);
 
+    // Pause Swiper autoplay during intro phase
+    useEffect(() => {
+        if (swiperInstance) {
+            if (showIntro) {
+                swiperInstance.autoplay?.stop();
+            } else {
+                swiperInstance.autoplay?.start();
+            }
+        }
+    }, [swiperInstance, showIntro]);
+
+    // Fade out intro after 5 seconds
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setShowIntro(false);
+        }, 6000);
+        return () => clearTimeout(timer);
+    }, []);
+
+    // Remove intro overlay from DOM after the fade-out transition completes
+    const handleIntroTransitionEnd = useCallback(() => {
+        if (!showIntro) {
+            setIntroRemoved(true);
+        }
+    }, [showIntro]);
+
+    // Animate content on slide change with GSAP
+    useEffect(() => {
+        if (showIntro) return;
+        const contentEl = contentRefs.current[currentSlide];
+        if (!contentEl) return;
+
+        // Text elements: fade + slide up
+        const textElements = contentEl.querySelectorAll("[data-hero-animate='text']");
+        gsap.fromTo(
+            textElements,
+            { y: 40, opacity: 0 },
+            {
+                y: 0,
+                opacity: 1,
+                duration: 0.8,
+                stagger: 0.1,
+                ease: "power3.out",
+                delay: 0.15,
+            }
+        );
+
+        // Glass elements (CTA button): slide up only, NO opacity change
+        // This keeps backdrop-blur visible instantly without a fade delay
+        const glassElements = contentEl.querySelectorAll("[data-hero-animate='glass']");
+        gsap.fromTo(
+            glassElements,
+            { y: 30 },
+            {
+                y: 0,
+                duration: 0.8,
+                ease: "power3.out",
+                delay: 0.35,
+            }
+        );
+    }, [currentSlide, showIntro]);
+
     return (
-        <section className="relative z-40 h-[100dvh] min-h-[100dvh] md:min-h-[700px] md:h-screen w-full overflow-visible">
+        <section className="relative z-40 h-[100dvh] min-h-[100dvh] md:min-h-[600px] md:h-screen w-full overflow-visible bg-[var(--color-secondary)]">
+            {/* Intro Photo Overlay */}
+            {!introRemoved && (
+                <div
+                    className="absolute inset-0 z-30 transition-opacity duration-700 ease-in-out bg-[var(--color-secondary)]"
+                    style={{ opacity: showIntro ? 1 : 0, pointerEvents: showIntro ? 'auto' : 'none' }}
+                    onTransitionEnd={handleIntroTransitionEnd}
+                >
+                    <Image
+                        src="/images/nehnutelnost more.webp"
+                        alt="Luxury property with pool"
+                        fill
+                        className="object-cover"
+                        priority
+                    />
+                </div>
+            )}
+
             <Swiper
                 modules={[Autoplay, EffectFade]}
                 effect="fade"
@@ -115,60 +212,72 @@ export default function HeroSlider({ lang = 'sk', dictionary, featuredProperties
                 loop
                 onSwiper={setSwiperInstance}
                 onSlideChange={(swiper) => setCurrentSlide(swiper.realIndex)}
-                className="w-full h-full"
+                className={`w-full h-full transition-opacity duration-700 ${showIntro ? "opacity-0" : "opacity-100"}`}
             >
                 {slides.map((slide, index) => (
                     <SwiperSlide key={slide.id}>
-                        {/* Cinematic Gradient Overlay — top portion handled by header gradient overlay */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-black/30 z-10" />
-                        <div className="absolute inset-0 bg-gradient-to-r from-black/30 to-transparent z-10" />
-
-                        {/* Background Image with Ken Burns */}
+                        {/* Background Image — no priority; intro overlay shows first */}
                         <Image
                             src={slide.image}
                             alt={slide.location || 'Property'}
                             fill
                             className="object-cover"
-                            style={{}}
-                            priority={index === 0}
+                            loading={index === 0 ? "eager" : "lazy"}
                         />
 
-                        {/* Content */}
-                        <div className="absolute inset-0 z-20 flex items-end pb-52 sm:pb-60 md:pb-80">
-                            <div className="container-custom px-4 sm:px-6">
+                        {/* Dark gradient overlay — ensures white text is always readable */}
+                        <div className="absolute inset-0 z-10 pointer-events-none" style={{
+                            background: 'linear-gradient(to top, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.3) 30%, rgba(0,0,0,0.15) 55%, rgba(0,0,0,0.1) 75%, rgba(0,0,0,0.06) 100%)',
+                        }} />
+
+                        {/* Content — fades in when intro ends, animates per-element on slide change */}
+                        <div
+                            ref={(el) => { contentRefs.current[index] = el; }}
+                            className="absolute inset-0 z-20 flex items-end pb-[clamp(10rem,22vh,15rem)] md:pb-[clamp(12rem,38vh,20rem)] transition-opacity duration-500 ease-in-out"
+                            style={{
+                                opacity: showIntro ? 0 : 1,
+                                transitionDelay: showIntro ? '0ms' : '200ms',
+                            }}
+                        >
+                            <div className="container-custom">
                                 {/* Location tag */}
-                                <div className="flex items-center gap-2 mb-6 md:mb-8">
-                                    <svg className="w-4 h-4 text-white/70 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+                                <div data-hero-animate="text" className="flex items-center gap-2 mb-[clamp(1.25rem,2vw,1.5rem)]" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.7), 0 2px 12px rgba(0,0,0,0.5), 0 4px 24px rgba(0,0,0,0.3)' }}>
+                                    <svg className="w-4 h-4 text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5} style={{ filter: 'drop-shadow(0 1px 4px rgba(0,0,0,0.6))' }}>
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
                                     </svg>
-                                    <span className="text-white text-sm sm:text-base font-medium">{slide.location}</span>
+                                    <span className="text-white text-[clamp(0.875rem,2.5vw,1rem)] font-semibold">{slide.location}</span>
                                     {slide.country && (
                                         <>
-                                            <span className="text-white/40">–</span>
-                                            <span className="text-white/70 text-sm sm:text-base">{slide.country}</span>
+                                            <span className="text-white/60">–</span>
+                                            <span className="text-white text-[clamp(0.875rem,2.5vw,1rem)] font-medium">{slide.country}</span>
                                         </>
                                     )}
                                 </div>
 
-                                {/* CTA Button */}
-                                <Link
-                                    href={slide.ctaLink}
-                                    className="group inline-flex items-center gap-3 bg-white/10 backdrop-blur-sm text-white px-6 py-3 sm:px-7 sm:py-3.5 rounded-full text-sm sm:text-base font-medium border border-white/20 hover:bg-white hover:text-[var(--color-secondary)] transition-all duration-300 active:scale-[0.98] tracking-wide"
-                                >
-                                    {slide.ctaLabel}
-                                    <svg className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                                    </svg>
-                                </Link>
+                                {/* CTA Button with magnetic effect — uses 'glass' animation (no opacity) */}
+                                <div data-hero-animate="glass">
+                                    <MagneticButton strength={0.2}>
+                                        <Link
+                                            href={slide.ctaLink}
+                                            className="group inline-flex items-center gap-3 bg-black/20 backdrop-blur-md text-white px-[clamp(1.5rem,3.5vw,1.75rem)] py-[clamp(0.75rem,1.2vw,0.875rem)] rounded-full text-[clamp(0.875rem,2.5vw,1rem)] font-medium border border-white/20 hover:bg-white hover:text-[var(--color-secondary)] transition-all duration-300 active:scale-[0.98] tracking-wide"
+                                            style={{ textShadow: '0 1px 3px rgba(0,0,0,0.4)' }}
+                                        >
+                                            {slide.ctaLabel}
+                                            <svg className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                                            </svg>
+                                        </Link>
+                                    </MagneticButton>
+                                </div>
                             </div>
                         </div>
                     </SwiperSlide>
                 ))}
             </Swiper>
 
-            {/* Hero Search Component */}
-            <HeroSearch lang={lang} dictionary={dictionary} />
+            {/* Hero Search Component — always visible */}
+            <HeroSearch lang={lang} dictionary={dictionary} priceRange={priceRange} />
         </section>
     );
 }

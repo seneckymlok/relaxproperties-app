@@ -75,8 +75,14 @@ export async function PUT(
             // Auto-save: check if property is already published
             const existing = await getPropertyById(id);
             if (existing && existing.publish_status === 'published') {
-                // Published → save edits to draft_data only
-                property = await saveDraft(id, payload);
+                // export_target is operational (controls feed inclusion), not content —
+                // always write it directly to the main column, never to draft_data
+                if (payload.export_target !== undefined && Object.keys(payload).length === 1) {
+                    property = await updateProperty(id, { export_target: payload.export_target });
+                } else {
+                    // Published → save content edits to draft_data only
+                    property = await saveDraft(id, payload);
+                }
             } else {
                 // Draft/new → save to main columns normally
                 property = await updateProperty(id, payload);

@@ -85,7 +85,7 @@ export default function PropertyFilters({
                     onFilterChange("priceRange", "all");
                     onFilterChange("beds", "all");
                 }}
-                className="w-full py-3 text-sm font-medium text-[var(--color-muted)] hover:text-[var(--color-primary)] transition-colors border-t border-[var(--color-border)] mt-2 pt-4"
+                className="w-full py-3 text-sm font-medium text-[var(--color-muted)] hover:text-[var(--color-teal)] transition-colors border-t border-[var(--color-border)] mt-2 pt-4"
             >
                 Zrušiť filtre
             </button>

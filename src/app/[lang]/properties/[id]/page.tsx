@@ -13,10 +13,26 @@ interface PropertyDetailPageProps {
 }
 
 function getAgentContact(lang: Language) {
-    if (lang === "sk") {
-        return { name: "Vierka", phone: "+421 911 819 152", phoneRaw: "+421911819152" };
+    if (lang === 'sk') {
+        return {
+            phone1: '+421 911 819 152', phone1Raw: '+421911819152',
+            phone2: '+421 911 989 895', phone2Raw: '+421911989895',
+            email: 'info@relaxproperties.sk',
+        };
     }
-    return { name: "Aleš", phone: "+421 911 989 895", phoneRaw: "+421911989895" };
+    if (lang === 'cz') {
+        return {
+            phone1: '+420 739 049 593', phone1Raw: '+420739049593',
+            phone2: '+421 911 989 895', phone2Raw: '+421911989895',
+            email: 'info@relaxproperties.cz',
+        };
+    }
+    // EN
+    return {
+        phone1: '+421 911 989 895', phone1Raw: '+421911989895',
+        phone2: '+421 911 819 152', phone2Raw: '+421911819152',
+        email: 'info@relaxproperties.sk',
+    };
 }
 
 function getYouTubeId(url: string): string | null {
@@ -140,8 +156,11 @@ export default async function PropertyDetailPage({ params }: PropertyDetailPageP
         },
         {
             icon: (
+                /* Bathtub — clean side-view silhouette */
                 <svg className="w-[22px] h-[22px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 13h18v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4zm2-3V6a2 2 0 012-2h2a2 2 0 012 2v4" />
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 12V5.5A2.5 2.5 0 016.5 3v0A2.5 2.5 0 019 5.5V6" />
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M2 12h20v4a4 4 0 01-4 4H6a4 4 0 01-4-4v-4z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 20v1.5M18 20v1.5" />
                 </svg>
             ),
             value: property.baths,
@@ -185,8 +204,10 @@ export default async function PropertyDetailPage({ params }: PropertyDetailPageP
         }] : []),
         ...(property.landArea ? [{
             icon: (
+                /* Land plot — bounded area with corner markers */
                 <svg className="w-[22px] h-[22px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 6.75V15m0-8.25a1.5 1.5 0 113 0V15a1.5 1.5 0 01-3 0V6.75zM3.75 4.5h16.5" />
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 3.75h2.5m-2.5 0v2.5m0-2.5h0M17.75 3.75h2.5m0 0v2.5m0-2.5h0M3.75 20.25h2.5m-2.5 0v-2.5m0 2.5h0M17.75 20.25h2.5m0 0v-2.5m0 2.5h0" />
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6.25 3.75h11.5M6.25 20.25h11.5M3.75 6.25v11.5M20.25 6.25v11.5" strokeDasharray="2 3" />
                 </svg>
             ),
             value: `${property.landArea} m²`,
@@ -203,8 +224,10 @@ export default async function PropertyDetailPage({ params }: PropertyDetailPageP
         }] : []),
         ...(property.parking && property.parking > 0 ? [{
             icon: (
+                /* Parking P — universal parking symbol */
                 <svg className="w-[22px] h-[22px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12" />
+                    <rect x="3" y="3" width="18" height="18" rx="3" strokeLinecap="round" strokeLinejoin="round" />
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 17V7h4a3 3 0 010 6H9" />
                 </svg>
             ),
             value: property.parking,
@@ -217,29 +240,27 @@ export default async function PropertyDetailPage({ params }: PropertyDetailPageP
 
     return (
         <>
-            {/* Breadcrumb */}
-            <div className="bg-[var(--color-surface)] border-b border-[var(--color-border)]" style={{ paddingTop: '5.5rem' }}>
-                <div className="container-custom px-4 sm:px-6">
-                    <nav className="flex items-center gap-2 py-3.5 text-xs font-medium tracking-wide text-[var(--color-muted)] overflow-x-auto no-scrollbar">
-                        <Link href={`/${lang}`} className="flex items-center gap-1.5 hover:text-[var(--color-primary)] transition-colors whitespace-nowrap">
-                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
-                            </svg>
+            {/* Main Content */}
+            <section className="bg-[var(--color-background)]" style={{ paddingTop: '5.5rem', paddingBottom: '3rem' }}>
+                {/* Floating Breadcrumb — inline, elegant */}
+                <div className="container-custom pt-5 pb-4">
+                    <nav className="flex items-center gap-1.5 text-[11px] sm:text-xs text-[var(--color-muted)] overflow-x-auto no-scrollbar">
+                        <Link href={`/${lang}`} className="hover:text-[var(--color-teal)] transition-colors whitespace-nowrap">
                             {t.home}
                         </Link>
-                        <span className="text-[var(--color-border-dark)] font-light">/</span>
-                        <Link href={`/${lang}/properties`} className="hover:text-[var(--color-primary)] transition-colors whitespace-nowrap">
+                        <svg className="w-3 h-3 text-[var(--color-border-dark)] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                        </svg>
+                        <Link href={`/${lang}/properties`} className="hover:text-[var(--color-teal)] transition-colors whitespace-nowrap">
                             {t.properties}
                         </Link>
-                        <span className="text-[var(--color-border-dark)] font-light">/</span>
-                        <span className="text-[var(--color-foreground)] truncate max-w-xs">{property.title}</span>
+                        <svg className="w-3 h-3 text-[var(--color-border-dark)] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                        </svg>
+                        <span className="text-[var(--color-foreground)] truncate max-w-[260px] sm:max-w-xs">{property.title}</span>
                     </nav>
                 </div>
-            </div>
-
-            {/* Main Content */}
-            <section className="bg-[var(--color-background)]" style={{ paddingTop: '2rem', paddingBottom: '3rem' }}>
-                <div className="container-custom px-4 sm:px-6">
+                <div className="container-custom">
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
                         {/* Left Column — Gallery & Details */}
                         <div className="lg:col-span-2">
@@ -340,7 +361,7 @@ export default async function PropertyDetailPage({ params }: PropertyDetailPageP
                                                 {mainAmenities.map((key) => (
                                                     <span
                                                         key={key}
-                                                        className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--color-surface)] rounded-full text-sm text-[var(--color-foreground)] border border-[var(--color-border)] hover:border-[var(--color-primary)]/30 hover:bg-[var(--color-primary)]/5 transition-colors"
+                                                        className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--color-surface)] rounded-full text-sm text-[var(--color-foreground)] border border-[var(--color-border)] hover:border-[var(--color-teal)]/30 hover:bg-[var(--color-teal)]/5 transition-colors"
                                                     >
                                                         <svg className="w-3.5 h-3.5 text-[var(--color-primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                                                             <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
@@ -359,7 +380,7 @@ export default async function PropertyDetailPage({ params }: PropertyDetailPageP
                                                 {additionalAmenities.map((key) => (
                                                     <span
                                                         key={key}
-                                                        className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--color-surface)] rounded-full text-sm text-[var(--color-foreground)] border border-[var(--color-border)] hover:border-[var(--color-primary)]/30 hover:bg-[var(--color-primary)]/5 transition-colors"
+                                                        className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--color-surface)] rounded-full text-sm text-[var(--color-foreground)] border border-[var(--color-border)] hover:border-[var(--color-teal)]/30 hover:bg-[var(--color-teal)]/5 transition-colors"
                                                     >
                                                         <svg className="w-3.5 h-3.5 text-[var(--color-primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                                                             <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
@@ -441,34 +462,32 @@ export default async function PropertyDetailPage({ params }: PropertyDetailPageP
                                     </div>
                                     <span className="block w-full h-px bg-[var(--color-border)] mb-4" />
                                     <div className="space-y-3">
-                                        {/* Primary contact based on locale */}
                                         <a
-                                            href={`tel:${agentContact.phoneRaw}`}
-                                            className="flex items-center gap-3 text-sm text-[var(--color-foreground)] hover:text-[var(--color-primary)] transition-colors font-medium"
+                                            href={`tel:${agentContact.phone1Raw}`}
+                                            className="flex items-center gap-3 text-sm text-[var(--color-foreground)] hover:text-[var(--color-teal)] transition-colors font-medium"
                                         >
                                             <svg className="w-4 h-4 text-[var(--color-primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
                                                 <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
                                             </svg>
-                                            {agentContact.name}: {agentContact.phone}
+                                            {agentContact.phone1}
                                         </a>
-                                        {/* Secondary contact */}
                                         <a
-                                            href={lang === 'sk' ? 'tel:+421911989895' : 'tel:+421911819152'}
-                                            className="flex items-center gap-3 text-sm text-[var(--color-foreground)] hover:text-[var(--color-primary)] transition-colors"
+                                            href={`tel:${agentContact.phone2Raw}`}
+                                            className="flex items-center gap-3 text-sm text-[var(--color-foreground)] hover:text-[var(--color-teal)] transition-colors"
                                         >
                                             <svg className="w-4 h-4 text-[var(--color-primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
                                                 <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
                                             </svg>
-                                            {lang === 'sk' ? '+421 911 989 895' : '+421 911 819 152'}
+                                            {agentContact.phone2}
                                         </a>
                                         <a
-                                            href="mailto:info@relaxproperties.sk"
-                                            className="flex items-center gap-3 text-sm text-[var(--color-foreground)] hover:text-[var(--color-primary)] transition-colors"
+                                            href={`mailto:${agentContact.email}`}
+                                            className="flex items-center gap-3 text-sm text-[var(--color-foreground)] hover:text-[var(--color-teal)] transition-colors"
                                         >
                                             <svg className="w-4 h-4 text-[var(--color-primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
                                                 <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
                                             </svg>
-                                            info@relaxproperties.sk
+                                            {agentContact.email}
                                         </a>
                                     </div>
                                 </div>
@@ -490,7 +509,7 @@ export default async function PropertyDetailPage({ params }: PropertyDetailPageP
                                 </div>
                                 <Link
                                     href={`/${lang}/properties?country=${property.country}`}
-                                    className="hidden md:inline-flex items-center gap-2 text-sm font-medium text-[var(--color-primary)] hover:text-[var(--color-accent)] transition-colors"
+                                    className="hidden md:inline-flex items-center gap-2 text-sm font-medium text-[var(--color-primary)] hover:text-[var(--color-teal)] transition-colors"
                                 >
                                     {t.viewAll}
                                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

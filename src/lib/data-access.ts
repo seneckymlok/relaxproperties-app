@@ -7,7 +7,7 @@
  * - Static filter options remain in-memory (not in DB yet)
  */
 
-import { getPublishedProperties, type PropertyRecord } from './property-store';
+import { getPublishedProperties, getCachedPublishedProperties, type PropertyRecord } from './property-store';
 
 export type Language = 'sk' | 'en' | 'cz';
 
@@ -84,9 +84,11 @@ export function toPublicProperty(p: PropertyRecord, lang: Language = 'sk'): Publ
         title,
         location,
         locationDescription: locationDescription || undefined,
-        country: p.country,
+        country: p.country.toLowerCase(),
         price: p.price,
-        priceFormatted: p.price_on_request ? 'Cena na vyžiadanie' : `€ ${p.price.toLocaleString('en-US')}`,
+        priceFormatted: p.price_on_request
+            ? (lang === 'en' ? 'Price on request' : lang === 'cz' ? 'Cena na vyžádání' : 'Cena na vyžiadanie')
+            : `€ ${p.price.toLocaleString('en-US')}`,
         beds: p.beds,
         baths: p.baths,
         area: p.area,
@@ -142,7 +144,7 @@ export function toPublicProperty(p: PropertyRecord, lang: Language = 'sk'): Publ
  */
 export async function getPropertiesServer(lang: Language = 'sk'): Promise<PublicProperty[]> {
     try {
-        const records = await getPublishedProperties();
+        const records = await getCachedPublishedProperties();
         return records.map(r => toPublicProperty(r, lang));
     } catch (error) {
         console.error('Failed to fetch properties from Supabase:', error);
@@ -197,10 +199,11 @@ const propertyTypesMap: Record<string, Record<Language, string>> = {
 
 const priceRangesMap: Record<string, Record<Language, string>> = {
     all: { sk: 'Akákoľvek cena', en: 'Any price', cz: 'Jakákoliv cena' },
-    '0-100000': { sk: 'Do 100 000 €', en: 'Up to €100,000', cz: 'Do 100 000 €' },
-    '100000-250000': { sk: '100 000 - 250 000 €', en: '€100,000 - €250,000', cz: '100 000 - 250 000 €' },
-    '250000-500000': { sk: '250 000 - 500 000 €', en: '€250,000 - €500,000', cz: '250 000 - 500 000 €' },
-    '500000+': { sk: 'Nad 500 000 €', en: 'Over €500,000', cz: 'Nad 500 000 €' },
+    '0-75000': { sk: 'Do 75 000 €', en: 'Up to €75,000', cz: 'Do 75 000 €' },
+    '75000-100000': { sk: '75 000 - 100 000 €', en: '€75,000 - €100,000', cz: '75 000 - 100 000 €' },
+    '100000-150000': { sk: '100 000 - 150 000 €', en: '€100,000 - €150,000', cz: '100 000 - 150 000 €' },
+    '150000-250000': { sk: '150 000 - 250 000 €', en: '€150,000 - €250,000', cz: '150 000 - 250 000 €' },
+    '250000+': { sk: 'Nad 250 000 €', en: 'Over €250,000', cz: 'Nad 250 000 €' },
 };
 
 const bedroomOptionsMap: Record<string, Record<Language, string>> = {
@@ -216,6 +219,7 @@ const sortOptionsMap: Record<string, Record<Language, string>> = {
     newest: { sk: 'Najnovšie', en: 'Newest', cz: 'Nejnovější' },
     'price-asc': { sk: 'Cena: najnižšia', en: 'Price: low to high', cz: 'Cena: nejnižší' },
     'price-desc': { sk: 'Cena: najvyššia', en: 'Price: high to low', cz: 'Cena: nejvyšší' },
+    'area-desc': { sk: 'Rozloha: najväčšia', en: 'Area: largest', cz: 'Plocha: největší' },
 };
 
 function localizeMap(map: Record<string, Record<Language, string>>, lang: Language): FilterOption[] {

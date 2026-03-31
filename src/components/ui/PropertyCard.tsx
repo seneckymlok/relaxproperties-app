@@ -48,6 +48,7 @@ export default function PropertyCard({
   const { isFavorite, toggleFavorite } = useFavorites();
   const favorited = isFavorite(id);
   const [isTouchDevice, setIsTouchDevice] = useState(false);
+  const [heartAnimating, setHeartAnimating] = useState(false);
 
   useEffect(() => {
     setIsTouchDevice("ontouchstart" in window || navigator.maxTouchPoints > 0);
@@ -57,31 +58,43 @@ export default function PropertyCard({
     e.preventDefault();
     e.stopPropagation();
     toggleFavorite(id);
+    if (!favorited) {
+      setHeartAnimating(true);
+      setTimeout(() => setHeartAnimating(false), 500);
+    }
   };
 
   const featuredLabel = dictionary?.common?.featured || 'Featured';
   const addToFavoritesLabel = dictionary?.common?.addToFavorites || 'Add to favorites';
   const removeFromFavoritesLabel = dictionary?.common?.removeFromFavorites || 'Remove from favorites';
 
-  // Label map for preview tags
+  // Label map for preview tags — all 3 languages (SK, EN, CZ)
   const tagLabels: Record<string, string> = {
     pool: lang === 'en' ? 'Pool' : 'Bazén',
-    garden: lang === 'en' ? 'Garden' : 'Záhrada',
+    garden: lang === 'en' ? 'Garden' : lang === 'cz' ? 'Zahrada' : 'Záhrada',
     balcony: lang === 'en' ? 'Balcony' : 'Balkón',
-    sea_view: lang === 'en' ? 'Sea View' : 'Výhľad na more',
-    first_line: lang === 'en' ? 'First Line' : 'Prvá línia',
+    terrace: lang === 'en' ? 'Terrace' : 'Terasa',
+    parking: lang === 'en' ? 'Parking' : lang === 'cz' ? 'Parkování' : 'Parkovanie',
+    sea_view: lang === 'en' ? 'Sea View' : lang === 'cz' ? 'Výhled na moře' : 'Výhľad na more',
+    first_line: lang === 'en' ? 'Beachfront' : lang === 'cz' ? 'První linie' : 'Prvá línia',
     new_build: lang === 'en' ? 'New Build' : 'Novostavba',
-    new_project: lang === 'en' ? 'New Project' : 'Nový projekt',
+    new_project: lang === 'en' ? 'New Project' : lang === 'cz' ? 'Nový projekt' : 'Nový projekt',
     luxury: lang === 'en' ? 'Luxury' : 'Luxus',
     golf: 'Golf',
     mountains: lang === 'en' ? 'Mountains' : 'Hory',
+    near_airport: lang === 'en' ? 'Near Airport' : lang === 'cz' ? 'Blízko letiště' : 'Blízko letiska',
+    near_beach: lang === 'en' ? 'Near Beach' : lang === 'cz' ? 'Blízko pláže' : 'Blízko pláže',
+    loggia: lang === 'en' ? 'Loggia' : 'Lodžia',
+    cellar: lang === 'en' ? 'Cellar' : lang === 'cz' ? 'Sklep' : 'Pivnica',
+    grand_garden: lang === 'en' ? 'Large Garden' : lang === 'cz' ? 'Velká zahrada' : 'Veľká záhrada',
+    near_golf: lang === 'en' ? 'Near Golf' : lang === 'cz' ? 'Blízko golfu' : 'Blízko golfu',
   };
 
   return (
     <Link href={`/${lang}/properties/${id}`} className="block h-full">
-      <article className="group h-full bg-white rounded-2xl overflow-hidden shadow-[var(--shadow-sm)] hover:shadow-[var(--shadow-lg)] transition-all duration-300 hover:-translate-y-1">
+      <article className="group h-full bg-white rounded-2xl overflow-hidden shadow-[var(--shadow-sm)] hover:shadow-[var(--shadow-lg)] transition-all duration-300 hover:-translate-y-1 flex flex-col">
         {/* Image */}
-        <div className={`relative ${compact ? "h-44 sm:h-48" : "aspect-[4/3]"} overflow-hidden bg-[var(--color-surface)] property-image-watermark`}>
+        <div className={`relative ${compact ? "h-[clamp(10rem,28vw,12rem)]" : "aspect-[4/3]"} overflow-hidden bg-[var(--color-surface)] property-image-watermark`}>
           <Swiper
             modules={[Navigation, Pagination]}
             navigation={!isTouchDevice ? {
@@ -102,7 +115,7 @@ export default function PropertyCard({
                   src={image}
                   alt={`${title} - foto ${index + 1}`}
                   fill
-                  className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                  className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
                 />
               </SwiperSlide>
             ))}
@@ -130,14 +143,35 @@ export default function PropertyCard({
             </>
           )}
 
-          {/* Favorite Button */}
+          {/* Preview Tags — top left */}
+          {previewTags.length > 0 && (
+            <div className="absolute top-3 left-3 z-10 flex flex-wrap gap-1.5 pointer-events-none max-w-[75%]">
+              {previewTags.slice(0, 3).map(tag => (
+                <span
+                  key={tag}
+                  className="px-2 py-[3px] text-[9px] font-semibold uppercase tracking-wider text-[var(--color-teal)] bg-white/70 backdrop-blur-sm rounded shadow-sm"
+                >
+                  {tagLabels[tag] || tag}
+                </span>
+              ))}
+            </div>
+          )}
+
+          {/* Featured Badge — top left, below tags */}
+          {featured && (
+            <span className={`absolute left-3 z-10 px-3 py-1 text-[10px] font-medium uppercase tracking-widest bg-[var(--color-accent)] text-white rounded-full ${previewTags.length > 0 ? "top-10" : "top-3"}`}>
+              {featuredLabel}
+            </span>
+          )}
+
+          {/* Favorite Button — top right */}
           <button
             onClick={handleFavoriteClick}
-            className="absolute top-3 left-3 z-10 w-10 h-10 sm:w-9 sm:h-9 flex items-center justify-center bg-white/90 hover:bg-white rounded-full shadow-sm transition-all active:scale-95 backdrop-blur-sm"
+            className="group/fav absolute top-3 right-3 z-10 w-10 h-10 sm:w-9 sm:h-9 flex items-center justify-center bg-white/90 hover:bg-white rounded-full shadow-sm transition-all active:scale-95 backdrop-blur-sm"
             title={favorited ? removeFromFavoritesLabel : addToFavoritesLabel}
           >
             <svg
-              className={`w-5 h-5 transition-colors ${favorited ? "text-red-500 fill-red-500" : "text-[var(--color-muted)]"}`}
+              className={`w-5 h-5 transition-colors ${favorited ? "text-red-500 fill-red-500" : "text-[var(--color-muted)] group-hover/fav:text-red-400"} ${heartAnimating ? "heart-burst" : ""}`}
               fill={favorited ? "currentColor" : "none"}
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -146,46 +180,25 @@ export default function PropertyCard({
               <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
             </svg>
           </button>
-
-          {/* Featured Badge */}
-          {featured && (
-            <span className="absolute top-3 right-3 z-10 px-3 py-1 text-[10px] font-medium uppercase tracking-widest bg-[var(--color-accent)] text-white rounded-full">
-              {featuredLabel}
-            </span>
-          )}
         </div>
 
-        {/* Preview Tags */}
-        {previewTags.length > 0 && (
-          <div className="px-5 sm:px-6 pt-3 flex flex-wrap gap-1.5">
-            {previewTags.map(tag => (
-              <span
-                key={tag}
-                className="px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider bg-[var(--color-primary)]/10 text-[var(--color-primary)] rounded-md"
-              >
-                {tagLabels[tag] || tag}
-              </span>
-            ))}
-          </div>
-        )}
-
         {/* Content */}
-        <div className={compact ? "p-4 sm:p-5" : "p-5 sm:p-6"}>
+        <div className={`${compact ? "p-4 sm:p-5" : "p-5 sm:p-6"} flex flex-col flex-1`}>
           {/* Price — large serif */}
-          <p className={`font-serif ${compact ? "text-lg sm:text-xl" : "text-xl sm:text-2xl"} text-[var(--color-primary)] mb-1.5 tabular-nums`}>
+          <p className={`font-serif ${compact ? "text-lg sm:text-xl" : "text-xl sm:text-2xl"} text-[var(--color-teal)] mb-1.5 tabular-nums`}>
             {price}
           </p>
 
           {/* Title */}
-          <h3 className={`font-medium text-[var(--color-secondary)] ${compact ? "text-sm" : "text-sm sm:text-base"} mb-1.5 group-hover:text-[var(--color-primary)] transition-colors line-clamp-1`}>
+          <h3 className={`font-medium text-[var(--color-secondary)] ${compact ? "text-sm" : "text-sm sm:text-base"} mb-1.5 group-hover:text-[var(--color-teal)] transition-colors line-clamp-1`}>
             {title}
           </h3>
 
           {/* Location */}
-          <p className="text-[var(--color-muted)] text-xs sm:text-sm mb-4">{location}</p>
+          <p className="text-[var(--color-muted)] text-xs sm:text-sm mb-4 line-clamp-2">{location}</p>
 
-          {/* Stats — pipe-separated */}
-          <div className="flex items-center gap-0 text-xs sm:text-sm text-[var(--color-muted)]">
+          {/* Stats — pipe-separated, pushed to bottom */}
+          <div className="flex items-center gap-0 text-xs sm:text-sm text-[var(--color-muted)] mt-auto">
             <div className="flex items-center gap-1.5">
               <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[var(--color-muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
@@ -195,7 +208,9 @@ export default function PropertyCard({
             <span className="mx-2.5 text-[var(--color-border-dark)]">|</span>
             <div className="flex items-center gap-1.5">
               <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[var(--color-muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M3 13h18v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4zm2-3V6a2 2 0 012-2h2a2 2 0 012 2v4" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4 12V5.5A2.5 2.5 0 016.5 3v0A2.5 2.5 0 019 5.5V6" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M2 12h20v4a4 4 0 01-4 4H6a4 4 0 01-4-4v-4z" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 20v1.5M18 20v1.5" />
               </svg>
               <span>{baths}</span>
             </div>

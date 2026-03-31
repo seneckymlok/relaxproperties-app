@@ -4,18 +4,51 @@ import { useState, useMemo } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import PropertyCard from "@/components/ui/PropertyCard";
 import CustomSelect from "@/components/ui/CustomSelect";
+import PriceRangeSlider from "@/components/ui/PriceRangeSlider";
 import { getFilterOptions, type Language, type PublicProperty } from "@/lib/data-access";
+
+const INITIAL_FEATURES_SHOWN = 4;
 
 interface PropertiesContentProps {
     lang: 'sk' | 'en' | 'cz';
     properties: PublicProperty[];
 }
 
-// Labels
+// All 3-language labels for the page chrome
 const labels = {
-    sk: { filter: 'Filtrovať', country: 'Krajina', type: 'Typ', bedrooms: 'Spálne', price: 'Cena', seaView: 'Výhľad na more', firstLine: 'Prvá línia', pool: 'Bazén', luxury: 'Luxusná', found: 'Nájdených', propertiesLabel: 'nehnuteľností', noResults: 'Žiadne nehnuteľnosti nezodpovedajú vašim kritériám.', sort: 'Zoradiť', searchPlaceholder: 'Hľadať podľa ID alebo názvu...', search: 'Hľadať' },
-    en: { filter: 'Filter', country: 'Country', type: 'Type', bedrooms: 'Bedrooms', price: 'Price', seaView: 'Sea View', firstLine: 'Beachfront', pool: 'Pool', luxury: 'Luxury', found: 'Found', propertiesLabel: 'properties', noResults: 'No properties match your criteria.', sort: 'Sort', searchPlaceholder: 'Search by ID or title...', search: 'Search' },
-    cz: { filter: 'Filtrovat', country: 'Země', type: 'Typ', bedrooms: 'Ložnice', price: 'Cena', seaView: 'Výhled na moře', firstLine: 'První linie', pool: 'Bazén', luxury: 'Luxusní', found: 'Nalezeno', propertiesLabel: 'nemovitostí', noResults: 'Žádné nemovitosti neodpovídají vašim kritériím.', sort: 'Seřadit', searchPlaceholder: 'Hledat podle ID nebo názvu...', search: 'Hledat' },
+    sk: {
+        filter: 'Filtrovať', country: 'Krajina', type: 'Typ', bedrooms: 'Spálne', price: 'Cena',
+        features: 'Vlastnosti',
+        seaView: 'Výhľad na more', firstLine: 'Prvá línia', pool: 'Bazén', luxury: 'Luxusná',
+        newBuild: 'Novostavba', balcony: 'Balkón', terrace: 'Terasa', garden: 'Záhrada',
+        parking: 'Parkovanie', nearBeach: 'Blízko pláže', nearAirport: 'Blízko letiska',
+        found: 'Nájdených', propertiesLabel: 'nehnuteľností',
+        noResults: 'Žiadne nehnuteľnosti nezodpovedajú vašim kritériám.',
+        sort: 'Zoradiť', searchPlaceholder: 'Hľadať podľa ID alebo názvu...', search: 'Hľadať',
+        resetFilters: 'Zrušiť filtre',
+    },
+    en: {
+        filter: 'Filter', country: 'Country', type: 'Type', bedrooms: 'Bedrooms', price: 'Price',
+        features: 'Features',
+        seaView: 'Sea View', firstLine: 'Beachfront', pool: 'Pool', luxury: 'Luxury',
+        newBuild: 'New Build', balcony: 'Balcony', terrace: 'Terrace', garden: 'Garden',
+        parking: 'Parking', nearBeach: 'Near Beach', nearAirport: 'Near Airport',
+        found: 'Found', propertiesLabel: 'properties',
+        noResults: 'No properties match your criteria.',
+        sort: 'Sort', searchPlaceholder: 'Search by ID or title...', search: 'Search',
+        resetFilters: 'Reset filters',
+    },
+    cz: {
+        filter: 'Filtrovat', country: 'Země', type: 'Typ', bedrooms: 'Ložnice', price: 'Cena',
+        features: 'Vlastnosti',
+        seaView: 'Výhled na moře', firstLine: 'První linie', pool: 'Bazén', luxury: 'Luxusní',
+        newBuild: 'Novostavba', balcony: 'Balkón', terrace: 'Terasa', garden: 'Zahrada',
+        parking: 'Parkování', nearBeach: 'Blízko pláže', nearAirport: 'Blízko letiště',
+        found: 'Nalezeno', propertiesLabel: 'nemovitostí',
+        noResults: 'Žádné nemovitosti neodpovídají vašim kritériím.',
+        sort: 'Seřadit', searchPlaceholder: 'Hledat podle ID nebo názvu...', search: 'Hledat',
+        resetFilters: 'Zrušit filtry',
+    },
 };
 
 export default function PropertiesContent({ lang, properties }: PropertiesContentProps) {
@@ -23,9 +56,20 @@ export default function PropertiesContent({ lang, properties }: PropertiesConten
     const router = useRouter();
     const l = labels[lang];
 
+    // Compute price bounds from actual data
+    const priceStats = useMemo(() => {
+        const prices = properties.map(p => p.price).filter(p => p > 0);
+        if (prices.length === 0) return { min: 0, max: 500000 };
+        // Round min down to nearest 5k, max up to nearest 5k
+        return {
+            min: Math.floor(Math.min(...prices) / 5000) * 5000,
+            max: Math.ceil(Math.max(...prices) / 5000) * 5000,
+        };
+    }, [properties]);
+
     // Get localized filter options (static, no DB)
     const filterOptions = useMemo(() => getFilterOptions(lang), [lang]);
-    const { countries, propertyTypes, bedroomOptions, priceRanges, sortOptions } = filterOptions;
+    const { countries, propertyTypes, bedroomOptions, sortOptions } = filterOptions;
 
     // Get initial filter values from URL
     const initialCountry = searchParams.get("country") || "all";
@@ -36,15 +80,23 @@ export default function PropertiesContent({ lang, properties }: PropertiesConten
         country: initialCountry,
         propertyType: initialType,
         bedrooms: searchParams.get("beds") || "all",
-        priceRange: "all",
         seaView: searchParams.get("seaView") === "true",
         firstLine: searchParams.get("firstLine") === "true",
         pool: searchParams.get("pool") === "true",
         newBuild: searchParams.get("newBuild") === "true",
         luxury: searchParams.get("luxury") === "true",
+        balcony: false,
+        terrace: false,
+        garden: false,
+        parking: false,
+        nearBeach: false,
+        nearAirport: false,
     });
+    const [priceRange, setPriceRange] = useState<[number, number]>([priceStats.min, priceStats.max]);
+    const isPriceFiltered = priceRange[0] !== priceStats.min || priceRange[1] !== priceStats.max;
     const [sortBy, setSortBy] = useState(initialSort);
     const [searchQuery, setSearchQuery] = useState("");
+    const [featuresExpanded, setFeaturesExpanded] = useState(false);
 
     // Search by ID or keyword
     const handleSearch = () => {
@@ -82,26 +134,20 @@ export default function PropertiesContent({ lang, properties }: PropertiesConten
             const minBeds = parseInt(filters.bedrooms);
             result = result.filter(p => p.beds >= minBeds);
         }
-        if (filters.priceRange !== "all") {
-            const [min, max] = filters.priceRange.split("-").map(Number);
-            if (max) {
-                result = result.filter(p => p.price >= min && p.price <= max);
-            } else {
-                result = result.filter(p => p.price >= min);
-            }
+        if (isPriceFiltered) {
+            result = result.filter(p => p.price >= priceRange[0] && p.price <= priceRange[1]);
         }
-        if (filters.seaView) {
-            result = result.filter(p => p.seaView);
-        }
-        if (filters.firstLine) {
-            result = result.filter(p => p.firstLine);
-        }
-        if (filters.pool) {
-            result = result.filter(p => p.pool);
-        }
-        if (filters.luxury) {
-            result = result.filter(p => p.luxury);
-        }
+        if (filters.seaView) result = result.filter(p => p.seaView);
+        if (filters.firstLine) result = result.filter(p => p.firstLine);
+        if (filters.pool) result = result.filter(p => p.pool);
+        if (filters.newBuild) result = result.filter(p => p.newBuild);
+        if (filters.luxury) result = result.filter(p => p.luxury);
+        if (filters.balcony) result = result.filter(p => p.balcony);
+        if (filters.terrace) result = result.filter(p => p.terasa);
+        if (filters.garden) result = result.filter(p => p.garden);
+        if (filters.parking) result = result.filter(p => p.parkingSpot);
+        if (filters.nearBeach) result = result.filter(p => p.nearBeach);
+        if (filters.nearAirport) result = result.filter(p => p.nearAirport);
 
         switch (sortBy) {
             case "price-asc":
@@ -121,19 +167,47 @@ export default function PropertiesContent({ lang, properties }: PropertiesConten
         }
 
         return result;
-    }, [filters, sortBy, searchQuery, properties]);
+    }, [filters, sortBy, searchQuery, properties, priceRange, isPriceFiltered]);
 
     const handleFilterChange = (key: string, value: string | boolean) => {
         setFilters(prev => ({ ...prev, [key]: value }));
     };
 
+    const activeFilterCount = Object.entries(filters).filter(([, v]) => v !== "all" && v !== false).length + (isPriceFiltered ? 1 : 0);
+
+    const resetFilters = () => {
+        setFilters({
+            country: "all", propertyType: "all", bedrooms: "all",
+            seaView: false, firstLine: false, pool: false, newBuild: false, luxury: false,
+            balcony: false, terrace: false, garden: false, parking: false, nearBeach: false, nearAirport: false,
+        });
+        setPriceRange([priceStats.min, priceStats.max]);
+        setSearchQuery("");
+    };
+
+    // Feature checkboxes config — ordered by most useful for buyers
+    const featureCheckboxes: { key: string; label: string }[] = [
+        { key: 'pool', label: l.pool },
+        { key: 'seaView', label: l.seaView },
+        { key: 'firstLine', label: l.firstLine },
+        { key: 'nearBeach', label: l.nearBeach },
+        { key: 'balcony', label: l.balcony },
+        { key: 'terrace', label: l.terrace },
+        { key: 'garden', label: l.garden },
+        { key: 'parking', label: l.parking },
+        { key: 'newBuild', label: l.newBuild },
+        { key: 'nearAirport', label: l.nearAirport },
+        { key: 'luxury', label: l.luxury },
+    ];
+
     return (
-        <section className="py-12 md:py-16">
+        <section className="py-[clamp(2rem,4vw,4rem)]">
             <div className="container-custom">
                 <div className="flex flex-col lg:flex-row gap-8">
                     {/* Sidebar Filters */}
                     <aside className="lg:w-72 flex-shrink-0">
-                        <div className="bg-white rounded-2xl border border-[var(--color-border)] p-6 sticky top-24">
+                        <div className="bg-white rounded-2xl border border-[var(--color-border)] sticky top-24 lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto lg:overflow-x-hidden lg:overscroll-contain scrollbar-thin">
+                            <div className="p-6">
                             {/* Search by ID/keyword */}
                             <div className="mb-6">
                                 <label className="block text-xs uppercase tracking-wider text-[var(--color-muted)] mb-2">{l.search}</label>
@@ -182,38 +256,66 @@ export default function PropertiesContent({ lang, properties }: PropertiesConten
                             </div>
 
                             <div className="mb-5">
-                                <label className="block text-xs uppercase tracking-wider text-[var(--color-muted)] mb-2">{l.price}</label>
-                                <CustomSelect
-                                    options={priceRanges}
-                                    value={filters.priceRange}
-                                    onChange={(value) => handleFilterChange("priceRange", value)}
+                                <label className="block text-xs uppercase tracking-wider text-[var(--color-muted)] mb-3">{l.price}</label>
+                                <PriceRangeSlider
+                                    min={priceStats.min}
+                                    max={priceStats.max}
+                                    step={5000}
+                                    value={priceRange}
+                                    onChange={setPriceRange}
                                 />
                             </div>
 
-                            <div className="border-t border-[var(--color-border)] pt-5 space-y-3">
-                                {[
-                                    { key: 'seaView', label: l.seaView },
-                                    { key: 'firstLine', label: l.firstLine },
-                                    { key: 'pool', label: l.pool },
-                                    { key: 'luxury', label: l.luxury },
-                                ].map(({ key, label: checkLabel }) => (
-                                    <label key={key} className="flex items-center gap-3 cursor-pointer group">
-                                        <div className="relative">
-                                            <input
-                                                type="checkbox"
-                                                checked={filters[key as keyof typeof filters] as boolean}
-                                                onChange={(e) => handleFilterChange(key, e.target.checked)}
-                                                className="peer sr-only"
-                                            />
-                                            <div className="w-5 h-5 rounded border-2 border-[var(--color-border)] peer-checked:border-[var(--color-primary)] peer-checked:bg-[var(--color-primary)] transition-colors flex items-center justify-center">
-                                                <svg className="w-3 h-3 text-white opacity-0 peer-checked:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                                                </svg>
+                            {/* Feature checkboxes — collapsible */}
+                            <div className="border-t border-[var(--color-border)] pt-5">
+                                <p className="text-xs uppercase tracking-wider text-[var(--color-muted)] mb-3">{l.features}</p>
+                                <div className="space-y-2.5">
+                                    {(featuresExpanded ? featureCheckboxes : featureCheckboxes.slice(0, INITIAL_FEATURES_SHOWN)).map(({ key, label: checkLabel }) => (
+                                        <label key={key} className="flex items-center gap-3 cursor-pointer group">
+                                            <div className="relative">
+                                                <input
+                                                    type="checkbox"
+                                                    checked={filters[key as keyof typeof filters] as boolean}
+                                                    onChange={(e) => handleFilterChange(key, e.target.checked)}
+                                                    className="peer sr-only"
+                                                />
+                                                <div className="w-5 h-5 rounded border-2 border-[var(--color-border)] peer-checked:border-[var(--color-primary)] peer-checked:bg-[var(--color-primary)] transition-colors flex items-center justify-center">
+                                                    <svg className="w-3 h-3 text-white opacity-0 peer-checked:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                                                    </svg>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <span className="text-sm text-[var(--color-foreground)] group-hover:text-[var(--color-primary)] transition-colors">{checkLabel}</span>
-                                    </label>
-                                ))}
+                                            <span className="text-sm text-[var(--color-foreground)] group-hover:text-[var(--color-teal)] transition-colors">{checkLabel}</span>
+                                        </label>
+                                    ))}
+                                </div>
+                                {featureCheckboxes.length > INITIAL_FEATURES_SHOWN && (
+                                    <button
+                                        onClick={() => setFeaturesExpanded(!featuresExpanded)}
+                                        className="mt-3 flex items-center gap-1.5 text-xs font-medium text-[var(--color-primary)] hover:text-[var(--color-teal)] transition-colors"
+                                    >
+                                        <svg
+                                            className={`w-3.5 h-3.5 transition-transform duration-200 ${featuresExpanded ? 'rotate-180' : ''}`}
+                                            fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                        >
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                        </svg>
+                                        {featuresExpanded
+                                            ? (lang === 'en' ? 'Show less' : lang === 'cz' ? 'Zobrazit méně' : 'Zobraziť menej')
+                                            : (lang === 'en' ? `Show all (${featureCheckboxes.length})` : lang === 'cz' ? `Zobrazit vše (${featureCheckboxes.length})` : `Zobraziť všetky (${featureCheckboxes.length})`)}
+                                    </button>
+                                )}
+                            </div>
+
+                            {/* Reset filters */}
+                            {activeFilterCount > 0 && (
+                                <button
+                                    onClick={resetFilters}
+                                    className="mt-5 w-full py-2.5 text-sm font-medium text-[var(--color-muted)] hover:text-[var(--color-teal)] border border-[var(--color-border)] rounded-lg hover:border-[var(--color-teal)]/30 transition-colors"
+                                >
+                                    {l.resetFilters} ({activeFilterCount})
+                                </button>
+                            )}
                             </div>
                         </div>
                     </aside>
@@ -229,7 +331,6 @@ export default function PropertiesContent({ lang, properties }: PropertiesConten
                                     options={sortOptions}
                                     value={sortBy}
                                     onChange={setSortBy}
-                                    placeholder="Zoradiť"
                                 />
                             </div>
                         </div>
@@ -248,13 +349,23 @@ export default function PropertiesContent({ lang, properties }: PropertiesConten
                                     images={property.images}
                                     featured={property.featured}
                                     previewTags={property.previewTags}
+                                    lang={lang}
                                 />
                             ))}
                         </div>
 
                         {filteredProperties.length === 0 && (
                             <div className="text-center py-16">
-                                <p className="text-[var(--color-muted)]">{l.noResults}</p>
+                                <svg className="w-16 h-16 mx-auto text-[var(--color-muted)] mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                                </svg>
+                                <p className="text-[var(--color-muted)] mb-4">{l.noResults}</p>
+                                <button
+                                    onClick={resetFilters}
+                                    className="px-6 py-3 border border-[var(--color-teal)] text-[var(--color-teal)] font-medium rounded-lg hover:bg-[var(--color-teal)] hover:text-white transition-colors"
+                                >
+                                    {l.resetFilters}
+                                </button>
                             </div>
                         )}
                     </main>

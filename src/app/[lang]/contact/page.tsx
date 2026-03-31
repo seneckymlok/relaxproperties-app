@@ -33,9 +33,9 @@ export default async function ContactPage({
                     className="object-cover"
                     priority
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-black/20" />
+                {/* Removed dark filter per user request */}
                 <div className="absolute inset-0 flex flex-col justify-end">
-                    <div className="container-custom px-4 sm:px-6" style={{ paddingBottom: '5rem' }}>
+                    <div className="container-custom" style={{ paddingBottom: '5rem' }}>
                         <p className="text-sm uppercase tracking-[0.2em] text-[var(--color-sand-light)] mb-4">
                             {t.subtitle}
                         </p>
@@ -50,7 +50,7 @@ export default async function ContactPage({
                 Main Content — Company Info + Form
                 ============================================= */}
             <section className="bg-[var(--color-background)]" style={{ paddingTop: '4rem', paddingBottom: '4rem' }}>
-                <div className="container-custom px-4 sm:px-6">
+                <div className="container-custom">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
 
                         {/* Left Column — Real Company Info */}
@@ -99,7 +99,7 @@ export default async function ContactPage({
                                             {t.companyInfo.phones.map((phone: { name: string; number: string; raw: string }, i: number) => (
                                                 <div key={i} className="flex items-center justify-between text-sm">
                                                     <span className="text-[var(--color-foreground)]">{phone.name}</span>
-                                                    <a href={`tel:${phone.raw}`} className="text-[var(--color-primary)] hover:underline font-medium">{phone.number}</a>
+                                                    <a href={`tel:${phone.raw}`} className="text-[var(--color-primary)] hover:text-[var(--color-teal)] transition-colors font-medium">{phone.number}</a>
                                                 </div>
                                             ))}
                                         </div>
@@ -115,7 +115,7 @@ export default async function ContactPage({
                                         </div>
                                         <div className="space-y-2 pl-7">
                                             {t.companyInfo.emails.map((email: string, i: number) => (
-                                                <a key={i} href={`mailto:${email}`} className="block text-sm text-[var(--color-primary)] hover:underline">
+                                                <a key={i} href={`mailto:${email}`} className="block text-sm text-[var(--color-primary)] hover:text-[var(--color-teal)] transition-colors">
                                                     {email}
                                                 </a>
                                             ))}

@@ -38,7 +38,7 @@ const properties = [
 
 export default function FeaturedProperties() {
     return (
-        <section className="py-20 bg-[var(--color-surface)]">
+        <section className="py-[clamp(2.5rem,5vw,5rem)] bg-[var(--color-surface)]">
             <div className="container-custom">
                 <div className="flex flex-col md:flex-row justify-between items-end mb-12">
                     <div>
@@ -51,7 +51,7 @@ export default function FeaturedProperties() {
                     </div>
                     <Link
                         href="/properties"
-                        className="hidden md:inline-flex items-center gap-2 text-[var(--color-primary)] font-medium hover:text-[var(--color-primary-dark)] transition-colors mt-4 md:mt-0"
+                        className="hidden md:inline-flex items-center gap-2 text-[var(--color-primary)] font-medium hover:text-[var(--color-teal)] transition-colors mt-4 md:mt-0"
                     >
                         View all properties
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -68,7 +68,7 @@ export default function FeaturedProperties() {
                                     src={property.image}
                                     alt={property.title}
                                     fill
-                                    className="object-cover transition-transform duration-500 group-hover:scale-110"
+                                    className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
                                 />
                                 <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1 text-sm font-semibold text-[var(--color-primary)] rounded">
                                     {property.price}
@@ -84,7 +84,7 @@ export default function FeaturedProperties() {
                                     {property.location}
                                 </div>
 
-                                <h3 className="text-xl font-serif font-semibold text-[var(--color-secondary)] mb-4 group-hover:text-[var(--color-primary)] transition-colors">
+                                <h3 className="text-xl font-serif font-semibold text-[var(--color-secondary)] mb-4 group-hover:text-[var(--color-teal)] transition-colors">
                                     {property.title}
                                 </h3>
 

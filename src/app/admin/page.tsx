@@ -23,7 +23,7 @@ export default async function AdminDashboard() {
         {
             label: "Celkom",
             value: counts.total,
-            iconClass: "text-[#111827]",
+            iconClass: "text-[var(--color-secondary)]",
             icon: (
                 <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21" />
@@ -33,7 +33,7 @@ export default async function AdminDashboard() {
         {
             label: "Publikované",
             value: counts.published,
-            iconClass: "text-[#111827]",
+            iconClass: "text-[var(--color-secondary)]",
             icon: (
                 <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
@@ -43,7 +43,7 @@ export default async function AdminDashboard() {
         {
             label: "Koncepty",
             value: counts.draft,
-            iconClass: "text-[#111827]",
+            iconClass: "text-[var(--color-secondary)]",
             icon: (
                 <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
@@ -53,7 +53,7 @@ export default async function AdminDashboard() {
         {
             label: "V koši",
             value: counts.trashed,
-            iconClass: "text-[#111827]",
+            iconClass: "text-[var(--color-secondary)]",
             icon: (
                 <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
@@ -75,11 +75,11 @@ export default async function AdminDashboard() {
                 {statCards.map((card) => (
                     <div
                         key={card.label}
-                        className="bg-white border border-[#E5E7EB] rounded-2xl p-6 flex items-center justify-between"
+                        className="bg-white border border-[var(--color-border)] rounded-2xl p-6 flex items-center justify-between"
                     >
                         <div className="flex flex-col items-start gap-1">
-                            <p className="text-[32px] font-serif text-[#111827] leading-none mb-1 font-medium tracking-tight">{card.value}</p>
-                            <p className="text-[14px] font-medium text-[#6B7280]">{card.label}</p>
+                            <p className="text-[32px] font-serif text-[var(--color-secondary)] leading-none mb-1 font-medium tracking-tight">{card.value}</p>
+                            <p className="text-[14px] font-medium text-[var(--color-muted)]">{card.label}</p>
                         </div>
                         <div className={`opacity-80 ${card.iconClass}`}>
                             {card.icon}
@@ -99,13 +99,13 @@ export default async function AdminDashboard() {
                     ].map((card) => (
                         <div
                             key={card.label}
-                            className="bg-white border border-[#E5E7EB] rounded-2xl p-6 flex items-center justify-between"
+                            className="bg-white border border-[var(--color-border)] rounded-2xl p-6 flex items-center justify-between"
                         >
                             <div className="flex flex-col items-start gap-1">
                                 <p className="text-[32px] font-serif text-[#111827] leading-none mb-1 font-medium tracking-tight">{card.value}</p>
                                 <p className="text-[14px] font-medium text-[#6B7280]">{card.label}</p>
                             </div>
-                            <div className="opacity-80 text-[#111827]">
+                            <div className="opacity-80 text-[var(--color-secondary)]">
                                 <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
                                 </svg>

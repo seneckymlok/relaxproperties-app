@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { FreeMode } from "swiper/modules";
+import { useScrollReveal } from "@/hooks/useScrollReveal";
 import type { Dictionary } from "@/lib/dictionaries";
 import type { PublicProperty } from "@/lib/data-access";
 
@@ -25,17 +26,21 @@ interface CountryData {
 
 export default function CountryBanners({ lang = 'sk', dictionary, properties = [] }: CountryBannersProps) {
     const getCountryName = (id: string): string => {
+        const names: Record<string, Record<string, string>> = {
+            croatia: { sk: 'Chorvátsko', en: 'Croatia', cz: 'Chorvatsko' },
+            bulgaria: { sk: 'Bulharsko', en: 'Bulgaria', cz: 'Bulharsko' },
+            spain: { sk: 'Španielsko', en: 'Spain', cz: 'Španělsko' },
+            greece: { sk: 'Grécko', en: 'Greece', cz: 'Řecko' },
+            italy: { sk: 'Taliansko', en: 'Italy', cz: 'Itálie' },
+            portugal: { sk: 'Portugalsko', en: 'Portugal', cz: 'Portugalsko' },
+            montenegro: { sk: 'Čierna Hora', en: 'Montenegro', cz: 'Černá Hora' },
+        };
+        // Dictionary override if available
         if (dictionary?.buyingProcess?.countries) {
             const countryData = dictionary.buyingProcess.countries[id as keyof typeof dictionary.buyingProcess.countries];
-            return countryData?.name || id;
+            if (countryData?.name) return countryData.name;
         }
-        const fallback: Record<string, string> = {
-            croatia: lang === 'en' ? 'Croatia' : lang === 'cz' ? 'Chorvatsko' : 'Chorvátsko',
-            bulgaria: lang === 'en' ? 'Bulgaria' : lang === 'cz' ? 'Bulharsko' : 'Bulharsko',
-            spain: lang === 'en' ? 'Spain' : lang === 'cz' ? 'Španělsko' : 'Španielsko',
-            greece: lang === 'en' ? 'Greece' : lang === 'cz' ? 'Řecko' : 'Grécko',
-        };
-        return fallback[id] || id;
+        return names[id]?.[lang] || names[id]?.sk || id;
     };
 
     const getCount = (countryId: string): number => {
@@ -71,27 +76,28 @@ export default function CountryBanners({ lang = 'sk', dictionary, properties = [
     ];
 
     const propertiesLabel = lang === 'en' ? 'properties' : lang === 'cz' ? 'nemovitostí' : 'nehnuteľností';
+    const sectionRef = useScrollReveal<HTMLDivElement>({ stagger: 0.15 });
 
     function CountryCard({ country }: { country: CountryData }) {
         return (
             <Link
                 href={`/${lang}/properties?country=${country.id}`}
-                className="group relative block h-56 sm:h-64 md:h-72 lg:h-80 rounded-2xl overflow-hidden active:scale-[0.98] transition-transform"
+                className="group relative block h-[clamp(13rem,35vw,20rem)] rounded-2xl overflow-hidden active:scale-[0.98] transition-transform image-hover-lift"
             >
                 {/* Background Image */}
                 <Image
                     src={country.image}
                     alt={country.name}
                     fill
-                    className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                    className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
                 />
 
                 {/* Refined Gradient */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent" />
 
                 {/* Content */}
-                <div className="absolute inset-0 flex flex-col justify-end p-4 sm:p-5 md:p-7">
-                    <h3 className="font-serif text-xl sm:text-2xl md:text-3xl text-white mb-3 sm:mb-4">
+                <div className="absolute inset-0 flex flex-col justify-end p-[clamp(1rem,3vw,1.75rem)]">
+                    <h3 className="font-serif text-[clamp(1.25rem,3vw,1.875rem)] text-white mb-[clamp(0.625rem,1.5vw,1rem)]">
                         {country.name}
                     </h3>
 
@@ -114,10 +120,10 @@ export default function CountryBanners({ lang = 'sk', dictionary, properties = [
     }
 
     return (
-        <section className="relative z-0 py-6 sm:py-8 md:py-12 lg:py-14 bg-[var(--color-surface)]">
-            <div className="container-custom px-4 sm:px-6">
+        <section className="relative z-0 py-[clamp(1.5rem,4vw,3.5rem)] bg-[var(--color-surface)]">
+            <div ref={sectionRef} className="container-custom">
                 {/* Mobile: Swipeable Carousel */}
-                <div className="md:hidden -mx-4 px-4">
+                <div className="md:hidden -mx-[var(--container-px)] px-[var(--container-px)]">
                     <Swiper
                         modules={[FreeMode]}
                         slidesPerView={1.5}
@@ -140,7 +146,9 @@ export default function CountryBanners({ lang = 'sk', dictionary, properties = [
                 {/* Desktop: Grid */}
                 <div className="hidden md:grid grid-cols-4 gap-6">
                     {countries.map((country) => (
-                        <CountryCard key={country.id} country={country} />
+                        <div key={country.id} data-reveal>
+                            <CountryCard country={country} />
+                        </div>
                     ))}
                 </div>
             </div>

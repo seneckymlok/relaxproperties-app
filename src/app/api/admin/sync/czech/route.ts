@@ -1,13 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { getPublishedProperties } from '@/lib/property-store';
-import { toSoftrealXml } from '@/lib/export-formatters';
+import { toSoftrealXmlBatch, parseSoftrealResponse } from '@/lib/export-formatters';
 
 /**
  * POST /api/admin/sync/czech
  *
- * Generates XML from all published properties and POSTs it to the Czech Softreal CRM.
+ * Bulk-syncs all published properties marked for Softreal export.
  * Protected by admin_session cookie OR a CRON_SECRET header for automated Vercel cron jobs.
+ *
+ * Filters:
+ *   - Only properties with export_target including 'softreal'
+ *   - Only properties that have a CZ translation (title_cz)
  *
  * Softreal endpoint:
  *   https://s1.system.softreal.cz/relaxproperties/softreal/publicImportApi/importXml/{key}
@@ -31,6 +35,19 @@ async function isAuthenticated(request: NextRequest): Promise<boolean> {
     return cookieStore.get('admin_session')?.value === 'authenticated';
 }
 
+interface SyncResult {
+    externalId: string;
+    propertyId: string;
+    title: string;
+    success: boolean;
+    httpStatus: number;
+    softrealId: number | null;
+    resultCode: number | null;
+    resultMessage: string | null;
+    errorCode: number | null;
+    errorMessage: string | null;
+}
+
 export async function POST(request: NextRequest) {
     if (!(await isAuthenticated(request))) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -48,46 +65,106 @@ export async function POST(request: NextRequest) {
     }
 
     try {
-        const properties = await getPublishedProperties();
-        const xml = toSoftrealXml(properties);
+        const allProperties = await getPublishedProperties();
 
-        const softrealUrl = `${SOFTREAL_BASE_URL}/${exportKey}`;
+        // Filter: only properties marked for Softreal export AND with CZ translation
+        const softrealProperties = allProperties.filter(p =>
+            p.export_target?.includes('softreal') && p.title_cz
+        );
 
-        const response = await fetch(softrealUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/xml; charset=utf-8',
-                'Accept': 'application/xml',
-            },
-            body: xml,
-        });
+        const skippedCount = allProperties.length - softrealProperties.length;
 
-        const responseText = await response.text();
-
-        if (!response.ok) {
-            console.error(`Softreal sync failed: ${response.status}`, responseText);
-            return NextResponse.json(
-                {
-                    success: false,
-                    propertiesCount: properties.length,
-                    softrealStatus: response.status,
-                    softrealResponse: responseText,
-                    syncedAt: new Date().toISOString(),
-                },
-                { status: 502 }
-            );
+        if (softrealProperties.length === 0) {
+            return NextResponse.json({
+                success: true,
+                message: 'No properties to sync — none are marked for Softreal export with CZ translations.',
+                totalPublished: allProperties.length,
+                skipped: skippedCount,
+                exported: 0,
+                succeeded: 0,
+                failed: 0,
+                results: [],
+                syncedAt: new Date().toISOString(),
+            });
         }
 
+        const xmlBatch = toSoftrealXmlBatch(softrealProperties);
+        const softrealUrl = `${SOFTREAL_BASE_URL}/${exportKey}`;
+
+        // Softreal accepts one <foreign> per request — send each property individually
+        const results: SyncResult[] = [];
+
+        for (let i = 0; i < xmlBatch.length; i++) {
+            const xml = xmlBatch[i];
+            const property = softrealProperties[i];
+            const externalId = property.property_id_external || property.id;
+
+            try {
+                const response = await fetch(softrealUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: new URLSearchParams({ data: xml }),
+                });
+
+                const responseText = await response.text();
+                const parsed = parseSoftrealResponse(responseText);
+
+                results.push({
+                    externalId,
+                    propertyId: property.id,
+                    title: property.title_cz || property.title_sk,
+                    success: parsed.success,
+                    httpStatus: response.status,
+                    softrealId: parsed.softrealId,
+                    resultCode: parsed.resultCode,
+                    resultMessage: parsed.resultMessage,
+                    errorCode: parsed.errorCode,
+                    errorMessage: parsed.errorMessage,
+                });
+
+                if (!parsed.success) {
+                    console.error(
+                        `[Softreal Sync] Failed for "${property.title_cz}" (${externalId}).` +
+                        ` Result: ${parsed.resultCode} — ${parsed.resultMessage}.` +
+                        (parsed.errorMessage
+                            ? ` Error: ${parsed.errorMessage}${parsed.errorCode ? ` (${parsed.errorCode})` : ''}.`
+                            : '')
+                    );
+                }
+            } catch (err) {
+                const msg = err instanceof Error ? err.message : 'Network error';
+                console.error(`[Softreal Sync] Network error for "${property.title_cz}" (${externalId}): ${msg}`);
+                results.push({
+                    externalId,
+                    propertyId: property.id,
+                    title: property.title_cz || property.title_sk,
+                    success: false,
+                    httpStatus: 0,
+                    softrealId: null,
+                    resultCode: null,
+                    resultMessage: null,
+                    errorCode: null,
+                    errorMessage: msg,
+                });
+            }
+        }
+
+        const succeeded = results.filter(r => r.success).length;
+        const failed = results.filter(r => !r.success).length;
+
         return NextResponse.json({
-            success: true,
-            propertiesCount: properties.length,
-            softrealStatus: response.status,
-            softrealResponse: responseText,
+            success: failed === 0,
+            totalPublished: allProperties.length,
+            skipped: skippedCount,
+            exported: softrealProperties.length,
+            succeeded,
+            failed,
+            results,
             syncedAt: new Date().toISOString(),
         });
     } catch (error) {
         const message = error instanceof Error ? error.message : 'Unknown error';
-        console.error('Czech sync error:', error);
+        console.error('[Softreal Sync] Fatal error:', error);
         return NextResponse.json(
             { success: false, error: message, syncedAt: new Date().toISOString() },
             { status: 500 }
@@ -97,7 +174,7 @@ export async function POST(request: NextRequest) {
 
 /**
  * GET /api/admin/sync/czech
- * Returns the current status / last sync info (no stored state yet — returns config status).
+ * Returns the current status / configuration info.
  */
 export async function GET(request: NextRequest) {
     if (!(await isAuthenticated(request))) {
@@ -106,11 +183,26 @@ export async function GET(request: NextRequest) {
 
     const exportKey = process.env.SOFTREAL_EXPORT_KEY;
 
+    // Count how many properties would be exported
+    let eligibleCount = 0;
+    let totalPublished = 0;
+    try {
+        const allProperties = await getPublishedProperties();
+        totalPublished = allProperties.length;
+        eligibleCount = allProperties.filter(p =>
+            p.export_target?.includes('softreal') && p.title_cz
+        ).length;
+    } catch {
+        // Non-critical — just for info display
+    }
+
     return NextResponse.json({
         configured: !!exportKey,
         softrealEndpoint: exportKey
             ? `${SOFTREAL_BASE_URL}/${exportKey}`
             : null,
+        totalPublished,
+        eligibleForExport: eligibleCount,
         hint: !exportKey
             ? 'Set SOFTREAL_EXPORT_KEY in your environment variables to enable Czech sync.'
             : null,
