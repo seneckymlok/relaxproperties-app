@@ -52,25 +52,25 @@ export default function CountryBanners({ lang = 'sk', dictionary, properties = [
         {
             id: "croatia",
             name: getCountryName("croatia"),
-            image: "/images/countries/croatia.jpg",
+            image: "/images/countries/croatia.webp",
             properties: getCount("croatia"),
         },
         {
             id: "bulgaria",
             name: getCountryName("bulgaria"),
-            image: "/images/countries/bulgaria.jpg",
+            image: "/images/countries/bulgaria.webp",
             properties: getCount("bulgaria"),
         },
         {
             id: "spain",
             name: getCountryName("spain"),
-            image: "https://images.unsplash.com/photo-1539037116277-4db20889f2d4?w=800&q=80",
+            image: "/images/countries/spain.webp",
             properties: getCount("spain"),
         },
         {
             id: "greece",
             name: getCountryName("greece"),
-            image: "https://images.unsplash.com/photo-1533105079780-92b9be482077?w=800&q=80",
+            image: "/images/countries/greece.webp",
             properties: getCount("greece"),
         },
     ];
