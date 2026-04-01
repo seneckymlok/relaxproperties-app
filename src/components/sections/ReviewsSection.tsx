@@ -19,9 +19,6 @@ interface Review {
 interface ReviewsSectionProps {
     lang?: string;
     dictionary?: Dictionary;
-    initialReviews?: Review[];
-    initialRating?: number;
-    initialTotalReviews?: number;
 }
 
 // Fallback reviews in case the API is unavailable
@@ -58,20 +55,17 @@ const FALLBACK_REVIEWS: Review[] = [
 const ROTATION_INTERVAL = 8000; // 8 seconds per review — enough time to read
 const VISIBLE_COUNT_DESKTOP = 3;
 
-export default function ReviewsSection({ lang = "sk", dictionary, initialReviews, initialRating, initialTotalReviews }: ReviewsSectionProps) {
-    const hasServerData = initialReviews && initialReviews.length > 0;
-    const [reviews, setReviews] = useState<Review[]>(hasServerData ? initialReviews : FALLBACK_REVIEWS);
-    const [rating, setRating] = useState(initialRating ?? 5);
-    const [totalReviews, setTotalReviews] = useState(initialTotalReviews ?? 0);
+export default function ReviewsSection({ lang = "sk", dictionary }: ReviewsSectionProps) {
+    const [reviews, setReviews] = useState<Review[]>(FALLBACK_REVIEWS);
+    const [rating, setRating] = useState(5);
+    const [totalReviews, setTotalReviews] = useState(0);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isTransitioning, setIsTransitioning] = useState(false);
     const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
     const [isPaused, setIsPaused] = useState(false);
     const reviewsHeaderRef = useScrollReveal<HTMLDivElement>({ y: 40 });
 
-    // Only fetch client-side if no server data was provided (fallback)
     useEffect(() => {
-        if (hasServerData) return;
         async function fetchReviews() {
             try {
                 const res = await fetch(`/api/reviews?lang=${lang}`);
@@ -87,7 +81,7 @@ export default function ReviewsSection({ lang = "sk", dictionary, initialReviews
             }
         }
         fetchReviews();
-    }, [lang, hasServerData]);
+    }, [lang]);
 
     // Auto-rotation
     const nextSlide = useCallback(() => {

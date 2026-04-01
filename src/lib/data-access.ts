@@ -283,51 +283,6 @@ export async function getBlogPostsServer(lang: Language = 'sk'): Promise<PublicB
     }
 }
 
-// ============================================
-// REVIEWS DATA ACCESS (Server-side)
-// ============================================
-
-export interface PublicReview {
-    name: string;
-    rating: number;
-    text: string;
-    timeAgo: string;
-    timestamp: number;
-    photo: string | null;
-    language: string;
-}
-
-export interface ReviewsData {
-    reviews: PublicReview[];
-    rating: number;
-    totalReviews: number;
-}
-
-/**
- * SERVER-SIDE: Fetch Google reviews via internal API
- * Uses Next.js fetch with revalidation for ISR-style caching
- */
-export async function getReviewsServer(lang: Language = 'sk'): Promise<ReviewsData> {
-    const fallback: ReviewsData = { reviews: [], rating: 5, totalReviews: 0 };
-    try {
-        const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || process.env.VERCEL_URL
-            ? `https://${process.env.VERCEL_URL}`
-            : 'http://localhost:3000';
-        const res = await fetch(`${baseUrl}/api/reviews?lang=${lang}`, {
-            next: { revalidate: 3600 },
-        });
-        if (!res.ok) return fallback;
-        const data = await res.json();
-        return {
-            reviews: data.reviews || [],
-            rating: data.rating || 5,
-            totalReviews: data.totalReviews || 0,
-        };
-    } catch {
-        return fallback;
-    }
-}
-
 // Re-export for backwards compatibility
 export const countries = localizeMap(countriesMap, 'sk');
 export const propertyTypes = localizeMap(propertyTypesMap, 'sk');

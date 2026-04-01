@@ -3,9 +3,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay, EffectFade } from "swiper/modules";
-import type SwiperType from "swiper";
 import { gsap } from "gsap";
 import HeroSearch from "./HeroSearch";
 import MagneticButton from "@/components/ui/MagneticButton";
@@ -13,15 +10,14 @@ import type { Dictionary } from "@/lib/dictionaries";
 import type { PublicProperty } from "@/lib/data-access";
 import { useCookieConsent } from "@/contexts/CookieConsentContext";
 
-import "swiper/css";
-import "swiper/css/effect-fade";
-
 interface HeroSliderProps {
     lang?: string;
     dictionary?: Dictionary;
     featuredProperties?: PublicProperty[];
     allProperties?: PublicProperty[];
 }
+
+const SLIDE_DURATION = 6000; // ms per slide
 
 const countriesMap: Record<string, Record<string, string>> = {
     spain: { sk: 'Španielsko', en: 'Spain', cz: 'Španělsko' },
@@ -41,10 +37,11 @@ function translateCountry(country: string, lang: string): string {
 export default function HeroSlider({ lang = 'sk', dictionary, featuredProperties = [], allProperties = [] }: HeroSliderProps) {
     const { hasConsented } = useCookieConsent();
     const [currentSlide, setCurrentSlide] = useState(0);
-    const [isMobile, setIsMobile] = useState(false);
-    const [swiperInstance, setSwiperInstance] = useState<SwiperType | null>(null);
     const contentRefs = useRef<(HTMLDivElement | null)[]>([]);
     const progressRef = useRef<HTMLDivElement>(null);
+    const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+    const progressAnimRef = useRef<number | null>(null);
+    const slideStartRef = useRef<number>(0);
 
     // Compute dynamic price range from all properties
     const priceRange = (() => {
@@ -117,25 +114,53 @@ export default function HeroSlider({ lang = 'sk', dictionary, featuredProperties
         ? propertySlides
         : fallbackSlides;
 
-    useEffect(() => {
-        const checkMobile = () => setIsMobile(window.innerWidth < 768);
-        checkMobile();
-        window.addEventListener("resize", checkMobile);
-        return () => window.removeEventListener("resize", checkMobile);
-    }, []);
+    // Autoplay: paused during intro and when cookie consent banner is visible
+    const isPaused = showIntro || !hasConsented;
 
-    // Pause Swiper autoplay during intro phase and when cookie consent banner is visible
-    useEffect(() => {
-        if (swiperInstance) {
-            if (showIntro || !hasConsented) {
-                swiperInstance.autoplay?.stop();
-            } else {
-                swiperInstance.autoplay?.start();
+    // Progress bar animation
+    const startProgress = useCallback(() => {
+        slideStartRef.current = performance.now();
+        if (progressRef.current) progressRef.current.style.width = '0%';
+
+        function tick() {
+            const elapsed = performance.now() - slideStartRef.current;
+            const pct = Math.min((elapsed / SLIDE_DURATION) * 100, 100);
+            if (progressRef.current) progressRef.current.style.width = `${pct}%`;
+            if (pct < 100) {
+                progressAnimRef.current = requestAnimationFrame(tick);
             }
         }
-    }, [swiperInstance, showIntro, hasConsented]);
+        progressAnimRef.current = requestAnimationFrame(tick);
+    }, []);
 
-    // Fade out intro after 5 seconds
+    const stopProgress = useCallback(() => {
+        if (progressAnimRef.current) {
+            cancelAnimationFrame(progressAnimRef.current);
+            progressAnimRef.current = null;
+        }
+    }, []);
+
+    // Autoplay timer
+    useEffect(() => {
+        if (isPaused || slides.length <= 1) {
+            if (timerRef.current) clearInterval(timerRef.current);
+            stopProgress();
+            return;
+        }
+
+        startProgress();
+        timerRef.current = setInterval(() => {
+            setCurrentSlide(prev => (prev + 1) % slides.length);
+            startProgress();
+        }, SLIDE_DURATION);
+
+        return () => {
+            if (timerRef.current) clearInterval(timerRef.current);
+            stopProgress();
+        };
+    }, [isPaused, slides.length, startProgress, stopProgress]);
+
+    // Fade out intro after 6 seconds
     useEffect(() => {
         const timer = setTimeout(() => {
             setShowIntro(false);
@@ -172,7 +197,6 @@ export default function HeroSlider({ lang = 'sk', dictionary, featuredProperties
         );
 
         // Glass elements (CTA button): slide only, NO opacity change
-        // Animating opacity breaks backdrop-blur (invisible at opacity:0)
         const glassElements = contentEl.querySelectorAll("[data-hero-animate='glass']");
         gsap.fromTo(
             glassElements,
@@ -208,27 +232,18 @@ export default function HeroSlider({ lang = 'sk', dictionary, featuredProperties
                 </div>
             )}
 
-            <Swiper
-                modules={[Autoplay, EffectFade]}
-                effect="fade"
-                autoplay={{
-                    delay: 6000,
-                    disableOnInteraction: false,
-                }}
-                loop
-                onSwiper={setSwiperInstance}
-                onSlideChange={(swiper) => {
-                    setCurrentSlide(swiper.realIndex);
-                    if (progressRef.current) progressRef.current.style.width = '0%';
-                }}
-                onAutoplayTimeLeft={(_s, _t, pct) => {
-                    if (progressRef.current) progressRef.current.style.width = `${(1 - pct) * 100}%`;
-                }}
-                className={`w-full h-full transition-opacity duration-700 ${showIntro ? "opacity-0" : "opacity-100"}`}
-            >
+            {/* CSS Fade Carousel — replaces Swiper for zero-JS overhead */}
+            <div className={`relative w-full h-full transition-opacity duration-700 ${showIntro ? "opacity-0" : "opacity-100"}`}>
                 {slides.map((slide, index) => (
-                    <SwiperSlide key={slide.id}>
-                        {/* Background Image — no priority; intro overlay shows first */}
+                    <div
+                        key={slide.id}
+                        className="absolute inset-0 transition-opacity duration-700 ease-in-out"
+                        style={{
+                            opacity: index === currentSlide ? 1 : 0,
+                            zIndex: index === currentSlide ? 1 : 0,
+                        }}
+                    >
+                        {/* Background Image */}
                         <Image
                             src={slide.image}
                             alt={slide.location || 'Property'}
@@ -239,12 +254,12 @@ export default function HeroSlider({ lang = 'sk', dictionary, featuredProperties
                             loading={index === 0 ? "eager" : "lazy"}
                         />
 
-                        {/* Dark gradient overlay — ensures white text is always readable */}
+                        {/* Dark gradient overlay */}
                         <div className="absolute inset-0 z-10 pointer-events-none" style={{
                             background: 'linear-gradient(to top, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.3) 30%, rgba(0,0,0,0.15) 55%, rgba(0,0,0,0.1) 75%, rgba(0,0,0,0.06) 100%)',
                         }} />
 
-                        {/* Content — fades in when intro ends, animates per-element on slide change */}
+                        {/* Content */}
                         <div
                             ref={(el) => { contentRefs.current[index] = el; }}
                             className="absolute inset-0 z-20 flex items-end pb-14 md:pb-[clamp(12rem,38vh,20rem)] transition-opacity duration-500 ease-in-out"
@@ -274,7 +289,7 @@ export default function HeroSlider({ lang = 'sk', dictionary, featuredProperties
                                     {slide.title}
                                 </h1>
 
-                                {/* CTA Button with magnetic effect — uses 'glass' animation (no opacity) */}
+                                {/* CTA Button with magnetic effect */}
                                 <div data-hero-animate="glass">
                                     <MagneticButton strength={0.2}>
                                         <Link
@@ -291,9 +306,9 @@ export default function HeroSlider({ lang = 'sk', dictionary, featuredProperties
                                 </div>
                             </div>
                         </div>
-                    </SwiperSlide>
+                    </div>
                 ))}
-            </Swiper>
+            </div>
 
             {/* Slide progress bar — mobile */}
             <div className={`md:hidden absolute bottom-0 left-0 right-0 z-40 h-[2px] bg-white/15 transition-opacity duration-700 ${showIntro ? 'opacity-0' : 'opacity-100'}`}>

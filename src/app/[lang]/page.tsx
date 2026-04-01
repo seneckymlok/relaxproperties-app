@@ -2,7 +2,7 @@ import dynamic from "next/dynamic";
 import HeroSlider from "@/components/sections/HeroSlider";
 import CountryBanners from "@/components/sections/CountryBanners";
 import { getDictionary } from "@/lib/dictionaries";
-import { getPropertiesServer, getBlogPostsServer, getReviewsServer, type Language, type PublicProperty } from "@/lib/data-access";
+import { getPropertiesServer, getBlogPostsServer, type Language, type PublicProperty } from "@/lib/data-access";
 import { getCachedHeroFeaturedPropertyIds } from "@/lib/hero-featured-store";
 
 // Below-fold sections: dynamically imported to reduce initial JS bundle
@@ -22,11 +22,10 @@ export default async function Home({
     const dictionary = getDictionary(validLang);
 
     // Parallel data fetching — all queries run simultaneously
-    const [properties, heroIds, blogPosts, reviewsData] = await Promise.all([
+    const [properties, heroIds, blogPosts] = await Promise.all([
         getPropertiesServer(validLang),
         getCachedHeroFeaturedPropertyIds(),
         getBlogPostsServer(validLang),
-        getReviewsServer(validLang),
     ]);
 
     const featuredForHero = heroIds.length > 0
@@ -50,7 +49,7 @@ export default async function Home({
             <AboutSection lang={validLang} dictionary={dictionary} />
 
             {/* 5. Reviews */}
-            <ReviewsSection lang={validLang} dictionary={dictionary} initialReviews={reviewsData.reviews} initialRating={reviewsData.rating} initialTotalReviews={reviewsData.totalReviews} />
+            <ReviewsSection lang={validLang} dictionary={dictionary} />
 
             {/* 6. Blog Carousel */}
             <BlogCarousel lang={validLang} dictionary={dictionary} initialArticles={blogPosts.slice(0, 3)} />

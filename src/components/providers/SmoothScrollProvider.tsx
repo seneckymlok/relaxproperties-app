@@ -1,18 +1,37 @@
 "use client";
 
 import { useEffect } from "react";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-gsap.registerPlugin(ScrollTrigger);
 
 export default function SmoothScrollProvider({ children }: { children: React.ReactNode }) {
     useEffect(() => {
-        ScrollTrigger.defaults({ scroller: window });
-        ScrollTrigger.refresh();
+        // Defer GSAP + ScrollTrigger loading until after initial paint
+        const id = typeof requestIdleCallback !== 'undefined'
+            ? requestIdleCallback(initGsap)
+            : setTimeout(initGsap, 100) as unknown as number;
+
+        let cleanup: (() => void) | undefined;
+
+        async function initGsap() {
+            const [{ gsap }, { ScrollTrigger }] = await Promise.all([
+                import("gsap"),
+                import("gsap/ScrollTrigger"),
+            ]);
+            gsap.registerPlugin(ScrollTrigger);
+            ScrollTrigger.defaults({ scroller: window });
+            ScrollTrigger.refresh();
+
+            cleanup = () => {
+                ScrollTrigger.getAll().forEach((t) => t.kill());
+            };
+        }
 
         return () => {
-            ScrollTrigger.getAll().forEach((t) => t.kill());
+            if (typeof cancelIdleCallback !== 'undefined') {
+                cancelIdleCallback(id);
+            } else {
+                clearTimeout(id);
+            }
+            cleanup?.();
         };
     }, []);
 
