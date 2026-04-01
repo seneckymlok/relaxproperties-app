@@ -52,13 +52,9 @@ export default async function RootLayout({
   return (
     <html lang={validLang}>
       <head>
-        {/* DNS prefetch & preconnect for external domains */}
-        <link rel="dns-prefetch" href="https://maps.googleapis.com" />
+        {/* DNS prefetch for external image domains (lightweight, no connection overhead) */}
         <link rel="dns-prefetch" href="https://8v6qfutk2bxqslae.public.blob.vercel-storage.com" />
         <link rel="dns-prefetch" href="https://7lisadzjl63dspu3.public.blob.vercel-storage.com" />
-        <link rel="dns-prefetch" href="https://images.unsplash.com" />
-        <link rel="preconnect" href="https://8v6qfutk2bxqslae.public.blob.vercel-storage.com" crossOrigin="anonymous" />
-        <link rel="preconnect" href="https://7lisadzjl63dspu3.public.blob.vercel-storage.com" crossOrigin="anonymous" />
       </head>
       <body className={`${dmSans.variable} ${libreBaskerville.variable} ${instrumentSerif.variable} antialiased`}>
         <SmoothScrollProvider>

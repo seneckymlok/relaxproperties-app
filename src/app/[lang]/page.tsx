@@ -1,12 +1,16 @@
+import dynamic from "next/dynamic";
 import HeroSlider from "@/components/sections/HeroSlider";
 import CountryBanners from "@/components/sections/CountryBanners";
-import NewOffers from "@/components/sections/NewOffers";
-import AboutSection from "@/components/sections/AboutSection";
-import ReviewsSection from "@/components/sections/ReviewsSection";
-import BlogCarousel from "@/components/sections/BlogCarousel";
 import { getDictionary } from "@/lib/dictionaries";
 import { getPropertiesServer, getBlogPostsServer, getReviewsServer, type Language, type PublicProperty } from "@/lib/data-access";
 import { getCachedHeroFeaturedPropertyIds } from "@/lib/hero-featured-store";
+
+// Below-fold sections: dynamically imported to reduce initial JS bundle
+// These components pull in Swiper, GSAP, and other heavy deps
+const NewOffers = dynamic(() => import("@/components/sections/NewOffers"));
+const AboutSection = dynamic(() => import("@/components/sections/AboutSection"));
+const ReviewsSection = dynamic(() => import("@/components/sections/ReviewsSection"));
+const BlogCarousel = dynamic(() => import("@/components/sections/BlogCarousel"));
 
 export default async function Home({
     params,

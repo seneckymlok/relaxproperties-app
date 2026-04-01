@@ -129,8 +129,8 @@
     /* Deep warm black — headings, strongest text */
     --color-foreground: #353533;
     /* Body text — soft warm dark */
-    --color-muted: #8A8A85;
-    /* Warm grey — captions, metadata */
+    --color-muted: #706F6B;
+    /* Warm grey — captions, metadata (4.5:1 on white) */
 
     --color-accent: #C4A882;
     /* Sand — warm luxury accent, badges, stars, decorative */

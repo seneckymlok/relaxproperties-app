@@ -111,6 +111,7 @@ function DualRangeSlider({
                         max={boundsMax}
                         step={PRICE_STEP}
                         value={sliderMin}
+                        aria-label={minLabel}
                         onChange={(e) => onSliderMinChange(Number(e.target.value))}
                         style={{ zIndex: sliderMin > boundsMax - PRICE_STEP * 5 ? 5 : 3 }}
                     />
@@ -120,6 +121,7 @@ function DualRangeSlider({
                         max={boundsMax}
                         step={PRICE_STEP}
                         value={sliderMax}
+                        aria-label={maxLabel}
                         onChange={(e) => onSliderMaxChange(Number(e.target.value))}
                         style={{ zIndex: 4 }}
                     />
@@ -830,7 +832,7 @@ export default function HeroSearch({ lang = 'sk', dictionary, priceRange }: Hero
                                         {/* Search Button */}
                                         <button
                                             onClick={handleSearch}
-                                            className="flex items-center gap-2.5 bg-[var(--color-accent)] text-white px-7 py-3 rounded-full hover:bg-[var(--color-accent-dark)] transition-all hover:scale-[1.02] active:scale-[0.98] flex-shrink-0 font-medium text-sm shadow-md shadow-[var(--color-accent)]/20"
+                                            className="flex items-center gap-2.5 bg-[var(--color-accent)] text-[var(--color-secondary)] px-7 py-3 rounded-full hover:bg-[var(--color-accent-dark)] transition-all hover:scale-[1.02] active:scale-[0.98] flex-shrink-0 font-medium text-sm shadow-md shadow-[var(--color-accent)]/20"
                                             title={t.search}
                                         >
                                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -858,7 +860,7 @@ export default function HeroSearch({ lang = 'sk', dictionary, priceRange }: Hero
                                         <button
                                             onClick={handleAiSearch}
                                             disabled={isAiSearching || !aiQuery.trim()}
-                                            className="flex items-center gap-2.5 bg-[var(--color-accent)] text-white px-7 py-3 rounded-full hover:bg-[var(--color-accent-dark)] transition-all hover:scale-[1.02] active:scale-[0.98] flex-shrink-0 font-medium text-sm disabled:opacity-50 shadow-md shadow-[var(--color-accent)]/20"
+                                            className="flex items-center gap-2.5 bg-[var(--color-accent)] text-[var(--color-secondary)] px-7 py-3 rounded-full hover:bg-[var(--color-accent-dark)] transition-all hover:scale-[1.02] active:scale-[0.98] flex-shrink-0 font-medium text-sm disabled:opacity-50 shadow-md shadow-[var(--color-accent)]/20"
                                             title={t.search}
                                         >
                                             {isAiSearching ? (

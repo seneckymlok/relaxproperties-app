@@ -116,6 +116,7 @@ export default function PropertyCard({
                   alt={`${title} - foto ${index + 1}`}
                   fill
                   sizes="(max-width: 640px) 85vw, (max-width: 768px) 60vw, (max-width: 1024px) 50vw, 25vw"
+                  quality={65}
                   className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
                 />
               </SwiperSlide>
@@ -127,6 +128,7 @@ export default function PropertyCard({
             <>
               <button
                 onClick={(e) => e.preventDefault()}
+                aria-label="Previous image"
                 className={`property-prev-${uniqueId} absolute left-2.5 top-1/2 -translate-y-1/2 z-10 w-8 h-8 flex items-center justify-center bg-white/90 hover:bg-white rounded-full opacity-0 group-hover:opacity-100 transition-all shadow-sm backdrop-blur-sm`}
               >
                 <svg className="w-4 h-4 text-[var(--color-secondary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -135,6 +137,7 @@ export default function PropertyCard({
               </button>
               <button
                 onClick={(e) => e.preventDefault()}
+                aria-label="Next image"
                 className={`property-next-${uniqueId} absolute right-2.5 top-1/2 -translate-y-1/2 z-10 w-8 h-8 flex items-center justify-center bg-white/90 hover:bg-white rounded-full opacity-0 group-hover:opacity-100 transition-all shadow-sm backdrop-blur-sm`}
               >
                 <svg className="w-4 h-4 text-[var(--color-secondary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">

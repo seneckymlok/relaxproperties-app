@@ -234,6 +234,7 @@ export default function HeroSlider({ lang = 'sk', dictionary, featuredProperties
                             alt={slide.location || 'Property'}
                             fill
                             sizes="100vw"
+                            quality={65}
                             className="object-cover"
                             loading={index === 0 ? "eager" : "lazy"}
                         />

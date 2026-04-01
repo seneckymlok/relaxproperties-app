@@ -212,12 +212,12 @@ export default function Header({ lang, dictionary }: HeaderProps) {
                                         height={45}
                                         className="h-[clamp(1.75rem,2.5vw,2.5rem)] w-auto absolute inset-0 object-contain object-left"
                                         aria-hidden="true"
+                                        priority
                                         style={{
                                             opacity: logoWhiteOpacity,
                                             filter: `brightness(${logoBrightness}) invert(${logoInvert})`,
                                             transition: 'opacity 0.15s ease, filter 0.15s ease',
                                         }}
-                                        priority
                                     />
                                 </div>
                             </Link>
