@@ -16,7 +16,7 @@ interface HeroSliderProps {
     allProperties?: PublicProperty[];
 }
 
-const SLIDE_DURATION = 6000; // ms per slide
+const SLIDE_DURATION = 6000;
 
 const countriesMap: Record<string, Record<string, string>> = {
     spain: { sk: 'Španielsko', en: 'Spain', cz: 'Španělsko' },
@@ -33,6 +33,15 @@ function translateCountry(country: string, lang: string): string {
     return countriesMap[key]?.[lang] || country;
 }
 
+/*
+ * INTRO PHASES:
+ *   'logo'    → Frosted glass overlay + centered brand logo (matches loading.tsx exactly)
+ *   'image'   → Property image revealed (frost + logo faded out)
+ *   'done'    → Entire curtain fading out, carousel visible underneath
+ *   'removed' → Overlay removed from DOM, carousel playing
+ */
+type IntroPhase = 'logo' | 'image' | 'done' | 'removed';
+
 export default function HeroSlider({ lang = 'sk', dictionary, featuredProperties = [], allProperties = [] }: HeroSliderProps) {
     const { hasConsented } = useCookieConsent();
     const [currentSlide, setCurrentSlide] = useState(0);
@@ -42,7 +51,6 @@ export default function HeroSlider({ lang = 'sk', dictionary, featuredProperties
     const progressAnimRef = useRef<number | null>(null);
     const slideStartRef = useRef<number>(0);
 
-    // Compute dynamic price range from all properties
     const priceRange = (() => {
         const prices = allProperties.map(p => p.price).filter(p => p > 0);
         if (prices.length === 0) return { min: 0, max: 2_000_000 };
@@ -52,13 +60,7 @@ export default function HeroSlider({ lang = 'sk', dictionary, featuredProperties
         };
     })();
 
-    // Two-phase intro:
-    //   Phase 1 (showLogo): Frosted glass + brand logo (matches loading.tsx)
-    //   Phase 2 (showIntro, !showLogo): Property image overlay
-    //   Phase 3 (!showIntro): Carousel plays
-    const [showLogo, setShowLogo] = useState(true);
-    const [showIntro, setShowIntro] = useState(true);
-    const [introRemoved, setIntroRemoved] = useState(false);
+    const [introPhase, setIntroPhase] = useState<IntroPhase>('logo');
 
     const viewDetailsLabel = lang === 'en' ? 'View property' : lang === 'cz' ? 'Zobrazit detail' : 'Zobraziť detail';
 
@@ -111,9 +113,10 @@ export default function HeroSlider({ lang = 'sk', dictionary, featuredProperties
     ];
 
     const slides = propertySlides.length > 0 ? propertySlides : fallbackSlides;
-    const isPaused = showIntro || !hasConsented;
+    const introActive = introPhase !== 'done' && introPhase !== 'removed';
+    const isPaused = introActive || !hasConsented;
 
-    // Progress bar animation
+    // --- Progress bar ---
     const startProgress = useCallback(() => {
         slideStartRef.current = performance.now();
         if (progressRef.current) progressRef.current.style.width = '0%';
@@ -133,7 +136,7 @@ export default function HeroSlider({ lang = 'sk', dictionary, featuredProperties
         }
     }, []);
 
-    // Autoplay timer
+    // --- Autoplay ---
     useEffect(() => {
         if (isPaused || slides.length <= 1) {
             if (timerRef.current) clearInterval(timerRef.current);
@@ -152,44 +155,50 @@ export default function HeroSlider({ lang = 'sk', dictionary, featuredProperties
         };
     }, [isPaused, slides.length, startProgress, stopProgress]);
 
-    // Phase 1 → Phase 2: Logo fades out after 2s, revealing property image beneath
+    // --- Intro timeline ---
+    // Phase 1 → 2: Logo holds for 2s, then frost dissolves revealing property image
     useEffect(() => {
-        const timer = setTimeout(() => setShowLogo(false), 2000);
+        const timer = setTimeout(() => setIntroPhase('image'), 2000);
         return () => clearTimeout(timer);
     }, []);
 
-    // Phase 2 → Phase 3: Property image fades out (4s mobile, 6s desktop total)
+    // Phase 2 → 3: Property image holds, then curtain lifts (4.5s mobile / 6s desktop)
     useEffect(() => {
         const isMobile = window.matchMedia("(max-width: 768px)").matches;
         const timer = setTimeout(() => {
-            setShowIntro(false);
+            setIntroPhase('done');
             setAnimKey(prev => prev + 1);
-        }, isMobile ? 4000 : 6000);
+        }, isMobile ? 4500 : 6000);
         return () => clearTimeout(timer);
     }, []);
 
-    // Remove intro overlays from DOM after transitions complete
-    const handleIntroTransitionEnd = useCallback(() => {
-        if (!showIntro) setIntroRemoved(true);
-    }, [showIntro]);
+    // Phase 3 → removed: After the curtain fade-out transition ends
+    const handleCurtainTransitionEnd = useCallback((e: React.TransitionEvent) => {
+        // Only respond to the opacity transition on the curtain itself
+        if (e.propertyName === 'opacity' && introPhase === 'done') {
+            setIntroPhase('removed');
+        }
+    }, [introPhase]);
 
     return (
         <section className="relative z-40 flex flex-col md:block h-[100svh] min-h-[100svh] md:min-h-[600px] md:h-screen w-full overflow-visible bg-[var(--color-secondary)]">
-            <div className="relative h-[63svh] md:h-full flex-shrink-0 overflow-hidden">
 
-            {/* Phase 1: Frosted glass + logo (matches loading.tsx) */}
-            {/* Phase 2: Property image (revealed when logo fades) */}
-            {!introRemoved && (
+            {/* ============================================
+                INTRO CURTAIN — fixed full-viewport overlay
+                Covers header, hero, search, everything.
+                Three layers: property image → frost → logo
+               ============================================ */}
+            {introPhase !== 'removed' && (
                 <div
-                    className="absolute inset-0 z-30 transition-opacity ease-out bg-[var(--color-secondary)]"
+                    className="fixed inset-0 z-[9999]"
                     style={{
-                        opacity: showIntro ? 1 : 0,
-                        transitionDuration: '1200ms',
-                        pointerEvents: showIntro ? 'auto' : 'none',
+                        opacity: introPhase === 'done' ? 0 : 1,
+                        transition: 'opacity 1.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                        pointerEvents: introPhase === 'done' ? 'none' : 'auto',
                     }}
-                    onTransitionEnd={handleIntroTransitionEnd}
+                    onTransitionEnd={handleCurtainTransitionEnd}
                 >
-                    {/* Property image — always present, visible when logo overlay lifts */}
+                    {/* Layer 1: Property image — visible when frost clears */}
                     <Image
                         src="/images/nehnutelnost more.webp"
                         alt="Luxury property with pool"
@@ -197,25 +206,35 @@ export default function HeroSlider({ lang = 'sk', dictionary, featuredProperties
                         className="object-cover"
                         priority
                     />
-
-                    {/* Frosted logo overlay — fades out to reveal property image */}
+                    {/* Gentle gradient over the property image */}
                     <div
-                        className="absolute inset-0 z-10 flex items-center justify-center transition-opacity ease-out"
+                        className="absolute inset-0"
                         style={{
-                            opacity: showLogo ? 1 : 0,
-                            transitionDuration: '1200ms',
-                            backgroundColor: 'rgba(var(--color-background-rgb, 247, 246, 243), 0.88)',
-                            backdropFilter: 'blur(40px)',
-                            WebkitBackdropFilter: 'blur(40px)',
+                            background: 'linear-gradient(to bottom, rgba(0,0,0,0.08) 0%, rgba(0,0,0,0.25) 100%)',
+                            opacity: introPhase === 'logo' ? 0 : 1,
+                            transition: 'opacity 1s ease-out',
+                        }}
+                    />
+
+                    {/* Layer 2: Frosted glass + logo */}
+                    <div
+                        className="absolute inset-0 flex items-center justify-center"
+                        style={{
+                            opacity: introPhase === 'logo' ? 1 : 0,
+                            transition: 'opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                            backgroundColor: 'rgba(var(--color-background-rgb), 0.92)',
+                            backdropFilter: introPhase === 'logo' ? 'blur(40px)' : 'blur(0px)',
+                            WebkitBackdropFilter: introPhase === 'logo' ? 'blur(40px)' : 'blur(0px)',
                         }}
                     >
-                        <div className={showLogo ? 'hero-logo-entrance' : ''}>
+                        {/* Layer 3: Logo */}
+                        <div className="intro-logo-entrance">
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img
                                 src="/images/relax-logo.png"
                                 alt="Relax Properties"
-                                width={260}
-                                height={67}
+                                width={280}
+                                height={72}
                                 className="h-[clamp(3.5rem,10vw,5rem)] w-auto"
                             />
                         </div>
@@ -223,103 +242,100 @@ export default function HeroSlider({ lang = 'sk', dictionary, featuredProperties
                 </div>
             )}
 
-            {/* CSS Fade Carousel */}
-            <div className={`relative w-full h-full transition-opacity duration-700 ${showIntro ? "opacity-0" : "opacity-100"}`}>
-                {slides.map((slide, index) => {
-                    const isActive = index === currentSlide;
-                    return (
-                        <div
-                            key={slide.id}
-                            className="absolute inset-0 transition-opacity duration-700 ease-in-out"
-                            style={{
-                                opacity: isActive ? 1 : 0,
-                                zIndex: isActive ? 1 : 0,
-                            }}
-                        >
-                            {(index === 0 || isActive) && (
-                                <Image
-                                    src={slide.image}
-                                    alt={slide.location || 'Property'}
-                                    fill
-                                    sizes="100vw"
-                                    quality={60}
-                                    className="object-cover"
-                                    {...(index === 0 ? { priority: true } : { loading: "lazy" as const })}
-                                />
-                            )}
-
-                            <div className="absolute inset-0 z-10 pointer-events-none" style={{
-                                background: 'linear-gradient(to top, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.3) 30%, rgba(0,0,0,0.15) 55%, rgba(0,0,0,0.1) 75%, rgba(0,0,0,0.06) 100%)',
-                            }} />
-
+            {/* ============================================
+                HERO CONTENT — renders behind the curtain
+               ============================================ */}
+            <div className="relative h-[63svh] md:h-full flex-shrink-0 overflow-hidden">
+                {/* CSS Fade Carousel */}
+                <div className="relative w-full h-full">
+                    {slides.map((slide, index) => {
+                        const isActive = index === currentSlide;
+                        return (
                             <div
-                                className="absolute inset-0 z-20 flex items-end pb-14 md:pb-[clamp(12rem,38vh,20rem)] transition-opacity duration-500 ease-in-out"
+                                key={slide.id}
+                                className="absolute inset-0 transition-opacity duration-700 ease-in-out"
                                 style={{
-                                    opacity: showIntro ? 0 : 1,
-                                    transitionDelay: showIntro ? '0ms' : '200ms',
+                                    opacity: isActive ? 1 : 0,
+                                    zIndex: isActive ? 1 : 0,
                                 }}
                             >
-                                <div className="container-custom">
-                                    <div
-                                        key={`loc-${animKey}`}
-                                        className={`hidden md:flex items-center gap-2 mb-[clamp(1.25rem,2vw,1.5rem)] ${isActive && !showIntro ? 'hero-text-reveal' : 'opacity-0'}`}
-                                        style={{ textShadow: '0 1px 3px rgba(0,0,0,0.7), 0 2px 12px rgba(0,0,0,0.5), 0 4px 24px rgba(0,0,0,0.3)', animationDelay: '100ms' }}
-                                    >
-                                        <svg className="w-4 h-4 text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5} style={{ filter: 'drop-shadow(0 1px 4px rgba(0,0,0,0.6))' }}>
-                                            <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
-                                            <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
-                                        </svg>
-                                        <span className="text-white text-[clamp(0.875rem,2.5vw,1rem)] font-semibold">{slide.location}</span>
-                                        {slide.country && (
-                                            <>
-                                                <span className="text-white/60">–</span>
-                                                <span className="text-white text-[clamp(0.875rem,2.5vw,1rem)] font-medium">{slide.country}</span>
-                                            </>
-                                        )}
-                                    </div>
+                                {(index === 0 || isActive) && (
+                                    <Image
+                                        src={slide.image}
+                                        alt={slide.location || 'Property'}
+                                        fill
+                                        sizes="100vw"
+                                        quality={60}
+                                        className="object-cover"
+                                        {...(index === 0 ? { priority: true } : { loading: "lazy" as const })}
+                                    />
+                                )}
 
-                                    <h1
-                                        key={`title-${animKey}`}
-                                        className={`md:hidden font-serif text-white text-[clamp(1.375rem,5.5vw,1.75rem)] leading-[1.15] mb-3 max-w-[320px] ${isActive && !showIntro ? 'hero-text-reveal' : 'opacity-0'}`}
-                                        style={{ textShadow: '0 1px 3px rgba(0,0,0,0.7), 0 2px 12px rgba(0,0,0,0.5), 0 4px 24px rgba(0,0,0,0.3)', animationDelay: '100ms' }}
-                                    >
-                                        {slide.title}
-                                    </h1>
+                                <div className="absolute inset-0 z-10 pointer-events-none" style={{
+                                    background: 'linear-gradient(to top, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.3) 30%, rgba(0,0,0,0.15) 55%, rgba(0,0,0,0.1) 75%, rgba(0,0,0,0.06) 100%)',
+                                }} />
 
-                                    <div
-                                        key={`cta-${animKey}`}
-                                        className={isActive && !showIntro ? 'hero-glass-reveal' : 'opacity-0'}
-                                        style={{ animationDelay: '250ms' }}
-                                    >
-                                        <MagneticButton strength={0.2}>
-                                            <Link
-                                                href={slide.ctaLink}
-                                                className="group inline-flex items-center gap-3 bg-black/20 backdrop-blur-md text-white px-[clamp(1.5rem,3.5vw,1.75rem)] py-[clamp(0.75rem,1.2vw,0.875rem)] rounded-full text-[clamp(0.875rem,2.5vw,1rem)] font-medium border border-white/20 hover:bg-white hover:text-[var(--color-secondary)] transition-all duration-300 active:scale-[0.98] tracking-wide"
-                                                style={{ textShadow: '0 1px 3px rgba(0,0,0,0.4)' }}
-                                            >
-                                                {slide.ctaLabel}
-                                                <svg className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                                                </svg>
-                                            </Link>
-                                        </MagneticButton>
+                                <div className="absolute inset-0 z-20 flex items-end pb-14 md:pb-[clamp(12rem,38vh,20rem)]">
+                                    <div className="container-custom">
+                                        <div
+                                            key={`loc-${animKey}`}
+                                            className={`hidden md:flex items-center gap-2 mb-[clamp(1.25rem,2vw,1.5rem)] ${isActive && !introActive ? 'hero-text-reveal' : 'opacity-0'}`}
+                                            style={{ textShadow: '0 1px 3px rgba(0,0,0,0.7), 0 2px 12px rgba(0,0,0,0.5), 0 4px 24px rgba(0,0,0,0.3)', animationDelay: '100ms' }}
+                                        >
+                                            <svg className="w-4 h-4 text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5} style={{ filter: 'drop-shadow(0 1px 4px rgba(0,0,0,0.6))' }}>
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
+                                            </svg>
+                                            <span className="text-white text-[clamp(0.875rem,2.5vw,1rem)] font-semibold">{slide.location}</span>
+                                            {slide.country && (
+                                                <>
+                                                    <span className="text-white/60">–</span>
+                                                    <span className="text-white text-[clamp(0.875rem,2.5vw,1rem)] font-medium">{slide.country}</span>
+                                                </>
+                                            )}
+                                        </div>
+
+                                        <h1
+                                            key={`title-${animKey}`}
+                                            className={`md:hidden font-serif text-white text-[clamp(1.375rem,5.5vw,1.75rem)] leading-[1.15] mb-3 max-w-[320px] ${isActive && !introActive ? 'hero-text-reveal' : 'opacity-0'}`}
+                                            style={{ textShadow: '0 1px 3px rgba(0,0,0,0.7), 0 2px 12px rgba(0,0,0,0.5), 0 4px 24px rgba(0,0,0,0.3)', animationDelay: '100ms' }}
+                                        >
+                                            {slide.title}
+                                        </h1>
+
+                                        <div
+                                            key={`cta-${animKey}`}
+                                            className={isActive && !introActive ? 'hero-glass-reveal' : 'opacity-0'}
+                                            style={{ animationDelay: '250ms' }}
+                                        >
+                                            <MagneticButton strength={0.2}>
+                                                <Link
+                                                    href={slide.ctaLink}
+                                                    className="group inline-flex items-center gap-3 bg-black/20 backdrop-blur-md text-white px-[clamp(1.5rem,3.5vw,1.75rem)] py-[clamp(0.75rem,1.2vw,0.875rem)] rounded-full text-[clamp(0.875rem,2.5vw,1rem)] font-medium border border-white/20 hover:bg-white hover:text-[var(--color-secondary)] transition-all duration-300 active:scale-[0.98] tracking-wide"
+                                                    style={{ textShadow: '0 1px 3px rgba(0,0,0,0.4)' }}
+                                                >
+                                                    {slide.ctaLabel}
+                                                    <svg className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                                                    </svg>
+                                                </Link>
+                                            </MagneticButton>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    );
-                })}
-            </div>
+                        );
+                    })}
+                </div>
 
-            {/* Slide progress bar — mobile */}
-            <div className={`md:hidden absolute bottom-0 left-0 right-0 z-40 h-[2px] bg-white/15 transition-opacity duration-700 ${showIntro ? 'opacity-0' : 'opacity-100'}`}>
-                <div
-                    ref={progressRef}
-                    className="h-full bg-white/70"
-                    style={{ width: '0%' }}
-                />
-            </div>
-
+                {/* Slide progress bar — mobile */}
+                <div className={`md:hidden absolute bottom-0 left-0 right-0 z-40 h-[2px] bg-white/15 transition-opacity duration-700 ${introActive ? 'opacity-0' : 'opacity-100'}`}>
+                    <div
+                        ref={progressRef}
+                        className="h-full bg-white/70"
+                        style={{ width: '0%' }}
+                    />
+                </div>
             </div>
 
             <HeroSearch lang={lang} dictionary={dictionary} priceRange={priceRange} />
