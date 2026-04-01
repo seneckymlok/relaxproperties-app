@@ -115,6 +115,7 @@
 
     /* Premium Color Palette — Black / Sand / White / Teal accent */
     --color-background: #FAFAF8;
+    --color-background-rgb: 250, 250, 248;
     /* Warm white — like quality linen paper */
     --color-surface: #F3F1ED;
     /* Warm stone — section/card alternate bg */
@@ -847,18 +848,31 @@ body.search-modal-open .header-gradient-vignette {
 }
 
 /* ============================================
-   HOMEPAGE LOADING — branded logo intro
+   HOMEPAGE INTRO — branded logo entrance
+   Used by both loading.tsx and HeroSlider
    ============================================ */
 
-@keyframes logoIntroFade {
-    0% { opacity: 0; transform: scale(0.92); }
-    30% { opacity: 1; transform: scale(1); }
-    80% { opacity: 1; transform: scale(1); }
-    100% { opacity: 0.6; transform: scale(1); }
+@keyframes logoEntrance {
+    0% {
+        opacity: 0;
+        transform: scale(0.94) translateY(6px);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
 }
 
-.homepage-logo-intro {
-    animation: logoIntroFade 1.8s cubic-bezier(0.33, 1, 0.68, 1) both;
+.homepage-logo-entrance {
+    animation: logoEntrance 1.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.hero-logo-entrance {
+    animation: logoEntrance 1.4s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 /* ============================================

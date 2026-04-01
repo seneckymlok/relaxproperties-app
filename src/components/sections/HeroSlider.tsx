@@ -36,7 +36,7 @@ function translateCountry(country: string, lang: string): string {
 export default function HeroSlider({ lang = 'sk', dictionary, featuredProperties = [], allProperties = [] }: HeroSliderProps) {
     const { hasConsented } = useCookieConsent();
     const [currentSlide, setCurrentSlide] = useState(0);
-    const [animKey, setAnimKey] = useState(0); // triggers CSS re-animation on slide change
+    const [animKey, setAnimKey] = useState(0);
     const progressRef = useRef<HTMLDivElement>(null);
     const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
     const progressAnimRef = useRef<number | null>(null);
@@ -52,13 +52,16 @@ export default function HeroSlider({ lang = 'sk', dictionary, featuredProperties
         };
     })();
 
-    // Intro overlay state
+    // Two-phase intro:
+    //   Phase 1 (showLogo): Frosted glass + brand logo (matches loading.tsx)
+    //   Phase 2 (showIntro, !showLogo): Property image overlay
+    //   Phase 3 (!showIntro): Carousel plays
+    const [showLogo, setShowLogo] = useState(true);
     const [showIntro, setShowIntro] = useState(true);
     const [introRemoved, setIntroRemoved] = useState(false);
 
     const viewDetailsLabel = lang === 'en' ? 'View property' : lang === 'cz' ? 'Zobrazit detail' : 'Zobraziť detail';
 
-    // Build slides from the 3 most recent properties
     const propertySlides = featuredProperties
         .filter(p => p.images.length > 0)
         .slice(0, 3)
@@ -76,7 +79,6 @@ export default function HeroSlider({ lang = 'sk', dictionary, featuredProperties
             };
         });
 
-    // Fallback static slides (only if no properties at all)
     const viewOffersLabel = dictionary?.common?.viewOffers || "Zobraziť ponuky";
     const fallbackSlides = [
         {
@@ -108,26 +110,18 @@ export default function HeroSlider({ lang = 'sk', dictionary, featuredProperties
         },
     ];
 
-    // Priority: property slides > static fallbacks
-    const slides = propertySlides.length > 0
-        ? propertySlides
-        : fallbackSlides;
-
-    // Autoplay: paused during intro and when cookie consent banner is visible
+    const slides = propertySlides.length > 0 ? propertySlides : fallbackSlides;
     const isPaused = showIntro || !hasConsented;
 
     // Progress bar animation
     const startProgress = useCallback(() => {
         slideStartRef.current = performance.now();
         if (progressRef.current) progressRef.current.style.width = '0%';
-
         function tick() {
             const elapsed = performance.now() - slideStartRef.current;
             const pct = Math.min((elapsed / SLIDE_DURATION) * 100, 100);
             if (progressRef.current) progressRef.current.style.width = `${pct}%`;
-            if (pct < 100) {
-                progressAnimRef.current = requestAnimationFrame(tick);
-            }
+            if (pct < 100) progressAnimRef.current = requestAnimationFrame(tick);
         }
         progressAnimRef.current = requestAnimationFrame(tick);
     }, []);
@@ -146,49 +140,56 @@ export default function HeroSlider({ lang = 'sk', dictionary, featuredProperties
             stopProgress();
             return;
         }
-
         startProgress();
         timerRef.current = setInterval(() => {
             setCurrentSlide(prev => (prev + 1) % slides.length);
             setAnimKey(prev => prev + 1);
             startProgress();
         }, SLIDE_DURATION);
-
         return () => {
             if (timerRef.current) clearInterval(timerRef.current);
             stopProgress();
         };
     }, [isPaused, slides.length, startProgress, stopProgress]);
 
-    // Fade out intro — 4s on mobile, 6s on desktop
+    // Phase 1 → Phase 2: Logo fades out after 2s, revealing property image beneath
+    useEffect(() => {
+        const timer = setTimeout(() => setShowLogo(false), 2000);
+        return () => clearTimeout(timer);
+    }, []);
+
+    // Phase 2 → Phase 3: Property image fades out (4s mobile, 6s desktop total)
     useEffect(() => {
         const isMobile = window.matchMedia("(max-width: 768px)").matches;
         const timer = setTimeout(() => {
             setShowIntro(false);
-            setAnimKey(prev => prev + 1); // trigger initial content animation
+            setAnimKey(prev => prev + 1);
         }, isMobile ? 4000 : 6000);
         return () => clearTimeout(timer);
     }, []);
 
-    // Remove intro overlay from DOM after the fade-out transition completes
+    // Remove intro overlays from DOM after transitions complete
     const handleIntroTransitionEnd = useCallback(() => {
-        if (!showIntro) {
-            setIntroRemoved(true);
-        }
+        if (!showIntro) setIntroRemoved(true);
     }, [showIntro]);
 
     return (
         <section className="relative z-40 flex flex-col md:block h-[100svh] min-h-[100svh] md:min-h-[600px] md:h-screen w-full overflow-visible bg-[var(--color-secondary)]">
-            {/* Image carousel area — shorter on mobile to make room for inline filters */}
             <div className="relative h-[63svh] md:h-full flex-shrink-0 overflow-hidden">
 
-            {/* Intro Photo Overlay */}
+            {/* Phase 1: Frosted glass + logo (matches loading.tsx) */}
+            {/* Phase 2: Property image (revealed when logo fades) */}
             {!introRemoved && (
                 <div
-                    className="absolute inset-0 z-30 transition-opacity duration-700 ease-in-out bg-[var(--color-secondary)]"
-                    style={{ opacity: showIntro ? 1 : 0, pointerEvents: showIntro ? 'auto' : 'none' }}
+                    className="absolute inset-0 z-30 transition-opacity ease-out bg-[var(--color-secondary)]"
+                    style={{
+                        opacity: showIntro ? 1 : 0,
+                        transitionDuration: '1200ms',
+                        pointerEvents: showIntro ? 'auto' : 'none',
+                    }}
                     onTransitionEnd={handleIntroTransitionEnd}
                 >
+                    {/* Property image — always present, visible when logo overlay lifts */}
                     <Image
                         src="/images/nehnutelnost more.webp"
                         alt="Luxury property with pool"
@@ -196,6 +197,29 @@ export default function HeroSlider({ lang = 'sk', dictionary, featuredProperties
                         className="object-cover"
                         priority
                     />
+
+                    {/* Frosted logo overlay — fades out to reveal property image */}
+                    <div
+                        className="absolute inset-0 z-10 flex items-center justify-center transition-opacity ease-out"
+                        style={{
+                            opacity: showLogo ? 1 : 0,
+                            transitionDuration: '1200ms',
+                            backgroundColor: 'rgba(var(--color-background-rgb, 247, 246, 243), 0.88)',
+                            backdropFilter: 'blur(40px)',
+                            WebkitBackdropFilter: 'blur(40px)',
+                        }}
+                    >
+                        <div className={showLogo ? 'hero-logo-entrance' : ''}>
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                                src="/images/relax-logo.png"
+                                alt="Relax Properties"
+                                width={260}
+                                height={67}
+                                className="h-[clamp(3.5rem,10vw,5rem)] w-auto"
+                            />
+                        </div>
+                    </div>
                 </div>
             )}
 
@@ -212,7 +236,6 @@ export default function HeroSlider({ lang = 'sk', dictionary, featuredProperties
                                 zIndex: isActive ? 1 : 0,
                             }}
                         >
-                            {/* Background Image — only first slide gets priority; others lazy */}
                             {(index === 0 || isActive) && (
                                 <Image
                                     src={slide.image}
@@ -225,12 +248,10 @@ export default function HeroSlider({ lang = 'sk', dictionary, featuredProperties
                                 />
                             )}
 
-                            {/* Dark gradient overlay */}
                             <div className="absolute inset-0 z-10 pointer-events-none" style={{
                                 background: 'linear-gradient(to top, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.3) 30%, rgba(0,0,0,0.15) 55%, rgba(0,0,0,0.1) 75%, rgba(0,0,0,0.06) 100%)',
                             }} />
 
-                            {/* Content — uses CSS animation instead of GSAP */}
                             <div
                                 className="absolute inset-0 z-20 flex items-end pb-14 md:pb-[clamp(12rem,38vh,20rem)] transition-opacity duration-500 ease-in-out"
                                 style={{
@@ -239,7 +260,6 @@ export default function HeroSlider({ lang = 'sk', dictionary, featuredProperties
                                 }}
                             >
                                 <div className="container-custom">
-                                    {/* Location tag — desktop only */}
                                     <div
                                         key={`loc-${animKey}`}
                                         className={`hidden md:flex items-center gap-2 mb-[clamp(1.25rem,2vw,1.5rem)] ${isActive && !showIntro ? 'hero-text-reveal' : 'opacity-0'}`}
@@ -258,7 +278,6 @@ export default function HeroSlider({ lang = 'sk', dictionary, featuredProperties
                                         )}
                                     </div>
 
-                                    {/* Property title — mobile only */}
                                     <h1
                                         key={`title-${animKey}`}
                                         className={`md:hidden font-serif text-white text-[clamp(1.375rem,5.5vw,1.75rem)] leading-[1.15] mb-3 max-w-[320px] ${isActive && !showIntro ? 'hero-text-reveal' : 'opacity-0'}`}
@@ -267,7 +286,6 @@ export default function HeroSlider({ lang = 'sk', dictionary, featuredProperties
                                         {slide.title}
                                     </h1>
 
-                                    {/* CTA Button with magnetic effect */}
                                     <div
                                         key={`cta-${animKey}`}
                                         className={isActive && !showIntro ? 'hero-glass-reveal' : 'opacity-0'}
@@ -302,9 +320,8 @@ export default function HeroSlider({ lang = 'sk', dictionary, featuredProperties
                 />
             </div>
 
-            </div>{/* end image carousel area */}
+            </div>
 
-            {/* Hero Search Component — always visible */}
             <HeroSearch lang={lang} dictionary={dictionary} priceRange={priceRange} />
         </section>
     );
