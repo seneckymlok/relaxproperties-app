@@ -33,19 +33,9 @@ function translateCountry(country: string, lang: string): string {
     return countriesMap[key]?.[lang] || country;
 }
 
-/*
- * INTRO PHASES:
- *   'logo'    → Frosted glass overlay + centered brand logo (matches loading.tsx exactly)
- *   'image'   → Property image revealed (frost + logo faded out)
- *   'done'    → Entire curtain fading out, carousel visible underneath
- *   'removed' → Overlay removed from DOM, carousel playing
- */
-type IntroPhase = 'logo' | 'image' | 'done' | 'removed';
-
 export default function HeroSlider({ lang = 'sk', dictionary, featuredProperties = [], allProperties = [] }: HeroSliderProps) {
     const { hasConsented } = useCookieConsent();
     const [currentSlide, setCurrentSlide] = useState(0);
-    const [animKey, setAnimKey] = useState(0);
     const progressRef = useRef<HTMLDivElement>(null);
     const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
     const progressAnimRef = useRef<number | null>(null);
@@ -59,8 +49,6 @@ export default function HeroSlider({ lang = 'sk', dictionary, featuredProperties
             max: Math.ceil(Math.max(...prices) / 5000) * 5000,
         };
     })();
-
-    const [introPhase, setIntroPhase] = useState<IntroPhase>('logo');
 
     const viewDetailsLabel = lang === 'en' ? 'View property' : lang === 'cz' ? 'Zobrazit detail' : 'Zobraziť detail';
 
@@ -113,8 +101,7 @@ export default function HeroSlider({ lang = 'sk', dictionary, featuredProperties
     ];
 
     const slides = propertySlides.length > 0 ? propertySlides : fallbackSlides;
-    const introActive = introPhase !== 'done' && introPhase !== 'removed';
-    const isPaused = introActive || !hasConsented;
+    const isPaused = !hasConsented;
 
     // --- Progress bar ---
     const startProgress = useCallback(() => {
@@ -146,7 +133,6 @@ export default function HeroSlider({ lang = 'sk', dictionary, featuredProperties
         startProgress();
         timerRef.current = setInterval(() => {
             setCurrentSlide(prev => (prev + 1) % slides.length);
-            setAnimKey(prev => prev + 1);
             startProgress();
         }, SLIDE_DURATION);
         return () => {
@@ -155,96 +141,8 @@ export default function HeroSlider({ lang = 'sk', dictionary, featuredProperties
         };
     }, [isPaused, slides.length, startProgress, stopProgress]);
 
-    // --- Intro timeline ---
-    // Phase 1 → 2: Logo holds for 2s, then frost dissolves revealing property image
-    useEffect(() => {
-        const timer = setTimeout(() => setIntroPhase('image'), 2000);
-        return () => clearTimeout(timer);
-    }, []);
-
-    // Phase 2 → 3: Property image holds, then curtain lifts (4.5s mobile / 6s desktop)
-    useEffect(() => {
-        const isMobile = window.matchMedia("(max-width: 768px)").matches;
-        const timer = setTimeout(() => {
-            setIntroPhase('done');
-            setAnimKey(prev => prev + 1);
-        }, isMobile ? 4500 : 6000);
-        return () => clearTimeout(timer);
-    }, []);
-
-    // Phase 3 → removed: After the curtain fade-out transition ends
-    const handleCurtainTransitionEnd = useCallback((e: React.TransitionEvent) => {
-        // Only respond to the opacity transition on the curtain itself
-        if (e.propertyName === 'opacity' && introPhase === 'done') {
-            setIntroPhase('removed');
-        }
-    }, [introPhase]);
-
     return (
         <section className="relative z-40 flex flex-col md:block h-[100svh] min-h-[100svh] md:min-h-[600px] md:h-screen w-full overflow-visible bg-[var(--color-secondary)]">
-
-            {/* ============================================
-                INTRO CURTAIN — fixed full-viewport overlay
-                Covers header, hero, search, everything.
-                Three layers: property image → frost → logo
-               ============================================ */}
-            {introPhase !== 'removed' && (
-                <div
-                    className="fixed inset-0 z-[9999]"
-                    style={{
-                        opacity: introPhase === 'done' ? 0 : 1,
-                        transition: 'opacity 1.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                        pointerEvents: introPhase === 'done' ? 'none' : 'auto',
-                    }}
-                    onTransitionEnd={handleCurtainTransitionEnd}
-                >
-                    {/* Layer 1: Property image — visible when frost clears */}
-                    <Image
-                        src="/images/nehnutelnost more.webp"
-                        alt="Luxury property with pool"
-                        fill
-                        className="object-cover"
-                        priority
-                    />
-                    {/* Gentle gradient over the property image */}
-                    <div
-                        className="absolute inset-0"
-                        style={{
-                            background: 'linear-gradient(to bottom, rgba(0,0,0,0.08) 0%, rgba(0,0,0,0.25) 100%)',
-                            opacity: introPhase === 'logo' ? 0 : 1,
-                            transition: 'opacity 1s ease-out',
-                        }}
-                    />
-
-                    {/* Layer 2: Frosted glass + logo */}
-                    <div
-                        className="absolute inset-0 flex items-center justify-center"
-                        style={{
-                            opacity: introPhase === 'logo' ? 1 : 0,
-                            transition: 'opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1)',
-                            backgroundColor: 'rgba(var(--color-background-rgb), 0.92)',
-                            backdropFilter: introPhase === 'logo' ? 'blur(40px)' : 'blur(0px)',
-                            WebkitBackdropFilter: introPhase === 'logo' ? 'blur(40px)' : 'blur(0px)',
-                        }}
-                    >
-                        {/* Layer 3: Logo */}
-                        <div className="intro-logo-entrance">
-                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img
-                                src="/images/relax-logo.png"
-                                alt="Relax Properties"
-                                width={280}
-                                height={72}
-                                className="h-[clamp(3.5rem,10vw,5rem)] w-auto"
-                            />
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {/* ============================================
-                HERO CONTENT — renders behind the curtain
-               ============================================ */}
             <div className="relative h-[63svh] md:h-full flex-shrink-0 overflow-hidden">
                 {/* CSS Fade Carousel */}
                 <div className="relative w-full h-full">
@@ -277,10 +175,8 @@ export default function HeroSlider({ lang = 'sk', dictionary, featuredProperties
 
                                 <div className="absolute inset-0 z-20 flex items-end pb-14 md:pb-[clamp(12rem,38vh,20rem)]">
                                     <div className="container-custom">
-                                        <div
-                                            key={`loc-${animKey}`}
-                                            className={`hidden md:flex items-center gap-2 mb-[clamp(1.25rem,2vw,1.5rem)] ${isActive && !introActive ? 'hero-text-reveal' : 'opacity-0'}`}
-                                            style={{ textShadow: '0 1px 3px rgba(0,0,0,0.7), 0 2px 12px rgba(0,0,0,0.5), 0 4px 24px rgba(0,0,0,0.3)', animationDelay: '100ms' }}
+                                        <div className={`hidden md:flex items-center gap-2 mb-[clamp(1.25rem,2vw,1.5rem)] ${isActive ? 'opacity-100' : 'opacity-0'} transition-opacity duration-500`}
+                                            style={{ textShadow: '0 1px 3px rgba(0,0,0,0.7), 0 2px 12px rgba(0,0,0,0.5), 0 4px 24px rgba(0,0,0,0.3)' }}
                                         >
                                             <svg className="w-4 h-4 text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5} style={{ filter: 'drop-shadow(0 1px 4px rgba(0,0,0,0.6))' }}>
                                                 <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -295,19 +191,13 @@ export default function HeroSlider({ lang = 'sk', dictionary, featuredProperties
                                             )}
                                         </div>
 
-                                        <h1
-                                            key={`title-${animKey}`}
-                                            className={`md:hidden font-serif text-white text-[clamp(1.375rem,5.5vw,1.75rem)] leading-[1.15] mb-3 max-w-[320px] ${isActive && !introActive ? 'hero-text-reveal' : 'opacity-0'}`}
-                                            style={{ textShadow: '0 1px 3px rgba(0,0,0,0.7), 0 2px 12px rgba(0,0,0,0.5), 0 4px 24px rgba(0,0,0,0.3)', animationDelay: '100ms' }}
+                                        <h1 className={`md:hidden font-serif text-white text-[clamp(1.375rem,5.5vw,1.75rem)] leading-[1.15] mb-3 max-w-[320px] ${isActive ? 'opacity-100' : 'opacity-0'} transition-opacity duration-500`}
+                                            style={{ textShadow: '0 1px 3px rgba(0,0,0,0.7), 0 2px 12px rgba(0,0,0,0.5), 0 4px 24px rgba(0,0,0,0.3)' }}
                                         >
                                             {slide.title}
                                         </h1>
 
-                                        <div
-                                            key={`cta-${animKey}`}
-                                            className={isActive && !introActive ? 'hero-glass-reveal' : 'opacity-0'}
-                                            style={{ animationDelay: '250ms' }}
-                                        >
+                                        <div className={`${isActive ? 'opacity-100' : 'opacity-0'} transition-opacity duration-500`}>
                                             <MagneticButton strength={0.2}>
                                                 <Link
                                                     href={slide.ctaLink}
@@ -329,7 +219,7 @@ export default function HeroSlider({ lang = 'sk', dictionary, featuredProperties
                 </div>
 
                 {/* Slide progress bar — mobile */}
-                <div className={`md:hidden absolute bottom-0 left-0 right-0 z-40 h-[2px] bg-white/15 transition-opacity duration-700 ${introActive ? 'opacity-0' : 'opacity-100'}`}>
+                <div className="md:hidden absolute bottom-0 left-0 right-0 z-40 h-[2px] bg-white/15">
                     <div
                         ref={progressRef}
                         className="h-full bg-white/70"
