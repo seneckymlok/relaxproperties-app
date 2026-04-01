@@ -55,6 +55,7 @@ export default function PhotoGallery({ images, title }: PhotoGalleryProps) {
                                     src={image}
                                     alt={`${title} - foto ${index + 1}`}
                                     fill
+                                    sizes="(max-width: 1024px) 100vw, 66vw"
                                     className="object-cover"
                                     priority={index === 0}
                                 />
@@ -119,6 +120,7 @@ export default function PhotoGallery({ images, title }: PhotoGalleryProps) {
                                         src={image}
                                         alt={`Thumbnail ${index + 1}`}
                                         fill
+                                        sizes="(max-width: 640px) 25vw, (max-width: 768px) 20vw, (max-width: 1024px) 16vw, 10vw"
                                         className="object-cover"
                                     />
                                 </div>

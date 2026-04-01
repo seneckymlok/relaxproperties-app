@@ -152,7 +152,7 @@ export async function GET() {
         return NextResponse.json(feed, {
             headers: {
                 'Cache-Control': 'public, max-age=3600, stale-while-revalidate=7200',
-                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Origin': 'https://www.relaxproperties.sk',
             },
         });
     } catch (error) {

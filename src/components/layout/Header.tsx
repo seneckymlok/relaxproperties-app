@@ -344,6 +344,8 @@ export default function Header({ lang, dictionary }: HeaderProps) {
                                 }}
                                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                                 aria-label="Toggle menu"
+                                aria-expanded={isMobileMenuOpen}
+                                aria-controls="mobile-menu"
                             >
                                 {isMobileMenuOpen ? (
                                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -374,6 +376,9 @@ export default function Header({ lang, dictionary }: HeaderProps) {
             {/* ─── Mobile Menu Panel ─── */}
             <div
                 ref={menuRef}
+                id="mobile-menu"
+                role="dialog"
+                aria-label="Navigation menu"
                 className={`fixed top-0 right-0 bottom-0 w-[85%] max-w-sm bg-white z-50 md:hidden transform transition-transform duration-300 ease-out ${isMobileMenuOpen ? "translate-x-0" : "translate-x-full"
                     }`}
             >

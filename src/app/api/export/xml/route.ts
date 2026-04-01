@@ -25,7 +25,7 @@ export async function GET() {
             headers: {
                 'Content-Type': 'application/xml; charset=utf-8',
                 'Cache-Control': 'public, max-age=3600, stale-while-revalidate=7200',
-                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Origin': 'https://www.relaxproperties.sk',
                 'Content-Disposition': 'inline; filename="realsoft-export.xml"',
             },
         });

@@ -1,0 +1,40 @@
+# Relax Properties — AI-Readable Site Summary
+
+> Relax Properties is a premium international real estate agency specializing in Mediterranean and seaside properties. We help clients from Slovakia, Czech Republic, and internationally purchase vacation homes and investment properties across Southern Europe.
+
+## Company Overview
+- **Name**: Relax Properties
+- **Website**: https://www.relaxproperties.sk
+- **Industry**: International Real Estate / Mediterranean Property Sales
+- **Languages**: Slovak (sk), Czech (cz), English (en)
+- **Service Areas**: Croatia, Spain, Bulgaria, Italy, Portugal, Greece, Montenegro
+
+## What We Do
+Relax Properties assists buyers in finding and purchasing seaside and Mediterranean properties. We provide end-to-end support including property search, legal verification of ownership rights, collaboration with local experts, and guidance through the entire buying process. Our focus is on making international property purchases safe, smooth, and stress-free.
+
+## Key Offerings
+- **Property Types**: Villas, apartments, houses, and land plots
+- **Price Range**: From approximately €45,000 to €2,000,000+
+- **Features**: Sea view, first-line properties, swimming pools, new builds, luxury properties, golf properties, mountain properties
+- **Countries**: Croatia (Dalmatia, Istria), Spain (Costa del Sol, Costa Blanca), Bulgaria (Sunny Beach), Italy, Portugal, Greece, Montenegro
+
+## Contact Information
+- **Slovakia Office**: +421 911 819 152 (Mgr. Viera Dvořáková) — info@relaxproperties.sk
+- **Czech Republic Office**: +421 911 989 895 / +420 739 049 593 (Mgr. Aleš Dvořák) — info@relaxproperties.cz
+- **Spain Specialist**: +421 911 353 550 (Bc. Tatiana Tóthová) — spanielsko@relaxproperties.sk
+
+## Site Structure
+- `/sk`, `/en`, `/cz` — Localized homepages
+- `/[lang]/properties` — Full property listings with filters
+- `/[lang]/properties/[id]` — Individual property detail pages
+- `/[lang]/blog` — Articles and tips about buying property abroad
+- `/[lang]/contact` — Contact form and agent information
+- `/[lang]/about` — Company information and team
+- `/[lang]/buying-process` — Step-by-step guide to purchasing property abroad
+- `/sitemap.xml` — Complete sitemap for all pages and languages
+
+## Technical Details
+- Built with Next.js (React), server-side rendered
+- Multi-language support (Slovak, Czech, English)
+- Structured data (Schema.org JSON-LD) on property and organization pages
+- Open Graph and Twitter Card metadata for social sharing

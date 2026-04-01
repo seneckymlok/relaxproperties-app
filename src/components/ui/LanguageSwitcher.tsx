@@ -72,6 +72,7 @@ export default function LanguageSwitcher({ isScrolled = false, onLanguageChange 
                     : "text-white/90 hover:bg-white/10"
                     }`}
                 aria-label="Zmeniť jazyk"
+                aria-expanded={isOpen}
             >
                 <span>{currentLang.code.toUpperCase()}</span>
                 <svg

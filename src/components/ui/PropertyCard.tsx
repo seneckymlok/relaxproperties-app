@@ -115,6 +115,7 @@ export default function PropertyCard({
                   src={image}
                   alt={`${title} - foto ${index + 1}`}
                   fill
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
                 />
               </SwiperSlide>

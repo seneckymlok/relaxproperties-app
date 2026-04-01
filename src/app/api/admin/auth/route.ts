@@ -1,11 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123';
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
 const SESSION_COOKIE = 'admin_session';
 const SESSION_TOKEN = 'authenticated';
 
 export async function POST(request: NextRequest) {
+    if (!ADMIN_PASSWORD) {
+        return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
+    }
+
     try {
         const { password } = await request.json();
 

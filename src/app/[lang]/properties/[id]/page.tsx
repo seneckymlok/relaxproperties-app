@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import PhotoGallery from "@/components/ui/PhotoGallery";
@@ -7,6 +8,40 @@ import PropertyMapSection from "@/components/ui/PropertyMapSection";
 import PropertyActions from "@/components/ui/PropertyActions";
 import { getPropertyByIdServer, getPropertiesServer, type Language } from "@/lib/data-access";
 import { getDictionary } from "@/lib/dictionaries";
+
+export async function generateMetadata({ params }: { params: Promise<{ id: string; lang: string }> }): Promise<Metadata> {
+  const { id, lang: rawLang } = await params;
+  const lang = (['sk', 'en', 'cz'].includes(rawLang) ? rawLang : 'sk') as Language;
+  const property = await getPropertyByIdServer(id, lang);
+
+  if (!property) {
+    return { title: 'Property Not Found' };
+  }
+
+  const description = property.description
+    ? property.description.slice(0, 160).replace(/\s+/g, ' ').trim()
+    : `${property.type} in ${property.location}, ${property.country} — ${property.priceFormatted}, ${property.beds} beds, ${property.baths} baths, ${property.area} m²`;
+
+  const ogImage = property.images.length > 0 ? property.images[0] : undefined;
+
+  return {
+    title: property.title,
+    description,
+    openGraph: {
+      title: property.title,
+      description,
+      ...(ogImage ? { images: [{ url: ogImage, width: 1200, height: 630, alt: property.title }] } : {}),
+    },
+    alternates: {
+      canonical: `https://www.relaxproperties.sk/${lang}/properties/${id}`,
+      languages: {
+        sk: `/sk/properties/${id}`,
+        en: `/en/properties/${id}`,
+        cs: `/cz/properties/${id}`,
+      },
+    },
+  };
+}
 
 interface PropertyDetailPageProps {
     params: Promise<{ id: string; lang: string }>;
@@ -238,8 +273,43 @@ export default async function PropertyDetailPage({ params }: PropertyDetailPageP
     // YouTube video embed
     const videoId = property.videoUrl ? getYouTubeId(property.videoUrl) : null;
 
+    const jsonLd = [
+        {
+            "@context": "https://schema.org",
+            "@type": "Product",
+            "name": property.title,
+            "description": property.description || "",
+            "image": property.images,
+            "url": `https://www.relaxproperties.sk/${lang}/properties/${id}`,
+            "offers": {
+                "@type": "Offer",
+                "price": property.price,
+                "priceCurrency": "EUR",
+                "availability": "https://schema.org/InStock",
+            },
+            "additionalProperty": [
+                { "@type": "PropertyValue", "name": "Bedrooms", "value": property.beds },
+                { "@type": "PropertyValue", "name": "Bathrooms", "value": property.baths },
+                { "@type": "PropertyValue", "name": "Area", "value": property.area, "unitCode": "MTK" },
+            ],
+        },
+        {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+                { "@type": "ListItem", "position": 1, "name": "Home", "item": `https://www.relaxproperties.sk/${lang}` },
+                { "@type": "ListItem", "position": 2, "name": "Properties", "item": `https://www.relaxproperties.sk/${lang}/properties` },
+                { "@type": "ListItem", "position": 3, "name": property.title },
+            ],
+        },
+    ];
+
     return (
         <>
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+            />
             {/* Main Content */}
             <section className="bg-[var(--color-background)]" style={{ paddingTop: '5.5rem', paddingBottom: '3rem' }}>
                 {/* Floating Breadcrumb — inline, elegant */}

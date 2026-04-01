@@ -1,9 +1,33 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { getDictionary } from "@/lib/dictionaries";
 import type { Language } from "@/lib/data-access";
 import { getPageHero } from "@/lib/page-hero-store";
 import MagneticButton from "@/components/ui/MagneticButton";
+
+export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }): Promise<Metadata> {
+  const { lang } = await params;
+  const titles: Record<string, string> = {
+    sk: 'O nás',
+    en: 'About Us',
+    cz: 'O nás',
+  };
+  const descriptions: Record<string, string> = {
+    sk: 'Spoznajte tím Relax Properties. Pomáhame klientom nájsť vysnívanú nehnuteľnosť pri mori už roky.',
+    en: 'Meet the Relax Properties team. We have been helping clients find their dream Mediterranean property for years.',
+    cz: 'Poznejte tým Relax Properties. Pomáháme klientům najít vysněnou nemovitost u moře již roky.',
+  };
+  const v = ['sk', 'en', 'cz'].includes(lang) ? lang : 'sk';
+  return {
+    title: titles[v] || titles.sk,
+    description: descriptions[v] || descriptions.sk,
+    alternates: {
+      canonical: `https://www.relaxproperties.sk/${v}/about`,
+      languages: { sk: '/sk/about', en: '/en/about', cs: '/cz/about' },
+    },
+  };
+}
 
 // Team members data
 const teamMembers = [

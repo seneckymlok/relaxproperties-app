@@ -1,8 +1,32 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import ContactAgentForm from "@/components/ui/ContactAgentForm";
 import { getDictionary } from "@/lib/dictionaries";
 import type { Language } from "@/lib/data-access";
 import { getPageHero } from "@/lib/page-hero-store";
+
+export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }): Promise<Metadata> {
+  const { lang } = await params;
+  const titles: Record<string, string> = {
+    sk: 'Kontakt',
+    en: 'Contact Us',
+    cz: 'Kontakt',
+  };
+  const descriptions: Record<string, string> = {
+    sk: 'Kontaktujte nás pre viac informácií o nehnuteľnostiach pri mori. Sme tu pre vás.',
+    en: 'Get in touch with Relax Properties for inquiries about Mediterranean real estate.',
+    cz: 'Kontaktujte nás pro více informací o nemovitostech u moře. Jsme tu pro vás.',
+  };
+  const v = ['sk', 'en', 'cz'].includes(lang) ? lang : 'sk';
+  return {
+    title: titles[v] || titles.sk,
+    description: descriptions[v] || descriptions.sk,
+    alternates: {
+      canonical: `https://www.relaxproperties.sk/${v}/contact`,
+      languages: { sk: '/sk/contact', en: '/en/contact', cs: '/cz/contact' },
+    },
+  };
+}
 
 export default async function ContactPage({
     params,

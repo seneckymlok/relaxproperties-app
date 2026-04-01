@@ -187,9 +187,9 @@ export default function HeroSlider({ lang = 'sk', dictionary, featuredProperties
     }, [currentSlide, showIntro]);
 
     return (
-        <section className="relative z-40 flex flex-col md:block h-[100dvh] min-h-[100dvh] md:min-h-[600px] md:h-screen w-full overflow-visible bg-[var(--color-secondary)]">
+        <section className="relative z-40 flex flex-col md:block h-[100svh] min-h-[100svh] md:min-h-[600px] md:h-screen w-full overflow-visible bg-[var(--color-secondary)]">
             {/* Image carousel area — shorter on mobile to make room for inline filters */}
-            <div className="relative h-[63dvh] md:h-full flex-shrink-0 overflow-hidden">
+            <div className="relative h-[63svh] md:h-full flex-shrink-0 overflow-hidden">
 
             {/* Intro Photo Overlay */}
             {!introRemoved && (
@@ -202,6 +202,7 @@ export default function HeroSlider({ lang = 'sk', dictionary, featuredProperties
                         src="/images/nehnutelnost more.webp"
                         alt="Luxury property with pool"
                         fill
+                        sizes="100vw"
                         className="object-cover"
                         priority
                     />
@@ -233,6 +234,7 @@ export default function HeroSlider({ lang = 'sk', dictionary, featuredProperties
                             src={slide.image}
                             alt={slide.location || 'Property'}
                             fill
+                            sizes="100vw"
                             className="object-cover"
                             loading={index === 0 ? "eager" : "lazy"}
                         />

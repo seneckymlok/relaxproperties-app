@@ -1,8 +1,32 @@
+import type { Metadata } from "next";
 import { Suspense } from "react";
 import PropertiesContent from "@/components/sections/PropertiesContent";
 import { getDictionary } from "@/lib/dictionaries";
 import { getPropertiesServer, type Language } from "@/lib/data-access";
 import { getPageHero } from "@/lib/page-hero-store";
+
+export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }): Promise<Metadata> {
+  const { lang } = await params;
+  const titles: Record<string, string> = {
+    sk: 'Nehnuteľnosti',
+    en: 'Properties',
+    cz: 'Nemovitosti',
+  };
+  const descriptions: Record<string, string> = {
+    sk: 'Prezrite si našu ponuku nehnuteľností pri mori v Chorvátsku, Španielsku, Bulharsku a ďalších krajinách.',
+    en: 'Browse our selection of Mediterranean properties in Croatia, Spain, Bulgaria and more.',
+    cz: 'Prohlédněte si naši nabídku nemovitostí u moře v Chorvatsku, Španělsku, Bulharsku a dalších zemích.',
+  };
+  const v = ['sk', 'en', 'cz'].includes(lang) ? lang : 'sk';
+  return {
+    title: titles[v] || titles.sk,
+    description: descriptions[v] || descriptions.sk,
+    alternates: {
+      canonical: `https://www.relaxproperties.sk/${v}/properties`,
+      languages: { sk: '/sk/properties', en: '/en/properties', cs: '/cz/properties' },
+    },
+  };
+}
 
 // Loading fallback for Suspense
 function LoadingFallback() {

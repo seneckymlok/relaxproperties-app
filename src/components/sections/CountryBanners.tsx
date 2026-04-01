@@ -84,6 +84,7 @@ export default function CountryBanners({ lang = 'sk', dictionary, properties = [
                     src={country.image}
                     alt={country.name}
                     fill
+                    sizes="(max-width: 640px) 75vw, (max-width: 1024px) 45vw, 33vw"
                     className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
                 />
 

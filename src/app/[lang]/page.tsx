@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import HeroSlider from "@/components/sections/HeroSlider";
 import CountryBanners from "@/components/sections/CountryBanners";
 import NewOffers from "@/components/sections/NewOffers";
@@ -7,6 +8,29 @@ import BlogCarousel from "@/components/sections/BlogCarousel";
 import { getDictionary } from "@/lib/dictionaries";
 import { getPropertiesServer, type Language, type PublicProperty } from "@/lib/data-access";
 import { getCachedHeroFeaturedPropertyIds } from "@/lib/hero-featured-store";
+
+export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }): Promise<Metadata> {
+  const { lang } = await params;
+  const titles: Record<string, string> = {
+    sk: 'Relax Properties | Luxusné Nehnuteľnosti pri Mori',
+    en: 'Relax Properties | Luxury Mediterranean Real Estate',
+    cz: 'Relax Properties | Luxusní Nemovitosti u Moře',
+  };
+  const descriptions: Record<string, string> = {
+    sk: 'Objavte prémiové nehnuteľnosti v Chorvátsku, Španielsku, Bulharsku a ďalších. Váš spoľahlivý partner pre kúpu nehnuteľností pri mori.',
+    en: 'Discover premium properties across Croatia, Spain, Bulgaria and more. Your trusted partner for Mediterranean vacation homes.',
+    cz: 'Objevte prémiové nemovitosti v Chorvatsku, Španělsku, Bulharsku a dalších. Váš spolehlivý partner pro koupi nemovitostí u moře.',
+  };
+  const v = ['sk', 'en', 'cz'].includes(lang) ? lang : 'sk';
+  return {
+    title: titles[v] || titles.sk,
+    description: descriptions[v] || descriptions.sk,
+    alternates: {
+      canonical: `https://www.relaxproperties.sk/${v}`,
+      languages: { sk: '/sk', en: '/en', cs: '/cz' },
+    },
+  };
+}
 
 export default async function Home({
     params,

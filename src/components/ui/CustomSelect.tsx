@@ -94,6 +94,9 @@ export default function CustomSelect({
             )}
             <button
                 type="button"
+                role="combobox"
+                aria-expanded={isOpen}
+                aria-haspopup="listbox"
                 onClick={() => setIsOpen(!isOpen)}
                 className={`w-full flex items-center justify-between gap-2 text-left transition-all ${isHero
                     ? "bg-transparent py-2.5 text-white/90 hover:text-white"
@@ -121,6 +124,7 @@ export default function CustomSelect({
 
             {/* Dropdown */}
             <div
+                role="listbox"
                 className={`absolute top-full left-0 right-0 mt-2 rounded-xl z-50 max-h-60 overflow-y-auto transition-all duration-200 origin-top ${isHero
                     ? "bg-[rgba(26,26,24,0.95)] backdrop-blur-xl border border-white/12 shadow-2xl"
                     : "bg-white shadow-[var(--shadow-xl)] border border-[var(--color-border)]/50"
@@ -149,6 +153,8 @@ export default function CustomSelect({
                     <button
                         key={option.value}
                         type="button"
+                        role="option"
+                        aria-selected={option.value === value}
                         onClick={() => handleSelect(option.value)}
                         className={`w-full px-4 py-2.5 text-left text-sm transition-colors flex items-center gap-2.5 ${isHero
                             ? (option.value === value

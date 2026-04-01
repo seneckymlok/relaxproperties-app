@@ -45,6 +45,9 @@ export default function CookieConsentBanner({ lang, dictionary }: CookieConsentB
 
       {/* Banner */}
       <div
+        role="dialog"
+        aria-modal="true"
+        aria-label={t.title}
         className={`fixed bottom-0 left-0 right-0 z-[9999] transition-all duration-500 ease-out ${
           visible ? "translate-y-0 opacity-100" : "translate-y-full opacity-0"
         }`}
@@ -100,6 +103,9 @@ export default function CookieConsentBanner({ lang, dictionary }: CookieConsentB
                   </div>
                   <button
                     onClick={() => setAnalytics(!analytics)}
+                    role="switch"
+                    aria-checked={analytics}
+                    aria-label={t.analytics}
                     className={`relative w-10 h-5.5 rounded-full transition-colors duration-200 ${
                       analytics ? "bg-[var(--color-teal)]" : "bg-[var(--color-muted)]/30"
                     }`}
@@ -120,6 +126,9 @@ export default function CookieConsentBanner({ lang, dictionary }: CookieConsentB
                   </div>
                   <button
                     onClick={() => setMarketing(!marketing)}
+                    role="switch"
+                    aria-checked={marketing}
+                    aria-label={t.marketing}
                     className={`relative w-10 h-5.5 rounded-full transition-colors duration-200 ${
                       marketing ? "bg-[var(--color-teal)]" : "bg-[var(--color-muted)]/30"
                     }`}
