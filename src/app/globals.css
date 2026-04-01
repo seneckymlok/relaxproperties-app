@@ -847,6 +847,21 @@ body.search-modal-open .header-gradient-vignette {
 }
 
 /* ============================================
+   HOMEPAGE LOADING — branded logo intro
+   ============================================ */
+
+@keyframes logoIntroFade {
+    0% { opacity: 0; transform: scale(0.92); }
+    30% { opacity: 1; transform: scale(1); }
+    80% { opacity: 1; transform: scale(1); }
+    100% { opacity: 0.6; transform: scale(1); }
+}
+
+.homepage-logo-intro {
+    animation: logoIntroFade 1.8s cubic-bezier(0.33, 1, 0.68, 1) both;
+}
+
+/* ============================================
    HERO SLIDER — CSS text reveal (replaces GSAP)
    ============================================ */
 

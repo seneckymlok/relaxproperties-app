@@ -160,12 +160,13 @@ export default function HeroSlider({ lang = 'sk', dictionary, featuredProperties
         };
     }, [isPaused, slides.length, startProgress, stopProgress]);
 
-    // Fade out intro after 6 seconds
+    // Fade out intro — 4s on mobile, 6s on desktop
     useEffect(() => {
+        const isMobile = window.matchMedia("(max-width: 768px)").matches;
         const timer = setTimeout(() => {
             setShowIntro(false);
             setAnimKey(prev => prev + 1); // trigger initial content animation
-        }, 6000);
+        }, isMobile ? 4000 : 6000);
         return () => clearTimeout(timer);
     }, []);
 
