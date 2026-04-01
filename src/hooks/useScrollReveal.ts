@@ -1,10 +1,6 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-gsap.registerPlugin(ScrollTrigger);
 
 interface ScrollRevealOptions {
     y?: number;
@@ -17,8 +13,7 @@ interface ScrollRevealOptions {
 
 /**
  * Hook for scroll-triggered reveal animations.
- * Attach the returned ref to a container — all children with `data-reveal`
- * will animate in when scrolled into view.
+ * Lazy-loads GSAP + ScrollTrigger to keep them out of the initial bundle.
  */
 export function useScrollReveal<T extends HTMLElement = HTMLDivElement>(
     options: ScrollRevealOptions = {}
@@ -29,44 +24,57 @@ export function useScrollReveal<T extends HTMLElement = HTMLDivElement>(
         const el = ref.current;
         if (!el) return;
 
-        const {
-            y = 60,
-            x = 0,
-            duration = 0.9,
-            delay = 0,
-            stagger = 0.12,
-            once = true,
-        } = options;
+        let killed = false;
 
-        const children = el.querySelectorAll("[data-reveal]");
-        const targets = children.length > 0 ? children : [el];
+        async function init() {
+            const [{ gsap }, { ScrollTrigger }] = await Promise.all([
+                import("gsap"),
+                import("gsap/ScrollTrigger"),
+            ]);
+            gsap.registerPlugin(ScrollTrigger);
 
-        gsap.set(targets, {
-            y,
-            x,
-            opacity: 0,
-        });
+            if (killed || !el) return;
 
-        gsap.to(targets, {
-            y: 0,
-            x: 0,
-            opacity: 1,
-            duration,
-            delay,
-            stagger,
-            ease: "power3.out",
-            scrollTrigger: {
-                trigger: el,
-                start: "top 85%",
-                toggleActions: once ? "play none none none" : "play none none reverse",
-            },
-        });
+            const {
+                y = 60,
+                x = 0,
+                duration = 0.9,
+                delay = 0,
+                stagger = 0.12,
+                once = true,
+            } = options;
+
+            const children = el.querySelectorAll("[data-reveal]");
+            const targets = children.length > 0 ? children : [el];
+
+            gsap.set(targets, { y, x, opacity: 0 });
+
+            gsap.to(targets, {
+                y: 0,
+                x: 0,
+                opacity: 1,
+                duration,
+                delay,
+                stagger,
+                ease: "power3.out",
+                scrollTrigger: {
+                    trigger: el,
+                    start: "top 85%",
+                    toggleActions: once ? "play none none none" : "play none none reverse",
+                },
+            });
+        }
+
+        init();
 
         return () => {
-            ScrollTrigger.getAll().forEach((trigger) => {
-                if (trigger.vars.trigger === el) {
-                    trigger.kill();
-                }
+            killed = true;
+            import("gsap/ScrollTrigger").then(({ ScrollTrigger }) => {
+                ScrollTrigger.getAll().forEach((trigger) => {
+                    if (trigger.vars.trigger === el) {
+                        trigger.kill();
+                    }
+                });
             });
         };
     }, [options.y, options.x, options.duration, options.delay, options.stagger, options.once]);
@@ -76,6 +84,7 @@ export function useScrollReveal<T extends HTMLElement = HTMLDivElement>(
 
 /**
  * Hook for parallax effect on an element.
+ * Lazy-loads GSAP + ScrollTrigger.
  */
 export function useParallax<T extends HTMLElement = HTMLDivElement>(
     speed: number = 0.3
@@ -86,22 +95,39 @@ export function useParallax<T extends HTMLElement = HTMLDivElement>(
         const el = ref.current;
         if (!el) return;
 
-        gsap.to(el, {
-            y: () => speed * 100,
-            ease: "none",
-            scrollTrigger: {
-                trigger: el,
-                start: "top bottom",
-                end: "bottom top",
-                scrub: true,
-            },
-        });
+        let killed = false;
+
+        async function init() {
+            const [{ gsap }, { ScrollTrigger }] = await Promise.all([
+                import("gsap"),
+                import("gsap/ScrollTrigger"),
+            ]);
+            gsap.registerPlugin(ScrollTrigger);
+
+            if (killed || !el) return;
+
+            gsap.to(el, {
+                y: () => speed * 100,
+                ease: "none",
+                scrollTrigger: {
+                    trigger: el,
+                    start: "top bottom",
+                    end: "bottom top",
+                    scrub: true,
+                },
+            });
+        }
+
+        init();
 
         return () => {
-            ScrollTrigger.getAll().forEach((trigger) => {
-                if (trigger.vars.trigger === el) {
-                    trigger.kill();
-                }
+            killed = true;
+            import("gsap/ScrollTrigger").then(({ ScrollTrigger }) => {
+                ScrollTrigger.getAll().forEach((trigger) => {
+                    if (trigger.vars.trigger === el) {
+                        trigger.kill();
+                    }
+                });
             });
         };
     }, [speed]);

@@ -847,6 +847,28 @@ body.search-modal-open .header-gradient-vignette {
 }
 
 /* ============================================
+   HERO SLIDER — CSS text reveal (replaces GSAP)
+   ============================================ */
+
+@keyframes heroTextReveal {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes heroGlassReveal {
+    from { transform: translateY(8px); }
+    to { transform: translateY(0); }
+}
+
+.hero-text-reveal {
+    animation: heroTextReveal 0.6s cubic-bezier(0.33, 1, 0.68, 1) both;
+}
+
+.hero-glass-reveal {
+    animation: heroGlassReveal 0.5s cubic-bezier(0.33, 1, 0.68, 1) both;
+}
+
+/* ============================================
    SECTION DIVIDER — SUBTLE HORIZONTAL LINE
    ============================================ */
 

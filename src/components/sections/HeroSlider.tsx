@@ -3,7 +3,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { gsap } from "gsap";
 import HeroSearch from "./HeroSearch";
 import MagneticButton from "@/components/ui/MagneticButton";
 import type { Dictionary } from "@/lib/dictionaries";
@@ -37,7 +36,7 @@ function translateCountry(country: string, lang: string): string {
 export default function HeroSlider({ lang = 'sk', dictionary, featuredProperties = [], allProperties = [] }: HeroSliderProps) {
     const { hasConsented } = useCookieConsent();
     const [currentSlide, setCurrentSlide] = useState(0);
-    const contentRefs = useRef<(HTMLDivElement | null)[]>([]);
+    const [animKey, setAnimKey] = useState(0); // triggers CSS re-animation on slide change
     const progressRef = useRef<HTMLDivElement>(null);
     const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
     const progressAnimRef = useRef<number | null>(null);
@@ -151,6 +150,7 @@ export default function HeroSlider({ lang = 'sk', dictionary, featuredProperties
         startProgress();
         timerRef.current = setInterval(() => {
             setCurrentSlide(prev => (prev + 1) % slides.length);
+            setAnimKey(prev => prev + 1);
             startProgress();
         }, SLIDE_DURATION);
 
@@ -164,6 +164,7 @@ export default function HeroSlider({ lang = 'sk', dictionary, featuredProperties
     useEffect(() => {
         const timer = setTimeout(() => {
             setShowIntro(false);
+            setAnimKey(prev => prev + 1); // trigger initial content animation
         }, 6000);
         return () => clearTimeout(timer);
     }, []);
@@ -174,41 +175,6 @@ export default function HeroSlider({ lang = 'sk', dictionary, featuredProperties
             setIntroRemoved(true);
         }
     }, [showIntro]);
-
-    // Animate content on slide change with GSAP
-    useEffect(() => {
-        if (showIntro) return;
-        const contentEl = contentRefs.current[currentSlide];
-        if (!contentEl) return;
-
-        // Text elements: gentle fade with minimal lift
-        const textElements = contentEl.querySelectorAll("[data-hero-animate='text']");
-        gsap.fromTo(
-            textElements,
-            { y: 12, opacity: 0 },
-            {
-                y: 0,
-                opacity: 1,
-                duration: 0.6,
-                stagger: 0.08,
-                ease: "power2.out",
-                delay: 0.1,
-            }
-        );
-
-        // Glass elements (CTA button): slide only, NO opacity change
-        const glassElements = contentEl.querySelectorAll("[data-hero-animate='glass']");
-        gsap.fromTo(
-            glassElements,
-            { y: 8 },
-            {
-                y: 0,
-                duration: 0.5,
-                ease: "power2.out",
-                delay: 0.25,
-            }
-        );
-    }, [currentSlide, showIntro]);
 
     return (
         <section className="relative z-40 flex flex-col md:block h-[100svh] min-h-[100svh] md:min-h-[600px] md:h-screen w-full overflow-visible bg-[var(--color-secondary)]">
@@ -232,82 +198,98 @@ export default function HeroSlider({ lang = 'sk', dictionary, featuredProperties
                 </div>
             )}
 
-            {/* CSS Fade Carousel — replaces Swiper for zero-JS overhead */}
+            {/* CSS Fade Carousel */}
             <div className={`relative w-full h-full transition-opacity duration-700 ${showIntro ? "opacity-0" : "opacity-100"}`}>
-                {slides.map((slide, index) => (
-                    <div
-                        key={slide.id}
-                        className="absolute inset-0 transition-opacity duration-700 ease-in-out"
-                        style={{
-                            opacity: index === currentSlide ? 1 : 0,
-                            zIndex: index === currentSlide ? 1 : 0,
-                        }}
-                    >
-                        {/* Background Image */}
-                        <Image
-                            src={slide.image}
-                            alt={slide.location || 'Property'}
-                            fill
-                            sizes="100vw"
-                            quality={65}
-                            className="object-cover"
-                            loading={index === 0 ? "eager" : "lazy"}
-                        />
-
-                        {/* Dark gradient overlay */}
-                        <div className="absolute inset-0 z-10 pointer-events-none" style={{
-                            background: 'linear-gradient(to top, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.3) 30%, rgba(0,0,0,0.15) 55%, rgba(0,0,0,0.1) 75%, rgba(0,0,0,0.06) 100%)',
-                        }} />
-
-                        {/* Content */}
+                {slides.map((slide, index) => {
+                    const isActive = index === currentSlide;
+                    return (
                         <div
-                            ref={(el) => { contentRefs.current[index] = el; }}
-                            className="absolute inset-0 z-20 flex items-end pb-14 md:pb-[clamp(12rem,38vh,20rem)] transition-opacity duration-500 ease-in-out"
+                            key={slide.id}
+                            className="absolute inset-0 transition-opacity duration-700 ease-in-out"
                             style={{
-                                opacity: showIntro ? 0 : 1,
-                                transitionDelay: showIntro ? '0ms' : '200ms',
+                                opacity: isActive ? 1 : 0,
+                                zIndex: isActive ? 1 : 0,
                             }}
                         >
-                            <div className="container-custom">
-                                {/* Location tag — desktop only */}
-                                <div data-hero-animate="text" className="hidden md:flex items-center gap-2 mb-[clamp(1.25rem,2vw,1.5rem)]" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.7), 0 2px 12px rgba(0,0,0,0.5), 0 4px 24px rgba(0,0,0,0.3)' }}>
-                                    <svg className="w-4 h-4 text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5} style={{ filter: 'drop-shadow(0 1px 4px rgba(0,0,0,0.6))' }}>
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
-                                    </svg>
-                                    <span className="text-white text-[clamp(0.875rem,2.5vw,1rem)] font-semibold">{slide.location}</span>
-                                    {slide.country && (
-                                        <>
-                                            <span className="text-white/60">–</span>
-                                            <span className="text-white text-[clamp(0.875rem,2.5vw,1rem)] font-medium">{slide.country}</span>
-                                        </>
-                                    )}
-                                </div>
+                            {/* Background Image — only first slide gets priority; others lazy */}
+                            {(index === 0 || isActive) && (
+                                <Image
+                                    src={slide.image}
+                                    alt={slide.location || 'Property'}
+                                    fill
+                                    sizes="100vw"
+                                    quality={60}
+                                    className="object-cover"
+                                    {...(index === 0 ? { priority: true } : { loading: "lazy" as const })}
+                                />
+                            )}
 
-                                {/* Property title — mobile only */}
-                                <h1 data-hero-animate="text" className="md:hidden font-serif text-white text-[clamp(1.375rem,5.5vw,1.75rem)] leading-[1.15] mb-3 max-w-[320px]" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.7), 0 2px 12px rgba(0,0,0,0.5), 0 4px 24px rgba(0,0,0,0.3)' }}>
-                                    {slide.title}
-                                </h1>
+                            {/* Dark gradient overlay */}
+                            <div className="absolute inset-0 z-10 pointer-events-none" style={{
+                                background: 'linear-gradient(to top, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.3) 30%, rgba(0,0,0,0.15) 55%, rgba(0,0,0,0.1) 75%, rgba(0,0,0,0.06) 100%)',
+                            }} />
 
-                                {/* CTA Button with magnetic effect */}
-                                <div data-hero-animate="glass">
-                                    <MagneticButton strength={0.2}>
-                                        <Link
-                                            href={slide.ctaLink}
-                                            className="group inline-flex items-center gap-3 bg-black/20 backdrop-blur-md text-white px-[clamp(1.5rem,3.5vw,1.75rem)] py-[clamp(0.75rem,1.2vw,0.875rem)] rounded-full text-[clamp(0.875rem,2.5vw,1rem)] font-medium border border-white/20 hover:bg-white hover:text-[var(--color-secondary)] transition-all duration-300 active:scale-[0.98] tracking-wide"
-                                            style={{ textShadow: '0 1px 3px rgba(0,0,0,0.4)' }}
-                                        >
-                                            {slide.ctaLabel}
-                                            <svg className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                                            </svg>
-                                        </Link>
-                                    </MagneticButton>
+                            {/* Content — uses CSS animation instead of GSAP */}
+                            <div
+                                className="absolute inset-0 z-20 flex items-end pb-14 md:pb-[clamp(12rem,38vh,20rem)] transition-opacity duration-500 ease-in-out"
+                                style={{
+                                    opacity: showIntro ? 0 : 1,
+                                    transitionDelay: showIntro ? '0ms' : '200ms',
+                                }}
+                            >
+                                <div className="container-custom">
+                                    {/* Location tag — desktop only */}
+                                    <div
+                                        key={`loc-${animKey}`}
+                                        className={`hidden md:flex items-center gap-2 mb-[clamp(1.25rem,2vw,1.5rem)] ${isActive && !showIntro ? 'hero-text-reveal' : 'opacity-0'}`}
+                                        style={{ textShadow: '0 1px 3px rgba(0,0,0,0.7), 0 2px 12px rgba(0,0,0,0.5), 0 4px 24px rgba(0,0,0,0.3)', animationDelay: '100ms' }}
+                                    >
+                                        <svg className="w-4 h-4 text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5} style={{ filter: 'drop-shadow(0 1px 4px rgba(0,0,0,0.6))' }}>
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
+                                        </svg>
+                                        <span className="text-white text-[clamp(0.875rem,2.5vw,1rem)] font-semibold">{slide.location}</span>
+                                        {slide.country && (
+                                            <>
+                                                <span className="text-white/60">–</span>
+                                                <span className="text-white text-[clamp(0.875rem,2.5vw,1rem)] font-medium">{slide.country}</span>
+                                            </>
+                                        )}
+                                    </div>
+
+                                    {/* Property title — mobile only */}
+                                    <h1
+                                        key={`title-${animKey}`}
+                                        className={`md:hidden font-serif text-white text-[clamp(1.375rem,5.5vw,1.75rem)] leading-[1.15] mb-3 max-w-[320px] ${isActive && !showIntro ? 'hero-text-reveal' : 'opacity-0'}`}
+                                        style={{ textShadow: '0 1px 3px rgba(0,0,0,0.7), 0 2px 12px rgba(0,0,0,0.5), 0 4px 24px rgba(0,0,0,0.3)', animationDelay: '100ms' }}
+                                    >
+                                        {slide.title}
+                                    </h1>
+
+                                    {/* CTA Button with magnetic effect */}
+                                    <div
+                                        key={`cta-${animKey}`}
+                                        className={isActive && !showIntro ? 'hero-glass-reveal' : 'opacity-0'}
+                                        style={{ animationDelay: '250ms' }}
+                                    >
+                                        <MagneticButton strength={0.2}>
+                                            <Link
+                                                href={slide.ctaLink}
+                                                className="group inline-flex items-center gap-3 bg-black/20 backdrop-blur-md text-white px-[clamp(1.5rem,3.5vw,1.75rem)] py-[clamp(0.75rem,1.2vw,0.875rem)] rounded-full text-[clamp(0.875rem,2.5vw,1rem)] font-medium border border-white/20 hover:bg-white hover:text-[var(--color-secondary)] transition-all duration-300 active:scale-[0.98] tracking-wide"
+                                                style={{ textShadow: '0 1px 3px rgba(0,0,0,0.4)' }}
+                                            >
+                                                {slide.ctaLabel}
+                                                <svg className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                                                </svg>
+                                            </Link>
+                                        </MagneticButton>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                ))}
+                    );
+                })}
             </div>
 
             {/* Slide progress bar — mobile */}

@@ -1,16 +1,8 @@
-import dynamic from "next/dynamic";
 import HeroSlider from "@/components/sections/HeroSlider";
-import CountryBanners from "@/components/sections/CountryBanners";
+import BelowFoldSections from "@/components/sections/BelowFoldSections";
 import { getDictionary } from "@/lib/dictionaries";
 import { getPropertiesServer, getBlogPostsServer, type Language, type PublicProperty } from "@/lib/data-access";
 import { getCachedHeroFeaturedPropertyIds } from "@/lib/hero-featured-store";
-
-// Below-fold sections: dynamically imported to reduce initial JS bundle
-// These components pull in Swiper, GSAP, and other heavy deps
-const NewOffers = dynamic(() => import("@/components/sections/NewOffers"));
-const AboutSection = dynamic(() => import("@/components/sections/AboutSection"));
-const ReviewsSection = dynamic(() => import("@/components/sections/ReviewsSection"));
-const BlogCarousel = dynamic(() => import("@/components/sections/BlogCarousel"));
 
 export default async function Home({
     params,
@@ -39,20 +31,13 @@ export default async function Home({
             {/* 1. Hero Banners with integrated Search */}
             <HeroSlider lang={validLang} dictionary={dictionary} featuredProperties={featuredForHero} allProperties={properties} />
 
-            {/* 2. Country Selection */}
-            <CountryBanners lang={validLang} dictionary={dictionary} properties={properties} />
-
-            {/* 3. New Offers */}
-            <NewOffers lang={validLang} dictionary={dictionary} properties={properties} />
-
-            {/* 4. About Us */}
-            <AboutSection lang={validLang} dictionary={dictionary} />
-
-            {/* 5. Reviews */}
-            <ReviewsSection lang={validLang} dictionary={dictionary} />
-
-            {/* 6. Blog Carousel */}
-            <BlogCarousel lang={validLang} dictionary={dictionary} initialArticles={blogPosts.slice(0, 3)} />
+            {/* Below-fold sections: client-side lazy loaded to defer Swiper/GSAP */}
+            <BelowFoldSections
+                lang={validLang}
+                dictionary={dictionary}
+                properties={properties}
+                blogPosts={blogPosts.slice(0, 3)}
+            />
         </div>
     );
 }
