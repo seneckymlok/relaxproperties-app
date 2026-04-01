@@ -101,7 +101,22 @@ export default function HeroSlider({ lang = 'sk', dictionary, featuredProperties
     ];
 
     const slides = propertySlides.length > 0 ? propertySlides : fallbackSlides;
-    const isPaused = !hasConsented;
+
+    // Intro photo overlay — shows "nehnutelnost more.webp" then fades to carousel
+    const [showIntro, setShowIntro] = useState(true);
+    const [introRemoved, setIntroRemoved] = useState(false);
+
+    useEffect(() => {
+        const isMobile = window.matchMedia("(max-width: 768px)").matches;
+        const timer = setTimeout(() => setShowIntro(false), isMobile ? 4000 : 6000);
+        return () => clearTimeout(timer);
+    }, []);
+
+    const handleIntroTransitionEnd = useCallback(() => {
+        if (!showIntro) setIntroRemoved(true);
+    }, [showIntro]);
+
+    const isPaused = showIntro || !hasConsented;
 
     // --- Progress bar ---
     const startProgress = useCallback(() => {
@@ -144,6 +159,27 @@ export default function HeroSlider({ lang = 'sk', dictionary, featuredProperties
     return (
         <section className="relative z-40 flex flex-col md:block h-[100svh] min-h-[100svh] md:min-h-[600px] md:h-screen w-full overflow-visible bg-[var(--color-secondary)]">
             <div className="relative h-[63svh] md:h-full flex-shrink-0 overflow-hidden">
+                {/* Intro photo overlay */}
+                {!introRemoved && (
+                    <div
+                        className="absolute inset-0 z-30 bg-[var(--color-secondary)]"
+                        style={{
+                            opacity: showIntro ? 1 : 0,
+                            transition: 'opacity 1s ease-out',
+                            pointerEvents: showIntro ? 'auto' : 'none',
+                        }}
+                        onTransitionEnd={handleIntroTransitionEnd}
+                    >
+                        <Image
+                            src="/images/nehnutelnost more.webp"
+                            alt="Luxury property with pool"
+                            fill
+                            className="object-cover"
+                            priority
+                        />
+                    </div>
+                )}
+
                 {/* CSS Fade Carousel */}
                 <div className="relative w-full h-full">
                     {slides.map((slide, index) => {
