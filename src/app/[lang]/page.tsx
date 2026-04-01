@@ -5,7 +5,7 @@ import AboutSection from "@/components/sections/AboutSection";
 import ReviewsSection from "@/components/sections/ReviewsSection";
 import BlogCarousel from "@/components/sections/BlogCarousel";
 import { getDictionary } from "@/lib/dictionaries";
-import { getPropertiesServer, type Language, type PublicProperty } from "@/lib/data-access";
+import { getPropertiesServer, getBlogPostsServer, getReviewsServer, type Language, type PublicProperty } from "@/lib/data-access";
 import { getCachedHeroFeaturedPropertyIds } from "@/lib/hero-featured-store";
 
 export default async function Home({
@@ -17,10 +17,12 @@ export default async function Home({
     const validLang = (['sk', 'en', 'cz'].includes(lang) ? lang : 'sk') as Language;
     const dictionary = getDictionary(validLang);
 
-    // Parallel data fetching — both queries run simultaneously
-    const [properties, heroIds] = await Promise.all([
+    // Parallel data fetching — all queries run simultaneously
+    const [properties, heroIds, blogPosts, reviewsData] = await Promise.all([
         getPropertiesServer(validLang),
         getCachedHeroFeaturedPropertyIds(),
+        getBlogPostsServer(validLang),
+        getReviewsServer(validLang),
     ]);
 
     const featuredForHero = heroIds.length > 0
@@ -44,10 +46,10 @@ export default async function Home({
             <AboutSection lang={validLang} dictionary={dictionary} />
 
             {/* 5. Reviews */}
-            <ReviewsSection lang={validLang} dictionary={dictionary} />
+            <ReviewsSection lang={validLang} dictionary={dictionary} initialReviews={reviewsData.reviews} initialRating={reviewsData.rating} initialTotalReviews={reviewsData.totalReviews} />
 
             {/* 6. Blog Carousel */}
-            <BlogCarousel lang={validLang} dictionary={dictionary} />
+            <BlogCarousel lang={validLang} dictionary={dictionary} initialArticles={blogPosts.slice(0, 3)} />
         </div>
     );
 }

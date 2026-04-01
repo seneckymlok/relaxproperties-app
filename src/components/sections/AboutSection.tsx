@@ -73,6 +73,7 @@ export default function AboutSection({ lang = 'sk', dictionary }: AboutSectionPr
                             src={member.image}
                             alt={member.name}
                             fill
+                            sizes="(max-width: 768px) 18vw, 8rem"
                             className="object-cover"
                         />
                     </div>

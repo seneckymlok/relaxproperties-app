@@ -1,12 +1,21 @@
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { notFound } from "next/navigation";
-import PhotoGallery from "@/components/ui/PhotoGallery";
 import ContactAgentForm from "@/components/ui/ContactAgentForm";
 import PropertyCard from "@/components/ui/PropertyCard";
 import PropertyMapSection from "@/components/ui/PropertyMapSection";
-import PropertyActions from "@/components/ui/PropertyActions";
 import { getPropertyByIdServer, getPropertiesServer, type Language } from "@/lib/data-access";
 import { getDictionary } from "@/lib/dictionaries";
+
+const PhotoGallery = dynamic(() => import("@/components/ui/PhotoGallery"), {
+    loading: () => (
+        <div className="w-full aspect-[16/10] bg-[var(--color-surface)] rounded-2xl animate-pulse" />
+    ),
+});
+
+const PropertyActions = dynamic(() => import("@/components/ui/PropertyActions"), {
+    loading: () => null,
+});
 
 interface PropertyDetailPageProps {
     params: Promise<{ id: string; lang: string }>;
@@ -424,6 +433,7 @@ export default async function PropertyDetailPage({ params }: PropertyDetailPageP
                                             title={`${property.title} - Video`}
                                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                                             allowFullScreen
+                                            loading="lazy"
                                             className="absolute inset-0 w-full h-full"
                                         />
                                     </div>

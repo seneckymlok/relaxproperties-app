@@ -27,11 +27,12 @@ interface BlogArticle {
 interface BlogCarouselProps {
     lang?: string;
     dictionary?: Dictionary;
+    initialArticles?: BlogArticle[];
 }
 
-export default function BlogCarousel({ lang = 'sk', dictionary }: BlogCarouselProps) {
-    const [articles, setArticles] = useState<BlogArticle[]>([]);
-    const [loading, setLoading] = useState(true);
+export default function BlogCarousel({ lang = 'sk', dictionary, initialArticles }: BlogCarouselProps) {
+    const [articles, setArticles] = useState<BlogArticle[]>(initialArticles || []);
+    const [loading, setLoading] = useState(!initialArticles);
 
     const sectionTitle = lang === 'en' ? 'Useful Articles and Tips' : lang === 'cz' ? 'Užitečné články a tipy' : 'Užitočné články a tipy';
     const viewAllLabel = lang === 'en' ? 'View all articles' : lang === 'cz' ? 'Zobrazit všechny články' : 'Zobraziť všetky články';
@@ -39,12 +40,13 @@ export default function BlogCarousel({ lang = 'sk', dictionary }: BlogCarouselPr
     const blogHeaderRef = useScrollReveal<HTMLDivElement>({ y: 40 });
     const blogGridRef = useScrollReveal<HTMLDivElement>({ stagger: 0.12, delay: 0.1 });
 
+    // Only fetch client-side if no server data was provided (fallback)
     useEffect(() => {
+        if (initialArticles) return;
         async function fetchBlogs() {
             try {
                 const res = await fetch(`/api/blog?lang=${lang}`);
                 const data = await res.json();
-                // Take up to 3 most recent posts for the homepage carousel
                 setArticles((data.posts || []).slice(0, 3));
             } catch {
                 setArticles([]);
@@ -53,7 +55,7 @@ export default function BlogCarousel({ lang = 'sk', dictionary }: BlogCarouselPr
             }
         }
         fetchBlogs();
-    }, [lang]);
+    }, [lang, initialArticles]);
 
     function formatDate(dateStr: string) {
         try {
@@ -80,6 +82,7 @@ export default function BlogCarousel({ lang = 'sk', dictionary }: BlogCarouselPr
                             src={article.image}
                             alt={article.title}
                             fill
+                            sizes="(max-width: 640px) 90vw, (max-width: 768px) 50vw, 33vw"
                             className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
                         />
                     ) : (
