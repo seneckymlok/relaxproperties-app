@@ -111,7 +111,6 @@ function DualRangeSlider({
                         max={boundsMax}
                         step={PRICE_STEP}
                         value={sliderMin}
-                        aria-label={minLabel}
                         onChange={(e) => onSliderMinChange(Number(e.target.value))}
                         style={{ zIndex: sliderMin > boundsMax - PRICE_STEP * 5 ? 5 : 3 }}
                     />
@@ -121,7 +120,6 @@ function DualRangeSlider({
                         max={boundsMax}
                         step={PRICE_STEP}
                         value={sliderMax}
-                        aria-label={maxLabel}
                         onChange={(e) => onSliderMaxChange(Number(e.target.value))}
                         style={{ zIndex: 4 }}
                     />
@@ -408,23 +406,24 @@ export default function HeroSearch({ lang = 'sk', dictionary, priceRange }: Hero
             const data = await response.json();
 
             if (data.success && data.filters) {
-                setFilters(prev => ({ ...prev, ...data.filters }));
-
                 const params = new URLSearchParams();
                 const f = data.filters;
                 if (f.country !== "all") params.set("country", f.country);
                 if (f.propertyType !== "all") params.set("type", f.propertyType);
                 if (f.bedrooms !== "all") params.set("beds", f.bedrooms);
+                if (f.sort && f.sort !== "featured") params.set("sort", f.sort);
                 if (f.priceMin) params.set("priceMin", f.priceMin);
                 if (f.priceMax) params.set("priceMax", f.priceMax);
-                if (f.seaView) params.set("seaView", "true");
-                if (f.firstLine) params.set("firstLine", "true");
-                if (f.pool) params.set("pool", "true");
-                if (f.newBuild) params.set("newBuild", "true");
-                if (f.newProject) params.set("newProject", "true");
-                if (f.luxury) params.set("luxury", "true");
-                if (f.golf) params.set("golf", "true");
-                if (f.mountains) params.set("mountains", "true");
+
+                // All boolean feature filters
+                const booleanFeatures = [
+                    "seaView", "firstLine", "pool", "newBuild", "newProject",
+                    "luxury", "golf", "mountains", "balcony", "terrace",
+                    "garden", "parking", "nearBeach", "nearAirport",
+                ];
+                for (const key of booleanFeatures) {
+                    if (f[key]) params.set(key, "true");
+                }
 
                 setIsMobileModalOpen(false);
                 router.push(`/${lang}/properties?${params.toString()}`);
@@ -832,7 +831,7 @@ export default function HeroSearch({ lang = 'sk', dictionary, priceRange }: Hero
                                         {/* Search Button */}
                                         <button
                                             onClick={handleSearch}
-                                            className="flex items-center gap-2.5 bg-[var(--color-accent)] text-[var(--color-secondary)] px-7 py-3 rounded-full hover:bg-[var(--color-accent-dark)] transition-all hover:scale-[1.02] active:scale-[0.98] flex-shrink-0 font-medium text-sm shadow-md shadow-[var(--color-accent)]/20"
+                                            className="flex items-center gap-2.5 bg-[var(--color-accent)] text-white px-7 py-3 rounded-full hover:bg-[var(--color-accent-dark)] transition-all hover:scale-[1.02] active:scale-[0.98] flex-shrink-0 font-medium text-sm shadow-md shadow-[var(--color-accent)]/20"
                                             title={t.search}
                                         >
                                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -860,7 +859,7 @@ export default function HeroSearch({ lang = 'sk', dictionary, priceRange }: Hero
                                         <button
                                             onClick={handleAiSearch}
                                             disabled={isAiSearching || !aiQuery.trim()}
-                                            className="flex items-center gap-2.5 bg-[var(--color-accent)] text-[var(--color-secondary)] px-7 py-3 rounded-full hover:bg-[var(--color-accent-dark)] transition-all hover:scale-[1.02] active:scale-[0.98] flex-shrink-0 font-medium text-sm disabled:opacity-50 shadow-md shadow-[var(--color-accent)]/20"
+                                            className="flex items-center gap-2.5 bg-[var(--color-accent)] text-white px-7 py-3 rounded-full hover:bg-[var(--color-accent-dark)] transition-all hover:scale-[1.02] active:scale-[0.98] flex-shrink-0 font-medium text-sm disabled:opacity-50 shadow-md shadow-[var(--color-accent)]/20"
                                             title={t.search}
                                         >
                                             {isAiSearching ? (
