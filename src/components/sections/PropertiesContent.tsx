@@ -71,10 +71,12 @@ export default function PropertiesContent({ lang, properties }: PropertiesConten
     const filterOptions = useMemo(() => getFilterOptions(lang), [lang]);
     const { countries, propertyTypes, bedroomOptions, sortOptions } = filterOptions;
 
-    // Get initial filter values from URL
+    // Get initial filter values from URL (supports AI search redirect params)
     const initialCountry = searchParams.get("country") || "all";
     const initialType = searchParams.get("type") || "all";
     const initialSort = searchParams.get("sort") || "featured";
+    const urlPriceMin = searchParams.get("priceMin");
+    const urlPriceMax = searchParams.get("priceMax");
 
     const [filters, setFilters] = useState({
         country: initialCountry,
@@ -84,15 +86,21 @@ export default function PropertiesContent({ lang, properties }: PropertiesConten
         firstLine: searchParams.get("firstLine") === "true",
         pool: searchParams.get("pool") === "true",
         newBuild: searchParams.get("newBuild") === "true",
+        newProject: searchParams.get("newProject") === "true",
         luxury: searchParams.get("luxury") === "true",
-        balcony: false,
-        terrace: false,
-        garden: false,
-        parking: false,
-        nearBeach: false,
-        nearAirport: false,
+        golf: searchParams.get("golf") === "true",
+        mountains: searchParams.get("mountains") === "true",
+        balcony: searchParams.get("balcony") === "true",
+        terrace: searchParams.get("terrace") === "true",
+        garden: searchParams.get("garden") === "true",
+        parking: searchParams.get("parking") === "true",
+        nearBeach: searchParams.get("nearBeach") === "true",
+        nearAirport: searchParams.get("nearAirport") === "true",
     });
-    const [priceRange, setPriceRange] = useState<[number, number]>([priceStats.min, priceStats.max]);
+    const [priceRange, setPriceRange] = useState<[number, number]>([
+        urlPriceMin ? Math.max(Number(urlPriceMin), priceStats.min) : priceStats.min,
+        urlPriceMax ? Math.min(Number(urlPriceMax), priceStats.max) : priceStats.max,
+    ]);
     const isPriceFiltered = priceRange[0] !== priceStats.min || priceRange[1] !== priceStats.max;
     const [sortBy, setSortBy] = useState(initialSort);
     const [searchQuery, setSearchQuery] = useState("");
@@ -152,7 +160,10 @@ export default function PropertiesContent({ lang, properties }: PropertiesConten
         if (filters.firstLine) result = result.filter(p => p.firstLine);
         if (filters.pool) result = result.filter(p => p.pool);
         if (filters.newBuild) result = result.filter(p => p.newBuild);
+        if (filters.newProject) result = result.filter(p => p.newProject);
         if (filters.luxury) result = result.filter(p => p.luxury);
+        if (filters.golf) result = result.filter(p => p.golf);
+        if (filters.mountains) result = result.filter(p => p.mountains);
         if (filters.balcony) result = result.filter(p => p.balcony);
         if (filters.terrace) result = result.filter(p => p.terasa);
         if (filters.garden) result = result.filter(p => p.garden);
@@ -189,7 +200,8 @@ export default function PropertiesContent({ lang, properties }: PropertiesConten
     const resetFilters = () => {
         setFilters({
             country: "all", propertyType: "all", bedrooms: "all",
-            seaView: false, firstLine: false, pool: false, newBuild: false, luxury: false,
+            seaView: false, firstLine: false, pool: false, newBuild: false, newProject: false,
+            luxury: false, golf: false, mountains: false,
             balcony: false, terrace: false, garden: false, parking: false, nearBeach: false, nearAirport: false,
         });
         setPriceRange([priceStats.min, priceStats.max]);

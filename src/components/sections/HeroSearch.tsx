@@ -406,23 +406,24 @@ export default function HeroSearch({ lang = 'sk', dictionary, priceRange }: Hero
             const data = await response.json();
 
             if (data.success && data.filters) {
-                setFilters(prev => ({ ...prev, ...data.filters }));
-
                 const params = new URLSearchParams();
                 const f = data.filters;
                 if (f.country !== "all") params.set("country", f.country);
                 if (f.propertyType !== "all") params.set("type", f.propertyType);
                 if (f.bedrooms !== "all") params.set("beds", f.bedrooms);
+                if (f.sort && f.sort !== "featured") params.set("sort", f.sort);
                 if (f.priceMin) params.set("priceMin", f.priceMin);
                 if (f.priceMax) params.set("priceMax", f.priceMax);
-                if (f.seaView) params.set("seaView", "true");
-                if (f.firstLine) params.set("firstLine", "true");
-                if (f.pool) params.set("pool", "true");
-                if (f.newBuild) params.set("newBuild", "true");
-                if (f.newProject) params.set("newProject", "true");
-                if (f.luxury) params.set("luxury", "true");
-                if (f.golf) params.set("golf", "true");
-                if (f.mountains) params.set("mountains", "true");
+
+                // All boolean feature filters
+                const booleanFeatures = [
+                    "seaView", "firstLine", "pool", "newBuild", "newProject",
+                    "luxury", "golf", "mountains", "balcony", "terrace",
+                    "garden", "parking", "nearBeach", "nearAirport",
+                ];
+                for (const key of booleanFeatures) {
+                    if (f[key]) params.set(key, "true");
+                }
 
                 setIsMobileModalOpen(false);
                 router.push(`/${lang}/properties?${params.toString()}`);
