@@ -4,6 +4,15 @@ import type { NextRequest } from "next/server";
 const locales = ["sk", "en", "cz"];
 const defaultLocale = "sk";
 
+const DOMAIN_LANG_MAP: Record<string, string> = {
+    'relaxproperties.cz': 'cz',
+    'www.relaxproperties.cz': 'cz',
+    'relaxproperties.eu': 'en',
+    'www.relaxproperties.eu': 'en',
+    'relaxproperties.sk': 'sk',
+    'www.relaxproperties.sk': 'sk',
+};
+
 export function proxy(request: NextRequest) {
     const { pathname } = request.nextUrl;
 
@@ -40,15 +49,12 @@ export function proxy(request: NextRequest) {
 
     if (pathnameHasLocale) return NextResponse.next();
 
-    // Redirect to default locale
-    const url = request.nextUrl.clone();
-    // Ensure we don't double slash
-    if (pathname === "/") {
-        url.pathname = `/${defaultLocale}`;
-    } else {
-        url.pathname = `/${defaultLocale}${pathname}`;
-    }
+    // Determine language from domain, fall back to defaultLocale
+    const hostname = request.headers.get('host') || '';
+    const lang = DOMAIN_LANG_MAP[hostname] ?? defaultLocale;
 
+    const url = request.nextUrl.clone();
+    url.pathname = pathname === "/" ? `/${lang}` : `/${lang}${pathname}`;
     return NextResponse.redirect(url);
 }
 
