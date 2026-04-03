@@ -191,14 +191,36 @@ export async function getPublishedProperties(): Promise<PropertyRecord[]> {
 }
 
 /**
- * Cached version of getPublishedProperties — revalidates every 60s.
- * Use this for public-facing pages to avoid hitting Supabase on every request.
+ * Cached version of getPublishedProperties — revalidates every 5 min.
+ * Tag 'properties' lets admin routes bust the cache instantly on publish/update/delete.
  */
 export const getCachedPublishedProperties = unstable_cache(
     getPublishedProperties,
     ['published-properties'],
-    { revalidate: 60 }
+    { revalidate: 300, tags: ['properties'] }
 );
+
+/**
+ * Fetch a small set of similar properties (same country, excluding current).
+ * Used on property detail pages — avoids loading the entire catalogue.
+ */
+export async function getSimilarProperties(
+    propertyId: string,
+    country: string,
+    limit: number = 3
+): Promise<PropertyRecord[]> {
+    const supabase = getAdminClient();
+    const { data, error } = await supabase
+        .from('properties')
+        .select('*')
+        .eq('publish_status', 'published')
+        .ilike('country', country)
+        .neq('id', propertyId)
+        .limit(limit);
+
+    if (error) throw new Error(`Failed to fetch similar properties: ${error.message}`);
+    return (data || []) as PropertyRecord[];
+}
 
 /**
  * Get a single property by ID

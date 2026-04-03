@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
+import { revalidateTag } from 'next/cache';
 import { getAllProperties, createProperty, permanentlyDeleteTrashedProperties } from '@/lib/property-store';
 import { del } from '@vercel/blob';
 
@@ -62,6 +63,7 @@ export async function POST(request: NextRequest) {
         const { save_mode, ...data } = body;
         data.publish_status = data.publish_status || 'draft';
         const property = await createProperty(data);
+        revalidateTag('properties');
         return NextResponse.json({ property }, { status: 201 });
     } catch (error) {
         const message = error instanceof Error ? error.message : 'Unknown error';

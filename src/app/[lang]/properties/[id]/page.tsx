@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import ContactAgentForm from "@/components/ui/ContactAgentForm";
 import PropertyCard from "@/components/ui/PropertyCard";
 import PropertyMapSection from "@/components/ui/PropertyMapSection";
-import { getPropertyByIdServer, getPropertiesServer, type Language } from "@/lib/data-access";
+import { getPropertyByIdServer, getSimilarPropertiesServer, type Language } from "@/lib/data-access";
 import { getDictionary } from "@/lib/dictionaries";
 
 const PhotoGallery = dynamic(() => import("@/components/ui/PhotoGallery"), {
@@ -146,11 +146,8 @@ export default async function PropertyDetailPage({ params }: PropertyDetailPageP
 
     const allAmenities = [...mainAmenities, ...additionalAmenities];
 
-    // Get similar properties (same country, excluding current)
-    const allProperties = await getPropertiesServer(lang);
-    const similarProperties = allProperties
-        .filter((p) => p.country === property.country && p.id !== property.id)
-        .slice(0, 3);
+    // Get similar properties — targeted SQL query, no full catalogue load
+    const similarProperties = await getSimilarPropertiesServer(id, property.country, lang, 3);
 
     // Stats bar items - conditionally show all available data
     const stats = [

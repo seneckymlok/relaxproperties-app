@@ -7,7 +7,7 @@
  * - Static filter options remain in-memory (not in DB yet)
  */
 
-import { getPublishedProperties, getCachedPublishedProperties, type PropertyRecord } from './property-store';
+import { getPublishedProperties, getCachedPublishedProperties, getSimilarProperties, type PropertyRecord } from './property-store';
 
 export type Language = 'sk' | 'en' | 'cz';
 
@@ -153,6 +153,25 @@ export async function getPropertiesServer(lang: Language = 'sk'): Promise<Public
 }
 
 /**
+ * SERVER-SIDE: Fetch a small set of similar properties (same country, excluding current).
+ * Much cheaper than loading all properties and filtering client-side.
+ */
+export async function getSimilarPropertiesServer(
+    propertyId: string,
+    country: string,
+    lang: Language = 'sk',
+    limit: number = 3
+): Promise<PublicProperty[]> {
+    try {
+        const records = await getSimilarProperties(propertyId, country, limit);
+        return records.map(r => toPublicProperty(r, lang));
+    } catch (error) {
+        console.error('Failed to fetch similar properties:', error);
+        return [];
+    }
+}
+
+/**
  * SERVER-SIDE: Fetch a single property by ID
  * Only returns published properties for public pages
  */
@@ -256,12 +275,13 @@ export interface PublicBlogArticle {
 }
 
 /**
- * SERVER-SIDE: Fetch published blog posts, localized
+ * SERVER-SIDE: Fetch published blog posts, localized.
+ * Pass a limit to avoid loading the full catalogue (homepage only needs 3).
  */
-export async function getBlogPostsServer(lang: Language = 'sk'): Promise<PublicBlogArticle[]> {
+export async function getBlogPostsServer(lang: Language = 'sk', limit?: number): Promise<PublicBlogArticle[]> {
     try {
         const { getPublishedBlogPosts } = await import('./blog-store');
-        const records = await getPublishedBlogPosts();
+        const records = await getPublishedBlogPosts(limit);
         return records.map(p => {
             const title = lang === 'en' ? (p.title_en || p.title_sk) : lang === 'cz' ? (p.title_cz || p.title_sk) : p.title_sk;
             const excerpt = lang === 'en' ? (p.excerpt_en || p.excerpt_sk) : lang === 'cz' ? (p.excerpt_cz || p.excerpt_sk) : (p.excerpt_sk || '');

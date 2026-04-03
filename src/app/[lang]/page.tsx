@@ -17,7 +17,7 @@ export default async function Home({
     const [properties, heroIds, blogPosts] = await Promise.all([
         getPropertiesServer(validLang),
         getCachedHeroFeaturedPropertyIds(),
-        getBlogPostsServer(validLang),
+        getBlogPostsServer(validLang, 3),
     ]);
 
     const featuredForHero = heroIds.length > 0
@@ -31,12 +31,12 @@ export default async function Home({
             {/* 1. Hero Banners with integrated Search */}
             <HeroSlider lang={validLang} dictionary={dictionary} featuredProperties={featuredForHero} allProperties={properties} />
 
-            {/* Below-fold sections: client-side lazy loaded to defer Swiper/GSAP */}
+            {/* Below-fold sections: client-side lazy loaded to defer GSAP */}
             <BelowFoldSections
                 lang={validLang}
                 dictionary={dictionary}
                 properties={properties}
-                blogPosts={blogPosts.slice(0, 3)}
+                blogPosts={blogPosts}
             />
         </div>
     );

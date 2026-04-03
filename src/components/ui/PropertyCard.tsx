@@ -2,15 +2,9 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState, useId, useEffect } from "react";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Pagination } from "swiper/modules";
+import { useState, useEffect, useRef } from "react";
 import { useFavorites } from "@/contexts/FavoritesContext";
 import type { Dictionary } from "@/lib/dictionaries";
-
-import "swiper/css";
-import "swiper/css/navigation";
-import "swiper/css/pagination";
 
 interface PropertyCardProps {
   id: string | number;
@@ -43,8 +37,8 @@ export default function PropertyCard({
   dictionary,
   previewTags = [],
 }: PropertyCardProps) {
-  const [activeIndex, setActiveIndex] = useState(0);
-  const uniqueId = useId().replace(/:/g, "");
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const touchStartX = useRef(0);
   const { isFavorite, toggleFavorite } = useFavorites();
   const favorited = isFavorite(id);
   const [isTouchDevice, setIsTouchDevice] = useState(false);
@@ -64,11 +58,35 @@ export default function PropertyCard({
     }
   };
 
+  const goNext = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setCurrentIndex(i => (i + 1) % images.length);
+  };
+
+  const goPrev = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setCurrentIndex(i => (i - 1 + images.length) % images.length);
+  };
+
+  const onTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const onTouchEnd = (e: React.TouchEvent) => {
+    const diff = touchStartX.current - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 40) {
+      setCurrentIndex(i =>
+        diff > 0 ? (i + 1) % images.length : (i - 1 + images.length) % images.length
+      );
+    }
+  };
+
   const featuredLabel = dictionary?.common?.featured || 'Featured';
   const addToFavoritesLabel = dictionary?.common?.addToFavorites || 'Add to favorites';
   const removeFromFavoritesLabel = dictionary?.common?.removeFromFavorites || 'Remove from favorites';
 
-  // Label map for preview tags — all 3 languages (SK, EN, CZ)
   const tagLabels: Record<string, string> = {
     pool: lang === 'en' ? 'Pool' : 'Bazén',
     garden: lang === 'en' ? 'Garden' : lang === 'cz' ? 'Zahrada' : 'Záhrada',
@@ -93,58 +111,66 @@ export default function PropertyCard({
   return (
     <Link href={`/${lang}/properties/${id}`} className="block h-full">
       <article className="group h-full bg-white rounded-2xl overflow-hidden shadow-[var(--shadow-sm)] hover:shadow-[var(--shadow-lg)] transition-all duration-300 hover:-translate-y-1 flex flex-col">
-        {/* Image */}
-        <div className={`relative ${compact ? "h-[clamp(10rem,28vw,12rem)]" : "aspect-[4/3]"} overflow-hidden bg-[var(--color-surface)] property-image-watermark`}>
-          <Swiper
-            modules={[Navigation, Pagination]}
-            navigation={!isTouchDevice ? {
-              nextEl: `.property-next-${uniqueId}`,
-              prevEl: `.property-prev-${uniqueId}`,
-            } : false}
-            pagination={isTouchDevice ? {
-              clickable: true,
-              dynamicBullets: true,
-            } : false}
-            loop={images.length > 1}
-            onSlideChange={(swiper) => setActiveIndex(swiper.realIndex)}
-            className="w-full h-full property-card-swiper"
+        {/* Image carousel */}
+        <div
+          className={`relative ${compact ? "h-[clamp(10rem,28vw,12rem)]" : "aspect-[4/3]"} overflow-hidden bg-[var(--color-surface)] property-image-watermark`}
+          onTouchStart={onTouchStart}
+          onTouchEnd={onTouchEnd}
+        >
+          {/* Sliding strip */}
+          <div
+            className="flex h-full transition-transform duration-300 ease-out"
+            style={{ transform: `translateX(-${currentIndex * 100}%)`, width: `${images.length * 100}%` }}
           >
             {images.map((image, index) => (
-              <SwiperSlide key={index}>
+              <div key={index} className="relative h-full flex-shrink-0" style={{ width: `${100 / images.length}%` }}>
                 <Image
                   src={image}
                   alt={`${title} - foto ${index + 1}`}
                   fill
                   sizes="(max-width: 640px) 85vw, (max-width: 768px) 60vw, (max-width: 1024px) 50vw, 25vw"
                   quality={65}
+                  loading={index === 0 ? "eager" : "lazy"}
                   className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
                 />
-              </SwiperSlide>
+              </div>
             ))}
-          </Swiper>
+          </div>
 
-          {/* Navigation Arrows */}
+          {/* Desktop navigation arrows */}
           {images.length > 1 && !isTouchDevice && (
             <>
               <button
-                onClick={(e) => e.preventDefault()}
+                onClick={goPrev}
                 aria-label="Previous image"
-                className={`property-prev-${uniqueId} absolute left-2.5 top-1/2 -translate-y-1/2 z-10 w-8 h-8 flex items-center justify-center bg-white/90 hover:bg-white rounded-full opacity-0 group-hover:opacity-100 transition-all shadow-sm backdrop-blur-sm`}
+                className="absolute left-2.5 top-1/2 -translate-y-1/2 z-10 w-8 h-8 flex items-center justify-center bg-white/90 hover:bg-white rounded-full opacity-0 group-hover:opacity-100 transition-all shadow-sm backdrop-blur-sm"
               >
                 <svg className="w-4 h-4 text-[var(--color-secondary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                 </svg>
               </button>
               <button
-                onClick={(e) => e.preventDefault()}
+                onClick={goNext}
                 aria-label="Next image"
-                className={`property-next-${uniqueId} absolute right-2.5 top-1/2 -translate-y-1/2 z-10 w-8 h-8 flex items-center justify-center bg-white/90 hover:bg-white rounded-full opacity-0 group-hover:opacity-100 transition-all shadow-sm backdrop-blur-sm`}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 z-10 w-8 h-8 flex items-center justify-center bg-white/90 hover:bg-white rounded-full opacity-0 group-hover:opacity-100 transition-all shadow-sm backdrop-blur-sm"
               >
                 <svg className="w-4 h-4 text-[var(--color-secondary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
               </button>
             </>
+          )}
+
+          {/* Mobile pagination dots */}
+          {images.length > 1 && isTouchDevice && (
+            <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-1 z-10 pointer-events-none">
+              {images.map((_, i) => (
+                <div
+                  key={i}
+                  className={`rounded-full transition-all duration-200 ${i === currentIndex ? 'w-4 h-1.5 bg-white' : 'w-1.5 h-1.5 bg-white/50'}`}
+                />
+              ))}
+            </div>
           )}
 
           {/* Preview Tags — top left */}
@@ -161,14 +187,14 @@ export default function PropertyCard({
             </div>
           )}
 
-          {/* Featured Badge — top left, below tags */}
+          {/* Featured Badge */}
           {featured && (
             <span className={`absolute left-3 z-10 px-3 py-1 text-[10px] font-medium uppercase tracking-widest bg-[var(--color-accent)] text-white rounded-full ${previewTags.length > 0 ? "top-10" : "top-3"}`}>
               {featuredLabel}
             </span>
           )}
 
-          {/* Favorite Button — top right */}
+          {/* Favorite Button */}
           <button
             onClick={handleFavoriteClick}
             className="group/fav absolute top-3 right-3 z-10 w-10 h-10 sm:w-9 sm:h-9 flex items-center justify-center bg-white/90 hover:bg-white rounded-full shadow-sm transition-all active:scale-95 backdrop-blur-sm"
@@ -188,20 +214,14 @@ export default function PropertyCard({
 
         {/* Content */}
         <div className={`${compact ? "p-4 sm:p-5" : "p-5 sm:p-6"} flex flex-col flex-1`}>
-          {/* Price — large serif */}
           <p className={`font-serif ${compact ? "text-lg sm:text-xl" : "text-xl sm:text-2xl"} text-[var(--color-teal)] mb-1.5 tabular-nums`}>
             {price}
           </p>
-
-          {/* Title */}
           <h3 className={`font-medium text-[var(--color-teal)] md:text-[var(--color-secondary)] ${compact ? "text-sm" : "text-sm sm:text-base"} mb-1.5 group-hover:text-[var(--color-teal)] transition-colors line-clamp-1`}>
             {title}
           </h3>
-
-          {/* Location */}
           <p className="text-[var(--color-muted)] text-xs sm:text-sm mb-4 line-clamp-2">{location}</p>
 
-          {/* Stats — pipe-separated, pushed to bottom */}
           <div className="flex items-center gap-0 text-xs sm:text-sm text-[var(--color-muted)] mt-auto">
             <div className="flex items-center gap-1.5">
               <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[var(--color-muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>

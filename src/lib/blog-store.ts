@@ -88,14 +88,17 @@ export async function getAllBlogPosts(): Promise<BlogPostRecord[]> {
 }
 
 /** Get published blog posts only (public site) */
-export async function getPublishedBlogPosts(): Promise<BlogPostRecord[]> {
+export async function getPublishedBlogPosts(limit?: number): Promise<BlogPostRecord[]> {
     const supabase = getAdminClient();
-    const { data, error } = await supabase
+    let query = supabase
         .from('blog_posts')
         .select('*')
         .eq('publish_status', 'published')
         .order('published_at', { ascending: false });
 
+    if (limit) query = query.limit(limit);
+
+    const { data, error } = await query;
     if (error) throw new Error(`Failed to fetch published blog posts: ${error.message}`);
     return (data || []) as BlogPostRecord[];
 }
