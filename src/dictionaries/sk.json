@@ -549,7 +549,14 @@
     "favorites": {
         "title": "Obľúbené",
         "subtitle": "Vaše obľúbené nehnuteľnosti",
+        "heroLabel": "Moje obľúbené",
+        "heroTitle": "Obľúbené nehnuteľnosti",
+        "countOne": "nehnuteľnosť v zozname",
+        "countFew": "nehnuteľnosti v zozname",
+        "countMany": "nehnuteľností v zozname",
         "empty": "Zatiaľ nemáte žiadne obľúbené nehnuteľnosti.",
+        "emptyTitle": "Zatiaľ nemáte žiadne obľúbené",
+        "emptyDescription": "Kliknite na ikonu srdca pri nehnuteľnostiach, ktoré sa vám páčia, a uložte si ich sem pre rýchly prístup.",
         "browseProperties": "Prehliadať nehnuteľnosti"
     },
     "blog": {

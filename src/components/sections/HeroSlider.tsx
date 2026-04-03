@@ -69,48 +69,18 @@ export default function HeroSlider({ lang = 'sk', dictionary, featuredProperties
             };
         });
 
-    const viewOffersLabel = dictionary?.common?.viewOffers || "Zobraziť ponuky";
-    const fallbackSlides = [
-        {
-            id: 'fallback-1',
-            location: dictionary?.home?.slides?.bulgaria?.location || "Slnečné pobrežie",
-            country: dictionary?.home?.slides?.bulgaria?.region || "Bulharsko",
-            title: dictionary?.home?.slides?.bulgaria?.title || "Apartmány pri mori od 45 000 €",
-            image: "https://images.unsplash.com/photo-1540541338287-41700207dee6?q=80&w=2670&auto=format&fit=crop",
-            ctaLink: `/${lang}/properties?country=bulgaria`,
-            ctaLabel: viewOffersLabel,
-        },
-        {
-            id: 'fallback-2',
-            location: dictionary?.home?.slides?.croatia?.location || "Dalmácia",
-            country: dictionary?.home?.slides?.croatia?.region || "Chorvátsko",
-            title: dictionary?.home?.slides?.croatia?.title || "Luxusné vily v prvej línii pri mori",
-            image: "https://images.unsplash.com/photo-1516483638261-f4dbaf036963?q=80&w=2572&auto=format&fit=crop",
-            ctaLink: `/${lang}/properties?country=croatia`,
-            ctaLabel: viewOffersLabel,
-        },
-        {
-            id: 'fallback-3',
-            location: dictionary?.home?.slides?.spain?.location || "Costa del Sol",
-            country: dictionary?.home?.slides?.spain?.region || "Španielsko",
-            title: dictionary?.home?.slides?.spain?.title || "Prémiové rezidencie s golfom",
-            image: "https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?q=80&w=2670&auto=format&fit=crop",
-            ctaLink: `/${lang}/properties?country=spain`,
-            ctaLabel: viewOffersLabel,
-        },
-    ];
+    const slides = propertySlides;
 
-    const slides = propertySlides.length > 0 ? propertySlides : fallbackSlides;
-
-    // Intro photo overlay — shows "nehnutelnost more.webp" then fades to carousel
+    // Intro photo overlay — shows main.webp/main_mobile.webp then fades to carousel (if properties exist)
     const [showIntro, setShowIntro] = useState(true);
     const [introRemoved, setIntroRemoved] = useState(false);
 
     useEffect(() => {
+        if (slides.length === 0) return; // no properties selected — keep main photo visible
         const isMobile = window.matchMedia("(max-width: 768px)").matches;
         const timer = setTimeout(() => setShowIntro(false), isMobile ? 4000 : 6000);
         return () => clearTimeout(timer);
-    }, []);
+    }, [slides.length]);
 
     const handleIntroTransitionEnd = useCallback(() => {
         if (!showIntro) setIntroRemoved(true);
@@ -171,10 +141,17 @@ export default function HeroSlider({ lang = 'sk', dictionary, featuredProperties
                         onTransitionEnd={handleIntroTransitionEnd}
                     >
                         <Image
-                            src="/images/nehnutelnost more.webp"
-                            alt="Luxury property with pool"
+                            src="/images/main_mobile.webp"
+                            alt="Luxury property"
                             fill
-                            className="object-cover"
+                            className="object-cover md:hidden"
+                            priority
+                        />
+                        <Image
+                            src="/images/main.webp"
+                            alt="Luxury property"
+                            fill
+                            className="object-cover hidden md:block"
                             priority
                         />
                     </div>

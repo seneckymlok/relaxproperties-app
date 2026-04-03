@@ -460,7 +460,14 @@
     "favorites": {
         "title": "Favorites",
         "subtitle": "Your favorite properties",
+        "heroLabel": "My Favorites",
+        "heroTitle": "Favorite Properties",
+        "countOne": "property in list",
+        "countFew": "properties in list",
+        "countMany": "properties in list",
         "empty": "You don't have any favorite properties yet.",
+        "emptyTitle": "No favorites yet",
+        "emptyDescription": "Click the heart icon on properties you like to save them here for quick access.",
         "browseProperties": "Browse Properties"
     },
     "blog": {
