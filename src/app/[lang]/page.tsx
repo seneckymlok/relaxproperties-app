@@ -24,7 +24,7 @@ export default async function Home({
         ? heroIds
             .map(id => properties.find(p => p.id === id))
             .filter((p): p is PublicProperty => !!p && p.images.length > 0)
-        : properties.filter(p => p.images.length > 0).slice(0, 3);
+        : [];
 
     return (
         <div className="flex flex-col min-h-screen">

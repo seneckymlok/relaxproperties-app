@@ -1,11 +1,13 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { useFavorites } from "@/contexts/FavoritesContext";
 import PropertyCard from "@/components/ui/PropertyCard";
 import Link from "next/link";
 import MagneticButton from "@/components/ui/MagneticButton";
+import { getDictionary } from "@/lib/dictionaries";
+import type { Language } from "@/lib/data-access";
 
 interface FavoriteProperty {
     id: string;
@@ -20,15 +22,25 @@ interface FavoriteProperty {
     previewTags?: string[];
 }
 
+function getCountLabel(count: number, lang: string, d: ReturnType<typeof getDictionary>): string {
+    const f = d.favorites;
+    if (lang === 'sk' || lang === 'cz') {
+        const word = count === 1 ? f.countOne : count >= 2 && count <= 4 ? f.countFew : f.countMany;
+        return `${count} ${word}`;
+    }
+    const word = count === 1 ? f.countOne : f.countMany;
+    return `${count} ${word}`;
+}
+
 export default function FavoritesPage() {
     const { favorites } = useFavorites();
     const pathname = usePathname();
-    const lang = (pathname?.split('/')[1] || 'sk') as 'sk' | 'en' | 'cz';
+    const lang = (pathname?.split('/')[1] || 'sk') as Language;
+    const d = getDictionary(lang);
     const [allProperties, setAllProperties] = useState<FavoriteProperty[]>([]);
     const [loadingProperties, setLoadingProperties] = useState(true);
     const [heroImage, setHeroImage] = useState("https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1920&q=80");
 
-    // Fetch properties and hero image on mount
     useEffect(() => {
         fetch('/api/properties')
             .then(res => res.json())
@@ -57,22 +69,19 @@ export default function FavoritesPage() {
             <section className="relative h-80 sm:h-96 md:h-[400px] bg-[var(--color-primary)]">
                 <div
                     className="absolute inset-0 bg-cover bg-center opacity-30"
-                    style={{
-                        backgroundImage: `url('${heroImage}')`,
-                    }}
+                    style={{ backgroundImage: `url('${heroImage}')` }}
                 />
-                {/* Removed filter per user request */}
                 <div className="relative container-custom h-full flex flex-col justify-center items-center text-center text-white pt-16">
                     <p className="text-sm uppercase tracking-[0.2em] text-[var(--color-sand-light)] mb-3">
-                        Moje obľúbené
+                        {d.favorites.heroLabel}
                     </p>
                     <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl font-medium text-white mb-4">
-                        Obľúbené nehnuteľnosti
+                        {d.favorites.heroTitle}
                     </h1>
                     <p className="text-lg text-white/80">
                         {favoriteProperties.length > 0
-                            ? `${favoriteProperties.length} ${favoriteProperties.length === 1 ? 'nehnuteľnosť' : favoriteProperties.length < 5 ? 'nehnuteľnosti' : 'nehnuteľností'} v zozname`
-                            : 'Zatiaľ nemáte žiadne obľúbené nehnuteľnosti'}
+                            ? getCountLabel(favoriteProperties.length, lang, d)
+                            : d.favorites.empty}
                     </p>
                 </div>
             </section>
@@ -113,17 +122,17 @@ export default function FavoritesPage() {
                                 </svg>
                             </div>
                             <h2 className="font-serif text-2xl md:text-3xl text-[var(--color-secondary)] mb-4 leading-tight">
-                                Zatiaľ nemáte žiadne obľúbené
+                                {d.favorites.emptyTitle}
                             </h2>
                             <p className="text-[var(--color-muted)] mb-8 max-w-sm sm:max-w-md mx-auto leading-relaxed text-sm sm:text-base">
-                                Kliknite na ikonu srdca pri nehnuteľnostiach, ktoré sa vám páčia, a uložte si ich sem pre rýchly prístup.
+                                {d.favorites.emptyDescription}
                             </p>
                             <MagneticButton strength={0.15}>
                                 <Link
                                     href={`/${lang}/properties`}
                                     className="inline-flex w-full sm:w-auto items-center justify-center gap-2 px-8 py-4 bg-[var(--color-primary)] text-white font-medium rounded-full hover:bg-[var(--color-primary-dark)] transition-colors"
                                 >
-                                    Prehliadať nehnuteľnosti
+                                    {d.favorites.browseProperties}
                                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
                                     </svg>

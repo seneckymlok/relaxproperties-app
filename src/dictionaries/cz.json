@@ -455,7 +455,14 @@
     "favorites": {
         "title": "Oblíbené",
         "subtitle": "Vaše oblíbené nemovitosti",
+        "heroLabel": "Moje oblíbené",
+        "heroTitle": "Oblíbené nemovitosti",
+        "countOne": "nemovitost v seznamu",
+        "countFew": "nemovitosti v seznamu",
+        "countMany": "nemovitostí v seznamu",
         "empty": "Zatím nemáte žádné oblíbené nemovitosti.",
+        "emptyTitle": "Zatím nemáte žádné oblíbené",
+        "emptyDescription": "Klikněte na ikonu srdce u nemovitostí, které se vám líbí, a uložte si je sem pro rychlý přístup.",
         "browseProperties": "Prohlížet nemovitosti"
     },
     "blog": {
