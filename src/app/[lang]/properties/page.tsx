@@ -1,3 +1,5 @@
+export const revalidate = 300;
+
 import { Suspense } from "react";
 import PropertiesContent from "@/components/sections/PropertiesContent";
 import { getDictionary } from "@/lib/dictionaries";

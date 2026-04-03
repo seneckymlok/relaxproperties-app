@@ -1,3 +1,5 @@
+export const revalidate = 300; // Serve from edge CDN, regenerate in background every 5 min
+
 import HeroSlider from "@/components/sections/HeroSlider";
 import BelowFoldSections from "@/components/sections/BelowFoldSections";
 import { getDictionary } from "@/lib/dictionaries";

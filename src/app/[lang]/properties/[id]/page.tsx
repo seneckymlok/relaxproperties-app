@@ -1,3 +1,14 @@
+export const revalidate = 300;
+
+export async function generateStaticParams() {
+    const { getPublishedProperties } = await import('@/lib/property-store');
+    const properties = await getPublishedProperties();
+    const langs = ['sk', 'en', 'cz'];
+    return langs.flatMap(lang =>
+        properties.map(p => ({ lang, id: p.id }))
+    );
+}
+
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { notFound } from "next/navigation";
