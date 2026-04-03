@@ -140,20 +140,24 @@ export default function HeroSlider({ lang = 'sk', dictionary, featuredProperties
                         }}
                         onTransitionEnd={handleIntroTransitionEnd}
                     >
-                        <Image
-                            src="/images/main_mobile.webp"
-                            alt="Luxury property"
-                            fill
-                            className="object-cover md:hidden"
-                            priority
-                        />
-                        <Image
-                            src="/images/main.webp"
-                            alt="Luxury property"
-                            fill
-                            className="object-cover hidden md:block"
-                            priority
-                        />
+                        <div className="absolute inset-0 md:hidden">
+                            <Image
+                                src="/images/main_mobile.webp"
+                                alt="Luxury property"
+                                fill
+                                className="object-cover"
+                                priority
+                            />
+                        </div>
+                        <div className="absolute inset-0 hidden md:block">
+                            <Image
+                                src="/images/main.webp"
+                                alt="Luxury property"
+                                fill
+                                className="object-cover"
+                                priority
+                            />
+                        </div>
                     </div>
                 )}
 
