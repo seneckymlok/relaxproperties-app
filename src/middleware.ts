@@ -11,6 +11,8 @@ const DOMAIN_LANG_MAP: Record<string, string> = {
     'www.relaxproperties.cz': 'cz',
     'relaxproperties.sk': 'sk',
     'www.relaxproperties.sk': 'sk',
+    'relaxproperties.eu': 'en',
+    'www.relaxproperties.eu': 'en',
 };
 
 export function middleware(request: NextRequest) {
