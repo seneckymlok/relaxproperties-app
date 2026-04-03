@@ -57,5 +57,4 @@ export function proxy(request: NextRequest) {
     url.pathname = pathname === "/" ? `/${lang}` : `/${lang}${pathname}`;
     return NextResponse.redirect(url);
 }
-
 // Remove matcher config to rely on function logic
