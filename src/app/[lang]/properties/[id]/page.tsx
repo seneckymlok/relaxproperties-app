@@ -20,7 +20,7 @@ import { getDictionary } from "@/lib/dictionaries";
 
 const PhotoGallery = dynamic(() => import("@/components/ui/PhotoGallery"), {
     loading: () => (
-        <div className="w-full aspect-[16/10] bg-[var(--color-surface)] rounded-2xl animate-pulse" />
+        <div className="w-full aspect-[21/9] bg-[var(--color-surface)] rounded-2xl animate-pulse" />
     ),
 });
 
@@ -299,10 +299,10 @@ export default async function PropertyDetailPage({ params }: PropertyDetailPageP
                     )}
                 </div>
 
-                {/* Full-bleed cinematic photo gallery */}
-                <PhotoGallery images={property.images} title={property.title} />
-
                 <div className="container-custom">
+                    {/* Photo Gallery */}
+                    <PhotoGallery images={property.images} title={property.title} />
+
                     <div className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
                         {/* Left Column — Details */}
                         <div className="lg:col-span-2">
