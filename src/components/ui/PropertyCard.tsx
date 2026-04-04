@@ -121,17 +121,25 @@ export default function PropertyCard({
           onTouchStart={onTouchStart}
           onTouchEnd={onTouchEnd}
         >
-          {/* Single image — swap on navigation */}
-          <Image
-            key={currentIndex}
-            src={images[currentIndex]}
-            alt={`${title} - foto ${currentIndex + 1}`}
-            fill
-            sizes="(max-width: 640px) 85vw, (max-width: 768px) 60vw, (max-width: 1024px) 50vw, 25vw"
-            quality={65}
-            loading={currentIndex === 0 ? "eager" : "lazy"}
-            className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
-          />
+          {/* Sliding strip */}
+          <div
+            className="flex h-full transition-transform duration-300 ease-out"
+            style={{ transform: `translateX(-${currentIndex * 100}%)`, width: `${images.length * 100}%` }}
+          >
+            {images.map((image, index) => (
+              <div key={index} className="relative h-full flex-shrink-0" style={{ width: `${100 / images.length}%` }}>
+                <Image
+                  src={image}
+                  alt={`${title} - foto ${index + 1}`}
+                  fill
+                  sizes="(max-width: 640px) 85vw, (max-width: 768px) 60vw, (max-width: 1024px) 50vw, 25vw"
+                  quality={65}
+                  loading={index === 0 ? "eager" : "lazy"}
+                  className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+                />
+              </div>
+            ))}
+          </div>
 
           {/* Desktop navigation arrows */}
           {images.length > 1 && !isTouchDevice && (
@@ -157,17 +165,13 @@ export default function PropertyCard({
             </>
           )}
 
-          {/* Mobile pagination dots — max 5 visible */}
+          {/* Mobile pagination dots */}
           {images.length > 1 && isTouchDevice && (
             <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-1 z-10 pointer-events-none">
-              {(images.length <= 5 ? images : images.slice(0, 5)).map((_, i) => (
+              {images.map((_, i) => (
                 <div
                   key={i}
-                  className={`rounded-full transition-all duration-200 ${
-                    images.length <= 5
-                      ? (i === currentIndex ? 'w-4 h-1.5 bg-white' : 'w-1.5 h-1.5 bg-white/50')
-                      : (i === Math.min(currentIndex, 4) ? 'w-4 h-1.5 bg-white' : 'w-1.5 h-1.5 bg-white/50')
-                  }`}
+                  className={`rounded-full transition-all duration-200 ${i === currentIndex ? 'w-4 h-1.5 bg-white' : 'w-1.5 h-1.5 bg-white/50'}`}
                 />
               ))}
             </div>
