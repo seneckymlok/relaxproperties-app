@@ -121,25 +121,17 @@ export default function PropertyCard({
           onTouchStart={onTouchStart}
           onTouchEnd={onTouchEnd}
         >
-          {/* Sliding strip */}
-          <div
-            className="flex h-full transition-transform duration-300 ease-out"
-            style={{ transform: `translateX(-${currentIndex * 100}%)`, width: `${images.length * 100}%` }}
-          >
-            {images.map((image, index) => (
-              <div key={index} className="relative h-full flex-shrink-0" style={{ width: `${100 / images.length}%` }}>
-                <Image
-                  src={image}
-                  alt={`${title} - foto ${index + 1}`}
-                  fill
-                  sizes="(max-width: 640px) 85vw, (max-width: 768px) 60vw, (max-width: 1024px) 50vw, 25vw"
-                  quality={65}
-                  loading={index === 0 ? "eager" : "lazy"}
-                  className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
-                />
-              </div>
-            ))}
-          </div>
+          {/* Single image — swap on navigation */}
+          <Image
+            key={currentIndex}
+            src={images[currentIndex]}
+            alt={`${title} - foto ${currentIndex + 1}`}
+            fill
+            sizes="(max-width: 640px) 85vw, (max-width: 768px) 60vw, (max-width: 1024px) 50vw, 25vw"
+            quality={65}
+            loading={currentIndex === 0 ? "eager" : "lazy"}
+            className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+          />
 
           {/* Desktop navigation arrows */}
           {images.length > 1 && !isTouchDevice && (
