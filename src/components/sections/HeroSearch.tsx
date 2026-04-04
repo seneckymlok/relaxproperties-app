@@ -9,12 +9,15 @@ import type { Dictionary } from "@/lib/dictionaries";
 const PRICE_STEP = 1_000;
 /* PRICE_MIN / PRICE_MAX are now dynamic — received via props */
 
-function formatPrice(value: number): string {
+function formatPrice(value: number, lang = 'sk'): string {
     if (value >= 1_000_000) {
         const m = value / 1_000_000;
         return `${m % 1 === 0 ? m.toFixed(0) : m.toFixed(1)}M €`;
     }
-    if (value >= 1_000) return `${Math.round(value / 1_000).toLocaleString()}k €`;
+    if (value >= 1_000) {
+        const suffix = lang === 'en' ? 'k' : 'tis.';
+        return `${Math.round(value / 1_000).toLocaleString()} ${suffix} €`;
+    }
     return `${value.toLocaleString()} €`;
 }
 
@@ -32,6 +35,7 @@ interface DualRangeSliderProps {
     onPriceMaxChange: (val: string) => void;
     minLabel: string;
     maxLabel: string;
+    lang?: string;
 }
 
 function DualRangeSlider({
@@ -48,6 +52,7 @@ function DualRangeSlider({
     onPriceMaxChange,
     minLabel,
     maxLabel,
+    lang,
 }: DualRangeSliderProps) {
     const minPercent = ((sliderMin - boundsMin) / (boundsMax - boundsMin)) * 100;
     const maxPercent = ((sliderMax - boundsMin) / (boundsMax - boundsMin)) * 100;
@@ -125,8 +130,8 @@ function DualRangeSlider({
                     />
                 </div>
                 <div className={`flex justify-between text-[11px] mt-0.5 ${labelColor}`}>
-                    <span>{formatPrice(boundsMin)}</span>
-                    <span>{formatPrice(boundsMax)}</span>
+                    <span>{formatPrice(boundsMin, lang)}</span>
+                    <span>{formatPrice(boundsMax, lang)}</span>
                 </div>
             </div>
         </div>
@@ -355,6 +360,7 @@ export default function HeroSearch({ lang = 'sk', dictionary, priceRange }: Hero
         onPriceMaxChange: (val: string) => handleFilterChange("priceMax", val),
         minLabel: t.min,
         maxLabel: t.max,
+        lang,
     };
 
     // Toggle Switch Component for mobile
