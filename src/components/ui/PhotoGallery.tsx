@@ -43,7 +43,7 @@ export default function PhotoGallery({ images, title }: PhotoGalleryProps) {
                         prevEl: ".gallery-prev",
                     }}
                     thumbs={{ swiper: thumbsSwiper && !thumbsSwiper.destroyed ? thumbsSwiper : null }}
-                    className="w-full aspect-[16/10] md:aspect-[16/9] rounded-xl overflow-hidden"
+                    className="w-full h-[55vw] max-h-[70vh] min-h-[260px] rounded-xl overflow-hidden"
                 >
                     {images.map((image, index) => (
                         <SwiperSlide key={index}>
