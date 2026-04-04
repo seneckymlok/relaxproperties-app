@@ -273,8 +273,8 @@ export default async function PropertyDetailPage({ params }: PropertyDetailPageP
         <>
             {/* Main Content */}
             <section className="bg-[var(--color-background)]" style={{ paddingTop: '5.5rem', paddingBottom: '3rem' }}>
-                {/* Floating Breadcrumb — inline, elegant */}
-                <div className="container-custom pt-2 pb-4">
+                {/* Breadcrumb + ID badge — contained */}
+                <div className="container-custom pt-2 pb-3">
                     <nav className="flex items-baseline gap-1.5 text-[11px] sm:text-xs text-[var(--color-muted)] overflow-x-auto scrollbar-hide">
                         <Link href={`/${lang}`} className="hover:text-[var(--color-teal)] transition-colors whitespace-nowrap">
                             {t.home}
@@ -286,11 +286,8 @@ export default async function PropertyDetailPage({ params }: PropertyDetailPageP
                         <span className="text-[var(--color-border-dark)]">&rsaquo;</span>
                         <span className="text-[var(--color-foreground)] truncate max-w-[260px] sm:max-w-xs">{property.title}</span>
                     </nav>
-                </div>
-                <div className="container-custom">
-                    {/* Property ID badge — teal, above photos */}
                     {property.propertyIdExternal && (
-                        <div className="mb-3">
+                        <div className="mt-2">
                             <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-[var(--color-teal)]/10 text-[var(--color-teal)] text-xs font-semibold rounded-full border border-[var(--color-teal)]/20 tracking-wide">
                                 <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z" />
@@ -300,10 +297,12 @@ export default async function PropertyDetailPage({ params }: PropertyDetailPageP
                             </span>
                         </div>
                     )}
+                </div>
 
-                    {/* Full-width photo gallery */}
-                    <PhotoGallery images={property.images} title={property.title} />
+                {/* Full-bleed cinematic photo gallery */}
+                <PhotoGallery images={property.images} title={property.title} />
 
+                <div className="container-custom">
                     <div className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
                         {/* Left Column — Details */}
                         <div className="lg:col-span-2">
