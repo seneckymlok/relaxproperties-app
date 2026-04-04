@@ -426,7 +426,7 @@ export default async function PropertyDetailPage({ params }: PropertyDetailPageP
                                 <h2 className="font-serif text-lg text-[var(--color-secondary)] mb-1">{t.description}</h2>
                                 <span className="block w-8 h-px bg-[var(--color-accent)] mb-4" />
                                 <div
-                                    className="text-[var(--color-foreground)] leading-relaxed text-base prose prose-sm max-w-none"
+                                    className="text-[var(--color-foreground)] leading-relaxed text-base [&>p]:mb-5 [&>p:last-child]:mb-0"
                                     dangerouslySetInnerHTML={{ __html: textToHtml(property.description || t.descriptionPlaceholder) }}
                                 />
                             </div>
@@ -439,7 +439,7 @@ export default async function PropertyDetailPage({ params }: PropertyDetailPageP
                                     </h2>
                                     <span className="block w-8 h-px bg-[var(--color-accent)] mb-4" />
                                     <div
-                                        className="text-[var(--color-foreground)] leading-relaxed text-base prose prose-sm max-w-none"
+                                        className="text-[var(--color-foreground)] leading-relaxed text-base [&>p]:mb-5 [&>p:last-child]:mb-0"
                                         dangerouslySetInnerHTML={{ __html: textToHtml(property.locationDescription!) }}
                                     />
                                 </div>
