@@ -2,6 +2,14 @@
 
 import Image from "next/image";
 import { useState, useCallback } from "react";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation, Thumbs, FreeMode } from "swiper/modules";
+import type { Swiper as SwiperType } from "swiper";
+
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/thumbs";
+import "swiper/css/free-mode";
 
 interface PhotoGalleryProps {
     images: string[];
@@ -9,6 +17,7 @@ interface PhotoGalleryProps {
 }
 
 export default function PhotoGallery({ images, title }: PhotoGalleryProps) {
+    const [thumbsSwiper, setThumbsSwiper] = useState<SwiperType | null>(null);
     const [lightboxOpen, setLightboxOpen] = useState(false);
     const [lightboxIndex, setLightboxIndex] = useState(0);
 
@@ -100,42 +109,87 @@ export default function PhotoGallery({ images, title }: PhotoGalleryProps) {
                 </div>
             )}
 
-            {/* ── Mobile: Swipeable Gallery ─────────────────────── */}
+            {/* ── Mobile: Original Swiper Gallery ────────────────── */}
             <div className="md:hidden relative">
-                <div className="overflow-x-auto snap-x snap-mandatory flex gap-[3px] rounded-xl scrollbar-hide">
-                    {images.slice(0, 8).map((img, i) => (
-                        <div
-                            key={i}
-                            className="snap-center shrink-0 first:pl-0 last:pr-0"
-                            style={{ width: "85%" }}
-                        >
+                <Swiper
+                    modules={[Navigation, Thumbs]}
+                    navigation={{
+                        nextEl: ".gallery-next-mobile",
+                        prevEl: ".gallery-prev-mobile",
+                    }}
+                    thumbs={{ swiper: thumbsSwiper && !thumbsSwiper.destroyed ? thumbsSwiper : null }}
+                    className="w-full aspect-[16/10] rounded-xl overflow-hidden"
+                >
+                    {images.map((image, index) => (
+                        <SwiperSlide key={index}>
                             <div
-                                className={`relative aspect-[4/3] rounded-xl overflow-hidden ${cellBase}`}
-                                onClick={() => openLightbox(i)}
+                                className="relative w-full h-full cursor-pointer property-image-watermark"
+                                onClick={() => openLightbox(index)}
                             >
                                 <Image
-                                    src={img}
-                                    alt={`${title} - ${i + 1}`}
+                                    src={image}
+                                    alt={`${title} - foto ${index + 1}`}
                                     fill
                                     className="object-cover"
-                                    priority={i === 0}
+                                    priority={index === 0}
                                 />
-                                {/* Show "+N" on last visible slide if there are more */}
-                                {i === 7 && images.length > 8 && (
-                                    <div className="absolute inset-0 bg-black/45 flex items-center justify-center">
-                                        <span className="text-white text-lg font-semibold">+{images.length - 8}</span>
-                                    </div>
-                                )}
                             </div>
-                        </div>
+                        </SwiperSlide>
                     ))}
-                </div>
+                </Swiper>
 
-                {/* Photo count badge */}
-                <div className="absolute bottom-3 right-3 z-10 px-2.5 py-1 bg-black/60 backdrop-blur-sm text-white text-xs font-medium rounded-md">
-                    1 / {images.length}
+                {/* Navigation Arrows */}
+                {images.length > 1 && (
+                    <>
+                        <button className="gallery-prev-mobile absolute left-4 top-1/2 -translate-y-1/2 z-10 w-12 h-12 flex items-center justify-center bg-white/90 hover:bg-white rounded-full shadow-lg transition-all">
+                            <svg className="w-5 h-5 text-[var(--color-secondary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 19l-7-7 7-7" />
+                            </svg>
+                        </button>
+                        <button className="gallery-next-mobile absolute right-4 top-1/2 -translate-y-1/2 z-10 w-12 h-12 flex items-center justify-center bg-white/90 hover:bg-white rounded-full shadow-lg transition-all">
+                            <svg className="w-5 h-5 text-[var(--color-secondary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5l7 7-7 7" />
+                            </svg>
+                        </button>
+                    </>
+                )}
+
+                {/* Image Counter */}
+                <div className="absolute bottom-4 right-4 z-10 px-3 py-1.5 bg-black/60 text-white text-sm rounded-lg">
+                    {images.length} fotiek
                 </div>
             </div>
+
+            {/* Thumbnails — mobile only */}
+            {images.length > 1 && (
+                <div className="mt-4 md:hidden">
+                    <Swiper
+                        onSwiper={setThumbsSwiper}
+                        modules={[FreeMode, Thumbs]}
+                        spaceBetween={12}
+                        slidesPerView={4}
+                        freeMode
+                        watchSlidesProgress
+                        breakpoints={{
+                            640: { slidesPerView: 5 },
+                        }}
+                        className="gallery-thumbs"
+                    >
+                        {images.map((image, index) => (
+                            <SwiperSlide key={index}>
+                                <div className="relative aspect-[4/3] rounded-xl overflow-hidden cursor-pointer opacity-50 hover:opacity-90 transition-all duration-200 [.swiper-slide-thumb-active_&]:opacity-100">
+                                    <Image
+                                        src={image}
+                                        alt={`Thumbnail ${index + 1}`}
+                                        fill
+                                        className="object-cover"
+                                    />
+                                </div>
+                            </SwiperSlide>
+                        ))}
+                    </Swiper>
+                </div>
+            )}
 
             {/* ── Lightbox ──────────────────────────────────────── */}
             {lightboxOpen && (
