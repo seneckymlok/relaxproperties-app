@@ -28,6 +28,20 @@ const PropertyActions = dynamic(() => import("@/components/ui/PropertyActions"),
     loading: () => null,
 });
 
+/**
+ * Convert plain-text (with \n line breaks) to HTML paragraphs.
+ * If the content already contains HTML tags, returns it unchanged.
+ */
+function textToHtml(text: string): string {
+    if (!text) return '';
+    // If it already has HTML tags, leave it as-is
+    if (/<[a-z][\s\S]*>/i.test(text)) return text;
+    return text
+        .split(/\n{2,}/)
+        .map(para => `<p>${para.replace(/\n/g, '<br />')}</p>`)
+        .join('');
+}
+
 interface PropertyDetailPageProps {
     params: Promise<{ id: string; lang: string }>;
 }
@@ -413,7 +427,7 @@ export default async function PropertyDetailPage({ params }: PropertyDetailPageP
                                 <span className="block w-8 h-px bg-[var(--color-accent)] mb-4" />
                                 <div
                                     className="text-[var(--color-foreground)] leading-relaxed text-base prose prose-sm max-w-none"
-                                    dangerouslySetInnerHTML={{ __html: property.description || t.descriptionPlaceholder }}
+                                    dangerouslySetInnerHTML={{ __html: textToHtml(property.description || t.descriptionPlaceholder) }}
                                 />
                             </div>
 
@@ -424,9 +438,10 @@ export default async function PropertyDetailPage({ params }: PropertyDetailPageP
                                         {lang === 'en' ? 'About the Location' : lang === 'cz' ? 'O lokalitě' : 'O lokalite'}
                                     </h2>
                                     <span className="block w-8 h-px bg-[var(--color-accent)] mb-4" />
-                                    <p className="text-[var(--color-foreground)] leading-relaxed text-base">
-                                        {property.locationDescription}
-                                    </p>
+                                    <div
+                                        className="text-[var(--color-foreground)] leading-relaxed text-base prose prose-sm max-w-none"
+                                        dangerouslySetInnerHTML={{ __html: textToHtml(property.locationDescription!) }}
+                                    />
                                 </div>
                             )}
 

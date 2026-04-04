@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import { revalidateTag } from 'next/cache';
+import { revalidateTag, revalidatePath } from 'next/cache';
 import { getPropertyById, updateProperty, deleteProperty, saveDraft, publishProperty, trashProperty, restoreProperty } from '@/lib/property-store';
 import { del } from '@vercel/blob';
 import { pushToSoftreal, removeFromSoftreal } from '@/lib/softreal-export';
@@ -69,6 +69,10 @@ export async function PUT(
             // Publish: merge everything into main columns, clear draft_data
             property = await publishProperty(id, payload);
             revalidateTag('properties', {});
+            // Force-revalidate all language variants of this property's detail page
+            for (const lang of ['sk', 'en', 'cz']) {
+                revalidatePath(`/${lang}/properties/${id}`);
+            }
 
             // Push to Softreal if export_target is set (fire-and-forget)
             if (property.export_target?.includes('softreal')) {
