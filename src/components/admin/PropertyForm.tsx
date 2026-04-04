@@ -91,6 +91,19 @@ interface PropertyFormData {
     location_description_sk: string;
     meta_title_sk: string;
     meta_description_sk: string;
+    // Multilingual overrides (EN & CZ)
+    title_en: string;
+    title_cz: string;
+    location_en: string;
+    location_cz: string;
+    description_en: string;
+    description_cz: string;
+    location_description_en: string;
+    location_description_cz: string;
+    meta_title_en: string;
+    meta_title_cz: string;
+    meta_description_en: string;
+    meta_description_cz: string;
     tags: string[];
     preview_tags: string[];
 
@@ -290,6 +303,7 @@ const Checkbox = ({ label, checked, onChange }: {
 export default function PropertyForm({ initialData, mode }: PropertyFormProps) {
     const router = useRouter();
     const [activeTab, setActiveTab] = useState("basic");
+    const [textLang, setTextLang] = useState<"sk" | "en" | "cz">("sk");
     const [saving, setSaving] = useState(false);
     const [translating, setTranslating] = useState(false);
     const [generatingAI, setGeneratingAI] = useState(false);
@@ -371,6 +385,18 @@ export default function PropertyForm({ initialData, mode }: PropertyFormProps) {
                 location_description_sk: (d.location_description_sk as string) || "",
                 meta_title_sk: (d.meta_title_sk as string) || "",
                 meta_description_sk: (d.meta_description_sk as string) || "",
+                title_en: (d.title_en as string) || "",
+                title_cz: (d.title_cz as string) || "",
+                location_en: (d.location_en as string) || "",
+                location_cz: (d.location_cz as string) || "",
+                description_en: (d.description_en as string) || "",
+                description_cz: (d.description_cz as string) || "",
+                location_description_en: (d.location_description_en as string) || "",
+                location_description_cz: (d.location_description_cz as string) || "",
+                meta_title_en: (d.meta_title_en as string) || "",
+                meta_title_cz: (d.meta_title_cz as string) || "",
+                meta_description_en: (d.meta_description_en as string) || "",
+                meta_description_cz: (d.meta_description_cz as string) || "",
                 tags: (d.tags as string[]) || [],
                 preview_tags: (d.preview_tags as string[]) || [],
                 publish_status: initialData.publish_status || "draft",
@@ -390,7 +416,11 @@ export default function PropertyForm({ initialData, mode }: PropertyFormProps) {
             parking_spot: false, fireplace: false, near_airport: false, billiard_room: false,
             near_beach: false, near_golf: false, yoga_room: false, grand_garden: false,
             images: [], hero_image_index: 0, video_url: "", pdf_images: [], description_sk: "", location_description_sk: "",
-            meta_title_sk: "", meta_description_sk: "", tags: [], preview_tags: [], publish_status: "draft",
+            meta_title_sk: "", meta_description_sk: "",
+            title_en: "", title_cz: "", location_en: "", location_cz: "",
+            description_en: "", description_cz: "", location_description_en: "", location_description_cz: "",
+            meta_title_en: "", meta_title_cz: "", meta_description_en: "", meta_description_cz: "",
+            tags: [], preview_tags: [], publish_status: "draft",
             latitude: "", longitude: "", map_zoom: "14", export_target: "",
         };
     });
@@ -465,6 +495,18 @@ export default function PropertyForm({ initialData, mode }: PropertyFormProps) {
                 location_description_sk: form.location_description_sk || null,
                 meta_title_sk: form.meta_title_sk || null,
                 meta_description_sk: form.meta_description_sk || null,
+                title_en: form.title_en || null,
+                title_cz: form.title_cz || null,
+                location_en: form.location_en || null,
+                location_cz: form.location_cz || null,
+                description_en: form.description_en || null,
+                description_cz: form.description_cz || null,
+                location_description_en: form.location_description_en || null,
+                location_description_cz: form.location_description_cz || null,
+                meta_title_en: form.meta_title_en || null,
+                meta_title_cz: form.meta_title_cz || null,
+                meta_description_en: form.meta_description_en || null,
+                meta_description_cz: form.meta_description_cz || null,
                 tags: form.tags,
                 preview_tags: form.preview_tags,
                 latitude: form.latitude ? parseFloat(form.latitude) : null,
@@ -538,41 +580,45 @@ export default function PropertyForm({ initialData, mode }: PropertyFormProps) {
         ];
         const textsToTranslate = translatableFields.map(f => (payload[f] as string) || '');
 
-        // Translate to EN
-        try {
-            const enRes = await fetch('/api/admin/translate', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ texts: textsToTranslate, targetLang: 'EN' }),
-            });
-            if (enRes.ok) {
-                const { translations } = await enRes.json();
-                payload.title_en = translations[0] || null;
-                payload.description_en = translations[1] || null;
-                payload.location_en = translations[2] || null;
-                payload.location_description_en = translations[3] || null;
-                payload.meta_title_en = translations[4] || null;
-                payload.meta_description_en = translations[5] || null;
-            }
-        } catch (e) { console.error('EN translation failed:', e); }
+        // EN field names corresponding to translatableFields
+        const enFields = ['title_en', 'description_en', 'location_en', 'location_description_en', 'meta_title_en', 'meta_description_en'];
+        const czFields = ['title_cz', 'description_cz', 'location_cz', 'location_description_cz', 'meta_title_cz', 'meta_description_cz'];
 
-        // Translate to CZ (Czech)
-        try {
-            const czRes = await fetch('/api/admin/translate', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ texts: textsToTranslate, targetLang: 'CS' }),
-            });
-            if (czRes.ok) {
-                const { translations } = await czRes.json();
-                payload.title_cz = translations[0] || null;
-                payload.description_cz = translations[1] || null;
-                payload.location_cz = translations[2] || null;
-                payload.location_description_cz = translations[3] || null;
-                payload.meta_title_cz = translations[4] || null;
-                payload.meta_description_cz = translations[5] || null;
-            }
-        } catch (e) { console.error('CZ translation failed:', e); }
+        // Only translate EN fields that are empty (don't overwrite manual entries)
+        const needsEnTranslation = enFields.some(f => !(payload[f] as string));
+        if (needsEnTranslation) {
+            try {
+                const enRes = await fetch('/api/admin/translate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ texts: textsToTranslate, targetLang: 'EN' }),
+                });
+                if (enRes.ok) {
+                    const { translations } = await enRes.json();
+                    enFields.forEach((f, i) => {
+                        if (!(payload[f] as string)) payload[f] = translations[i] || null;
+                    });
+                }
+            } catch (e) { console.error('EN translation failed:', e); }
+        }
+
+        // Only translate CZ fields that are empty
+        const needsCzTranslation = czFields.some(f => !(payload[f] as string));
+        if (needsCzTranslation) {
+            try {
+                const czRes = await fetch('/api/admin/translate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ texts: textsToTranslate, targetLang: 'CS' }),
+                });
+                if (czRes.ok) {
+                    const { translations } = await czRes.json();
+                    czFields.forEach((f, i) => {
+                        if (!(payload[f] as string)) payload[f] = translations[i] || null;
+                    });
+                }
+            } catch (e) { console.error('CZ translation failed:', e); }
+        }
 
         return payload;
     };
@@ -765,6 +811,18 @@ export default function PropertyForm({ initialData, mode }: PropertyFormProps) {
             location_description_sk: form.location_description_sk || null,
             meta_title_sk: form.meta_title_sk || null,
             meta_description_sk: form.meta_description_sk || null,
+            title_en: form.title_en || null,
+            title_cz: form.title_cz || null,
+            location_en: form.location_en || null,
+            location_cz: form.location_cz || null,
+            description_en: form.description_en || null,
+            description_cz: form.description_cz || null,
+            location_description_en: form.location_description_en || null,
+            location_description_cz: form.location_description_cz || null,
+            meta_title_en: form.meta_title_en || null,
+            meta_title_cz: form.meta_title_cz || null,
+            meta_description_en: form.meta_description_en || null,
+            meta_description_cz: form.meta_description_cz || null,
             tags: form.tags,
             preview_tags: form.preview_tags,
             publish_status: publishStatus || form.publish_status,
@@ -1152,121 +1210,217 @@ export default function PropertyForm({ initialData, mode }: PropertyFormProps) {
                 {/* ========== TAB: POPIS & SEO ========== */}
                 {activeTab === "description" && (
                     <div className="space-y-8">
-                        <Input label="Názov nehnuteľnosti" value={form.title_sk} onChange={v => updateField("title_sk", v)} required placeholder="napr. Luxusná Vila s bazénom" />
+
+                        {/* Language switcher */}
+                        <div className="flex items-center gap-1 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-1 w-fit">
+                            {([["sk", "🇸🇰 SK"], ["en", "🇬🇧 EN"], ["cz", "🇨🇿 CZ"]] as [typeof textLang, string][]).map(([lang, label]) => (
+                                <button
+                                    key={lang}
+                                    type="button"
+                                    onClick={() => setTextLang(lang)}
+                                    className={`px-4 py-1.5 text-xs font-semibold rounded-lg transition-all ${textLang === lang ? "bg-white text-[var(--color-primary)] shadow-sm" : "text-[var(--color-muted)] hover:text-[var(--color-foreground)]"}`}
+                                >
+                                    {label}
+                                </button>
+                            ))}
+                        </div>
+
+                        {/* Title */}
+                        {textLang === "sk" && <Input label="Názov nehnuteľnosti" value={form.title_sk} onChange={v => updateField("title_sk", v)} required placeholder="napr. Luxusná Vila s bazénom" />}
+                        {textLang === "en" && <Input label="Property title (EN)" value={form.title_en} onChange={v => updateField("title_en", v)} placeholder="e.g. Luxury Villa with Pool" helpText="Auto-translated from Slovak when empty. Edit to override." />}
+                        {textLang === "cz" && <Input label="Název nemovitosti (CZ)" value={form.title_cz} onChange={v => updateField("title_cz", v)} placeholder="např. Luxusní Vila s bazénem" helpText="Automaticky přeloženo ze slovenštiny. Upravte pro přepsání." />}
 
                         {/* Description */}
                         <div>
                             <div className="flex items-center justify-between mb-2">
                                 <label className="text-xs font-semibold uppercase tracking-wider text-[var(--color-muted)]">
-                                    Popis nehnuteľnosti <span className="text-red-500">*</span>
+                                    {textLang === "sk" ? <>Popis nehnuteľnosti <span className="text-red-500">*</span></> : textLang === "en" ? "Property description (EN)" : "Popis nemovitosti (CZ)"}
                                 </label>
-                                <span className="text-[11px] font-medium text-[var(--color-muted)]">Slovenčina</span>
+                                {textLang !== "sk" && <span className="text-[11px] font-medium text-amber-500">Auto-preložené — klikni pre úpravu</span>}
                             </div>
-                            <textarea
-                                value={form.description_sk}
-                                onChange={(e) => updateField("description_sk", e.target.value)}
-                                rows={8}
-                                placeholder="Napíšte popis nehnuteľnosti v slovenčine..."
-                                className="w-full px-4 py-3 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl text-sm text-[var(--color-foreground)] placeholder:text-[var(--color-muted)] focus:outline-none focus:border-[var(--color-primary)] focus:ring-1 focus:ring-[var(--color-primary)] transition-all resize-y shadow-sm"
-                            />
-                            <button
-                                type="button"
-                                disabled={generatingAI}
-                                className="mt-3 flex items-center gap-2 text-sm font-semibold text-[var(--color-primary)] hover:text-[var(--color-primary-dark)] transition-colors disabled:opacity-50"
-                                onClick={generateAIDescription}
-                            >
-                                {generatingAI ? (
-                                    <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" />
-                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                                    </svg>
-                                ) : (
-                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 00-2.455 2.456z" />
-                                    </svg>
-                                )}
-                                {generatingAI ? 'Generujem...' : 'Vygenerovať popis pomocou AI'}
-                            </button>
+                            {textLang === "sk" && (
+                                <>
+                                    <textarea
+                                        value={form.description_sk}
+                                        onChange={(e) => updateField("description_sk", e.target.value)}
+                                        rows={8}
+                                        placeholder="Napíšte popis nehnuteľnosti v slovenčine..."
+                                        className="w-full px-4 py-3 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl text-sm text-[var(--color-foreground)] placeholder:text-[var(--color-muted)] focus:outline-none focus:border-[var(--color-primary)] focus:ring-1 focus:ring-[var(--color-primary)] transition-all resize-y shadow-sm"
+                                    />
+                                    <button
+                                        type="button"
+                                        disabled={generatingAI}
+                                        className="mt-3 flex items-center gap-2 text-sm font-semibold text-[var(--color-primary)] hover:text-[var(--color-primary-dark)] transition-colors disabled:opacity-50"
+                                        onClick={generateAIDescription}
+                                    >
+                                        {generatingAI ? (
+                                            <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" />
+                                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                                            </svg>
+                                        ) : (
+                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 00-2.455 2.456z" />
+                                            </svg>
+                                        )}
+                                        {generatingAI ? 'Generujem...' : 'Vygenerovať popis pomocou AI'}
+                                    </button>
+                                </>
+                            )}
+                            {textLang === "en" && (
+                                <textarea
+                                    value={form.description_en}
+                                    onChange={(e) => updateField("description_en", e.target.value)}
+                                    rows={8}
+                                    placeholder="Auto-translated from Slovak when publishing. Edit to override..."
+                                    className="w-full px-4 py-3 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl text-sm text-[var(--color-foreground)] placeholder:text-[var(--color-muted)] focus:outline-none focus:border-[var(--color-primary)] focus:ring-1 focus:ring-[var(--color-primary)] transition-all resize-y shadow-sm"
+                                />
+                            )}
+                            {textLang === "cz" && (
+                                <textarea
+                                    value={form.description_cz}
+                                    onChange={(e) => updateField("description_cz", e.target.value)}
+                                    rows={8}
+                                    placeholder="Automaticky přeloženo ze slovenštiny při publikování. Upravte pro přepsání..."
+                                    className="w-full px-4 py-3 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl text-sm text-[var(--color-foreground)] placeholder:text-[var(--color-muted)] focus:outline-none focus:border-[var(--color-primary)] focus:ring-1 focus:ring-[var(--color-primary)] transition-all resize-y shadow-sm"
+                                />
+                            )}
                         </div>
 
                         {/* Location info */}
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                             <Input label="Mesto / Oblasť" value={form.city} onChange={v => updateField("city", v)} placeholder="napr. Split" helpText="Voliteľné — vyplní sa automaticky z mapy" />
-                            <Input label="Lokácia (zobrazovaná na webe)" value={form.location_sk} onChange={v => updateField("location_sk", v)} placeholder="napr. Split, Chorvátsko" helpText="Vyplní sa automaticky z mapy. Tento text sa zobrazí na karte nehnuteľnosti" />
+                            {textLang === "sk" && <Input label="Lokácia (SK)" value={form.location_sk} onChange={v => updateField("location_sk", v)} placeholder="napr. Split, Chorvátsko" helpText="Vyplní sa automaticky z mapy. Tento text sa zobrazí na karte nehnuteľnosti" />}
+                            {textLang === "en" && <Input label="Location (EN)" value={form.location_en} onChange={v => updateField("location_en", v)} placeholder="e.g. Split, Croatia" helpText="Auto-translated. Edit to override." />}
+                            {textLang === "cz" && <Input label="Lokalita (CZ)" value={form.location_cz} onChange={v => updateField("location_cz", v)} placeholder="např. Split, Chorvatsko" helpText="Automaticky přeloženo. Upravte pro přepsání." />}
                         </div>
 
                         {/* Location Description */}
                         <div>
                             <div className="flex items-center justify-between mb-2">
-                                <label className="text-xs font-semibold uppercase tracking-wider text-[var(--color-muted)]">Popis lokality</label>
-                                <span className="text-[11px] font-medium text-[var(--color-muted)]">Slovenčina</span>
+                                <label className="text-xs font-semibold uppercase tracking-wider text-[var(--color-muted)]">
+                                    {textLang === "sk" ? "Popis lokality" : textLang === "en" ? "Location description (EN)" : "Popis lokality (CZ)"}
+                                </label>
+                                {textLang !== "sk" && <span className="text-[11px] font-medium text-amber-500">Auto-preložené — klikni pre úpravu</span>}
                             </div>
-                            <textarea
-                                value={form.location_description_sk}
-                                onChange={(e) => updateField("location_description_sk", e.target.value)}
-                                rows={5}
-                                placeholder="Opíšte okolie a lokalitu..."
-                                className="w-full px-4 py-3 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl text-sm text-[var(--color-foreground)] placeholder:text-[var(--color-muted)] focus:outline-none focus:border-[var(--color-primary)] focus:ring-1 focus:ring-[var(--color-primary)] transition-all resize-y shadow-sm"
-                            />
+                            {textLang === "sk" && (
+                                <textarea
+                                    value={form.location_description_sk}
+                                    onChange={(e) => updateField("location_description_sk", e.target.value)}
+                                    rows={5}
+                                    placeholder="Opíšte okolie a lokalitu..."
+                                    className="w-full px-4 py-3 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl text-sm text-[var(--color-foreground)] placeholder:text-[var(--color-muted)] focus:outline-none focus:border-[var(--color-primary)] focus:ring-1 focus:ring-[var(--color-primary)] transition-all resize-y shadow-sm"
+                                />
+                            )}
+                            {textLang === "en" && (
+                                <textarea
+                                    value={form.location_description_en}
+                                    onChange={(e) => updateField("location_description_en", e.target.value)}
+                                    rows={5}
+                                    placeholder="Auto-translated from Slovak when publishing. Edit to override..."
+                                    className="w-full px-4 py-3 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl text-sm text-[var(--color-foreground)] placeholder:text-[var(--color-muted)] focus:outline-none focus:border-[var(--color-primary)] focus:ring-1 focus:ring-[var(--color-primary)] transition-all resize-y shadow-sm"
+                                />
+                            )}
+                            {textLang === "cz" && (
+                                <textarea
+                                    value={form.location_description_cz}
+                                    onChange={(e) => updateField("location_description_cz", e.target.value)}
+                                    rows={5}
+                                    placeholder="Automaticky přeloženo ze slovenštiny při publikování. Upravte pro přepsání..."
+                                    className="w-full px-4 py-3 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl text-sm text-[var(--color-foreground)] placeholder:text-[var(--color-muted)] focus:outline-none focus:border-[var(--color-primary)] focus:ring-1 focus:ring-[var(--color-primary)] transition-all resize-y shadow-sm"
+                                />
+                            )}
                         </div>
 
                         {/* SEO Section */}
                         <div className="pt-6 mt-3 border-t border-[var(--color-border)]">
                             <div className="flex items-center justify-between mb-5">
                                 <h3 className="text-sm font-bold text-[var(--color-secondary)]">SEO nastavenia</h3>
-                                <button
-                                    type="button"
-                                    onClick={generateAISEO}
-                                    disabled={generatingSEO}
-                                    className="flex items-center gap-1.5 px-3.5 py-1.5 bg-white border border-[var(--color-border)] hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] disabled:opacity-50 text-[var(--color-muted)] text-xs font-semibold rounded-lg transition-all"
-                                >
-                                    {generatingSEO ? (
-                                        <svg className="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24">
-                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" />
-                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                                        </svg>
-                                    ) : (
-                                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
-                                            <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 00-2.455 2.456z" />
-                                        </svg>
-                                    )}
-                                    {generatingSEO ? 'Generujem...' : 'Vygenerovať SEO pomocou AI'}
-                                </button>
+                                {textLang === "sk" && (
+                                    <button
+                                        type="button"
+                                        onClick={generateAISEO}
+                                        disabled={generatingSEO}
+                                        className="flex items-center gap-1.5 px-3.5 py-1.5 bg-white border border-[var(--color-border)] hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] disabled:opacity-50 text-[var(--color-muted)] text-xs font-semibold rounded-lg transition-all"
+                                    >
+                                        {generatingSEO ? (
+                                            <svg className="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24">
+                                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" />
+                                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                                            </svg>
+                                        ) : (
+                                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 00-2.455 2.456z" />
+                                            </svg>
+                                        )}
+                                        {generatingSEO ? 'Generujem...' : 'Vygenerovať SEO pomocou AI'}
+                                    </button>
+                                )}
                             </div>
                             <div className="space-y-5">
+                                {/* Meta title */}
                                 <div>
                                     <div className="flex items-center justify-between mb-2">
                                         <label className="text-xs font-semibold uppercase tracking-wider text-[var(--color-muted)]">Meta titulok</label>
-                                        <span className={`text-[11px] font-medium ${form.meta_title_sk.length > 60 ? "text-red-500" : "text-[var(--color-muted)]"}`}>
-                                            {form.meta_title_sk.length}/60
-                                        </span>
+                                        {textLang === "sk" && (
+                                            <span className={`text-[11px] font-medium ${form.meta_title_sk.length > 60 ? "text-red-500" : "text-[var(--color-muted)]"}`}>
+                                                {form.meta_title_sk.length}/60
+                                            </span>
+                                        )}
+                                        {textLang === "en" && (
+                                            <span className={`text-[11px] font-medium ${form.meta_title_en.length > 60 ? "text-red-500" : "text-[var(--color-muted)]"}`}>
+                                                {form.meta_title_en.length}/60
+                                            </span>
+                                        )}
+                                        {textLang === "cz" && (
+                                            <span className={`text-[11px] font-medium ${form.meta_title_cz.length > 60 ? "text-red-500" : "text-[var(--color-muted)]"}`}>
+                                                {form.meta_title_cz.length}/60
+                                            </span>
+                                        )}
                                     </div>
-                                    <input
-                                        type="text"
-                                        value={form.meta_title_sk}
-                                        onChange={(e) => updateField("meta_title_sk", e.target.value)}
-                                        placeholder={form.title_sk || "Automaticky z názvu..."}
-                                        className="w-full px-4 py-3 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl text-sm text-[var(--color-foreground)] placeholder:text-[var(--color-muted)] focus:outline-none focus:border-[var(--color-primary)] focus:ring-1 focus:ring-[var(--color-primary)] transition-all shadow-sm"
-                                    />
+                                    {textLang === "sk" && (
+                                        <input type="text" value={form.meta_title_sk} onChange={(e) => updateField("meta_title_sk", e.target.value)} placeholder={form.title_sk || "Automaticky z názvu..."} className="w-full px-4 py-3 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl text-sm text-[var(--color-foreground)] placeholder:text-[var(--color-muted)] focus:outline-none focus:border-[var(--color-primary)] focus:ring-1 focus:ring-[var(--color-primary)] transition-all shadow-sm" />
+                                    )}
+                                    {textLang === "en" && (
+                                        <input type="text" value={form.meta_title_en} onChange={(e) => updateField("meta_title_en", e.target.value)} placeholder="Auto-translated from Slovak..." className="w-full px-4 py-3 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl text-sm text-[var(--color-foreground)] placeholder:text-[var(--color-muted)] focus:outline-none focus:border-[var(--color-primary)] focus:ring-1 focus:ring-[var(--color-primary)] transition-all shadow-sm" />
+                                    )}
+                                    {textLang === "cz" && (
+                                        <input type="text" value={form.meta_title_cz} onChange={(e) => updateField("meta_title_cz", e.target.value)} placeholder="Automaticky přeloženo ze slovenštiny..." className="w-full px-4 py-3 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl text-sm text-[var(--color-foreground)] placeholder:text-[var(--color-muted)] focus:outline-none focus:border-[var(--color-primary)] focus:ring-1 focus:ring-[var(--color-primary)] transition-all shadow-sm" />
+                                    )}
                                 </div>
+                                {/* Meta description */}
                                 <div>
                                     <div className="flex items-center justify-between mb-2">
                                         <label className="text-xs font-semibold uppercase tracking-wider text-[var(--color-muted)]">Meta popis</label>
-                                        <span className={`text-[11px] font-medium ${form.meta_description_sk.length > 160 ? "text-red-500" : "text-[var(--color-muted)]"}`}>
-                                            {form.meta_description_sk.length}/160
-                                        </span>
+                                        {textLang === "sk" && (
+                                            <span className={`text-[11px] font-medium ${form.meta_description_sk.length > 160 ? "text-red-500" : "text-[var(--color-muted)]"}`}>
+                                                {form.meta_description_sk.length}/160
+                                            </span>
+                                        )}
+                                        {textLang === "en" && (
+                                            <span className={`text-[11px] font-medium ${form.meta_description_en.length > 160 ? "text-red-500" : "text-[var(--color-muted)]"}`}>
+                                                {form.meta_description_en.length}/160
+                                            </span>
+                                        )}
+                                        {textLang === "cz" && (
+                                            <span className={`text-[11px] font-medium ${form.meta_description_cz.length > 160 ? "text-red-500" : "text-[var(--color-muted)]"}`}>
+                                                {form.meta_description_cz.length}/160
+                                            </span>
+                                        )}
                                     </div>
-                                    <textarea
-                                        value={form.meta_description_sk}
-                                        onChange={(e) => updateField("meta_description_sk", e.target.value)}
-                                        rows={2}
-                                        placeholder="Popis pre vyhľadávače..."
-                                        className="w-full px-4 py-3 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl text-sm text-[var(--color-foreground)] placeholder:text-[var(--color-muted)] focus:outline-none focus:border-[var(--color-primary)] focus:ring-1 focus:ring-[var(--color-primary)] transition-all resize-y shadow-sm"
-                                    />
+                                    {textLang === "sk" && (
+                                        <textarea value={form.meta_description_sk} onChange={(e) => updateField("meta_description_sk", e.target.value)} rows={2} placeholder="Popis pre vyhľadávače..." className="w-full px-4 py-3 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl text-sm text-[var(--color-foreground)] placeholder:text-[var(--color-muted)] focus:outline-none focus:border-[var(--color-primary)] focus:ring-1 focus:ring-[var(--color-primary)] transition-all resize-y shadow-sm" />
+                                    )}
+                                    {textLang === "en" && (
+                                        <textarea value={form.meta_description_en} onChange={(e) => updateField("meta_description_en", e.target.value)} rows={2} placeholder="Auto-translated from Slovak..." className="w-full px-4 py-3 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl text-sm text-[var(--color-foreground)] placeholder:text-[var(--color-muted)] focus:outline-none focus:border-[var(--color-primary)] focus:ring-1 focus:ring-[var(--color-primary)] transition-all resize-y shadow-sm" />
+                                    )}
+                                    {textLang === "cz" && (
+                                        <textarea value={form.meta_description_cz} onChange={(e) => updateField("meta_description_cz", e.target.value)} rows={2} placeholder="Automaticky přeloženo ze slovenštiny..." className="w-full px-4 py-3 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl text-sm text-[var(--color-foreground)] placeholder:text-[var(--color-muted)] focus:outline-none focus:border-[var(--color-primary)] focus:ring-1 focus:ring-[var(--color-primary)] transition-all resize-y shadow-sm" />
+                                    )}
                                 </div>
-                                {/* Google Preview */}
+                                {/* Google Preview — always based on SK */}
                                 <div className="bg-white rounded-2xl p-6 border border-[var(--color-border)] shadow-sm">
-                                    <p className="text-[11px] font-semibold uppercase tracking-wider text-[var(--color-muted)] mb-3">Google náhľad</p>
+                                    <p className="text-[11px] font-semibold uppercase tracking-wider text-[var(--color-muted)] mb-3">Google náhľad (SK)</p>
                                     <div className="space-y-1">
                                         <p className="text-balance sm:text-lg text-[var(--color-primary)] hover:underline cursor-pointer truncate font-medium">
                                             {form.meta_title_sk || form.title_sk || "Názov nehnuteľnosti"} | Relax Properties
