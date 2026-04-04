@@ -167,7 +167,7 @@ export default function ContactAgentForm({
                             onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                             className="w-full px-4 border border-[var(--color-border)] rounded-xl bg-[var(--color-surface)] text-[var(--color-foreground)] focus:outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]/10 transition-colors"
                             style={{ height: '3.25rem' }}
-                            placeholder="+421 900 000 000"
+                            placeholder={lang === 'cz' ? '+420 700 000 000' : lang === 'en' ? '+44 7700 000 000' : '+421 900 000 000'}
                         />
                     </div>
                 </div>

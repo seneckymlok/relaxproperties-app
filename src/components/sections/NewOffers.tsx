@@ -18,6 +18,8 @@ interface NewOffersProperty {
     images: string[];
     featured: boolean;
     previewTags?: string[];
+    distanceFromSea?: number | null;
+    propertyIdExternal?: string | null;
 }
 
 interface NewOffersProps {
@@ -61,6 +63,8 @@ export default function NewOffers({ lang = 'sk', dictionary, properties = [] }: 
                                 previewTags={property.previewTags}
                                 lang={lang}
                                 dictionary={dictionary}
+                                distanceFromSea={property.distanceFromSea}
+                                propertyIdExternal={property.propertyIdExternal}
                             />
                         </div>
                     ))}
@@ -83,6 +87,8 @@ export default function NewOffers({ lang = 'sk', dictionary, properties = [] }: 
                                 previewTags={property.previewTags}
                                 lang={lang}
                                 dictionary={dictionary}
+                                distanceFromSea={property.distanceFromSea}
+                                propertyIdExternal={property.propertyIdExternal}
                             />
                         </div>
                     ))}

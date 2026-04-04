@@ -151,7 +151,11 @@ export default async function AboutPage({
                         </p>
 
                         {/* Google Reviews badge */}
-                        <div className="mt-10 inline-flex flex-col sm:flex-row items-center gap-1.5 sm:gap-3 px-5 sm:px-6 py-2.5 sm:py-3 bg-[var(--color-surface)] rounded-2xl sm:rounded-full border border-[var(--color-border)]">
+                        <a
+                            href="https://www.google.com/maps/place/Relax+Properties+s.r.o./@48.2710298,17.042041,17z/data=!4m8!3m7!1s0x476ced6d8cfdd1b3:0xec703ba3cf5a109b!8m2!3d48.2710263!4d17.0446159!9m1!1b1!16s%2Fg%2F11p0133p2j?hl=en&entry=ttu&g_ep=EgoyMDI2MDQwMS4wIKXMDSoASAFQAw%3D%3D"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="mt-10 inline-flex flex-col sm:flex-row items-center gap-1.5 sm:gap-3 px-5 sm:px-6 py-2.5 sm:py-3 bg-[var(--color-surface)] hover:bg-white rounded-2xl sm:rounded-full border border-[var(--color-border)] hover:border-[var(--color-teal)]/30 hover:shadow-sm transition-all group">
                             <div className="flex gap-0.5">
                                 {[...Array(5)].map((_, i) => (
                                     <svg key={i} className="w-4 h-4 sm:w-5 sm:h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
@@ -159,10 +163,10 @@ export default async function AboutPage({
                                     </svg>
                                 ))}
                             </div>
-                            <span className="text-xs sm:text-sm font-medium text-[var(--color-secondary)] text-center">
+                            <span className="text-xs sm:text-sm font-medium text-[var(--color-secondary)] group-hover:text-[var(--color-teal)] transition-colors text-center">
                                 {t.googleReviews}
                             </span>
-                        </div>
+                        </a>
                     </div>
 
                     {/* Partner types strip */}

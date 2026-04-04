@@ -288,28 +288,36 @@ export default async function PropertyDetailPage({ params }: PropertyDetailPageP
                     </nav>
                 </div>
                 <div className="container-custom">
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
-                        {/* Left Column — Gallery & Details */}
-                        <div className="lg:col-span-2">
-                            {/* Photo Gallery */}
-                            <PhotoGallery images={property.images} title={property.title} />
+                    {/* Property ID badge — teal, above photos */}
+                    {property.propertyIdExternal && (
+                        <div className="mb-3">
+                            <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-[var(--color-teal)]/10 text-[var(--color-teal)] text-xs font-semibold rounded-full border border-[var(--color-teal)]/20 tracking-wide">
+                                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z" />
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 6h.008v.008H6V6z" />
+                                </svg>
+                                ID: {property.propertyIdExternal}
+                            </span>
+                        </div>
+                    )}
 
+                    {/* Full-width photo gallery */}
+                    <PhotoGallery images={property.images} title={property.title} />
+
+                    <div className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
+                        {/* Left Column — Details */}
+                        <div className="lg:col-span-2">
                             {/* Property Header */}
-                            <div className="mt-8 pb-6 border-b border-[var(--color-border)]">
+                            <div className="pb-6 border-b border-[var(--color-border)]">
                                 <div className="flex flex-wrap items-start justify-between gap-4">
                                     <div>
-                                        <div className="flex items-center gap-2 mb-3 flex-wrap">
-                                            {property.featured && (
+                                        {property.featured && (
+                                            <div className="mb-3">
                                                 <span className="inline-block px-3 py-1 text-xs font-medium uppercase tracking-wider text-[var(--color-accent)] bg-[var(--color-accent)]/10 rounded-full">
                                                     {t.featured}
                                                 </span>
-                                            )}
-                                            {property.propertyIdExternal && (
-                                                <span className="inline-block px-3 py-1 text-xs font-medium text-[var(--color-muted)] bg-[var(--color-surface)] rounded-full border border-[var(--color-border)]">
-                                                    ID: {property.propertyIdExternal}
-                                                </span>
-                                            )}
-                                        </div>
+                                            </div>
+                                        )}
                                         <h1 className="font-serif text-2xl md:text-3xl lg:text-4xl text-[var(--color-secondary)] mb-2 leading-tight">
                                             {property.title}
                                         </h1>
@@ -561,6 +569,8 @@ export default async function PropertyDetailPage({ params }: PropertyDetailPageP
                                         featured={p.featured}
                                         previewTags={p.previewTags}
                                         lang={lang}
+                                        distanceFromSea={p.distanceFromSea}
+                                        propertyIdExternal={p.propertyIdExternal}
                                     />
                                 ))}
                             </div>

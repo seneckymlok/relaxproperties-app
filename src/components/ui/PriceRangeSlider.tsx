@@ -9,14 +9,19 @@ interface PriceRangeSliderProps {
     value: [number, number];
     onChange: (value: [number, number]) => void;
     formatLabel?: (value: number) => string;
+    lang?: string;
 }
 
-function defaultFormat(v: number): string {
+function defaultFormat(v: number, lang = 'sk'): string {
     if (v >= 1_000_000) {
         const m = v / 1_000_000;
         return `${m % 1 === 0 ? m.toFixed(0) : m.toFixed(1)}M €`;
     }
-    if (v >= 1_000) return `${Math.round(v / 1_000).toLocaleString()}k €`;
+    if (v >= 1_000) {
+        const thou = Math.round(v / 1_000).toLocaleString();
+        const suffix = lang === 'en' ? 'k' : 'tis.';
+        return `${thou} ${suffix} €`;
+    }
     return `${v.toLocaleString()} €`;
 }
 
@@ -26,8 +31,10 @@ export default function PriceRangeSlider({
     step = 1000,
     value,
     onChange,
-    formatLabel = defaultFormat,
+    formatLabel,
+    lang = 'sk',
 }: PriceRangeSliderProps) {
+    const resolvedFormat = formatLabel ?? ((v: number) => defaultFormat(v, lang));
     const [localMin, setLocalMin] = useState(value[0]);
     const [localMax, setLocalMax] = useState(value[1]);
 
@@ -58,11 +65,11 @@ export default function PriceRangeSlider({
             {/* Current value labels */}
             <div className="flex justify-between text-xs font-medium text-[var(--color-foreground)]">
                 <span className="bg-[var(--color-surface)] px-2 py-1 rounded-md border border-[var(--color-border)] tabular-nums">
-                    {formatLabel(localMin)}
+                    {resolvedFormat(localMin)}
                 </span>
                 <span className="text-[var(--color-muted)] self-center">—</span>
                 <span className="bg-[var(--color-surface)] px-2 py-1 rounded-md border border-[var(--color-border)] tabular-nums">
-                    {formatLabel(localMax)}
+                    {resolvedFormat(localMax)}
                 </span>
             </div>
 
@@ -104,8 +111,8 @@ export default function PriceRangeSlider({
 
             {/* Min/Max boundary labels */}
             <div className="flex justify-between text-[10px] text-[var(--color-muted)]">
-                <span>{formatLabel(min)}</span>
-                <span>{formatLabel(max)}</span>
+                <span>{resolvedFormat(min)}</span>
+                <span>{resolvedFormat(max)}</span>
             </div>
         </div>
     );

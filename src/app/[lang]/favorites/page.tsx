@@ -20,6 +20,8 @@ interface FavoriteProperty {
     images: string[];
     featured: boolean;
     previewTags?: string[];
+    distanceFromSea?: number | null;
+    propertyIdExternal?: string | null;
 }
 
 function getCountLabel(count: number, lang: string, d: ReturnType<typeof getDictionary>): string {
@@ -111,6 +113,8 @@ export default function FavoritesPage() {
                                     images={property.images}
                                     previewTags={property.previewTags}
                                     lang={lang}
+                                    distanceFromSea={property.distanceFromSea}
+                                    propertyIdExternal={property.propertyIdExternal}
                                 />
                             ))}
                         </div>

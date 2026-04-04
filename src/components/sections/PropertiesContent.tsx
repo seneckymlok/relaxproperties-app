@@ -241,7 +241,20 @@ export default function PropertiesContent({ lang, properties }: PropertiesConten
                 </div>
             </div>
 
-            <h3 className="font-medium text-[var(--color-secondary)] mb-6">{l.filter}</h3>
+            <div className="flex items-center justify-between mb-6">
+                <h3 className="font-medium text-[var(--color-secondary)]">{l.filter}</h3>
+                {activeFilterCount > 0 && (
+                    <button
+                        onClick={resetFilters}
+                        className="flex items-center gap-1.5 px-3 py-1 text-xs font-semibold text-[var(--color-teal)] bg-[var(--color-teal)]/10 hover:bg-[var(--color-teal)]/20 rounded-full border border-[var(--color-teal)]/20 transition-colors"
+                    >
+                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                        {l.resetFilters} ({activeFilterCount})
+                    </button>
+                )}
+            </div>
 
             <div className="mb-5">
                 <label className="block text-xs uppercase tracking-wider text-[var(--color-muted)] mb-2">{l.country}</label>
@@ -281,6 +294,7 @@ export default function PropertiesContent({ lang, properties }: PropertiesConten
                     step={5000}
                     value={priceRange}
                     onChange={setPriceRange}
+                    lang={lang}
                 />
             </div>
 
@@ -384,6 +398,8 @@ export default function PropertiesContent({ lang, properties }: PropertiesConten
                                     featured={property.featured}
                                     previewTags={property.previewTags}
                                     lang={lang}
+                                    distanceFromSea={property.distanceFromSea}
+                                    propertyIdExternal={property.propertyIdExternal}
                                 />
                             ))}
                         </div>
