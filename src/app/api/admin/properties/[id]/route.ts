@@ -64,11 +64,11 @@ export async function PUT(
             // Restore from trash → draft
             await restoreProperty(id);
             property = await getPropertyById(id);
-            revalidateTag('properties');
+            revalidateTag('properties', {});
         } else if (save_mode === 'publish') {
             // Publish: merge everything into main columns, clear draft_data
             property = await publishProperty(id, payload);
-            revalidateTag('properties');
+            revalidateTag('properties', {});
 
             // Push to Softreal if export_target is set (fire-and-forget)
             if (property.export_target?.includes('softreal')) {
@@ -145,7 +145,7 @@ export async function DELETE(
 
             // Hard delete from database
             await deleteProperty(id);
-            revalidateTag('properties');
+            revalidateTag('properties', {});
 
             return NextResponse.json({ success: true, mode: 'permanent' });
         } else {
@@ -156,7 +156,7 @@ export async function DELETE(
             }
 
             await trashProperty(id);
-            revalidateTag('properties');
+            revalidateTag('properties', {});
 
             return NextResponse.json({ success: true, mode: 'trashed' });
         }
