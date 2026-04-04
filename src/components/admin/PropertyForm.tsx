@@ -8,6 +8,7 @@ import type { GeoData } from "@/components/admin/AdminMapPicker";
 import ImageUploader from "@/components/admin/ImageUploader";
 
 const AdminMapPicker = dynamic(() => import("@/components/admin/AdminMapPicker"), { ssr: false });
+const TipTapEditor = dynamic(() => import("@/components/admin/TipTapEditor"), { ssr: false });
 
 // ============================================
 // TYPES
@@ -1240,12 +1241,10 @@ export default function PropertyForm({ initialData, mode }: PropertyFormProps) {
                             </div>
                             {textLang === "sk" && (
                                 <>
-                                    <textarea
-                                        value={form.description_sk}
-                                        onChange={(e) => updateField("description_sk", e.target.value)}
-                                        rows={8}
+                                    <TipTapEditor
+                                        content={form.description_sk}
+                                        onChange={(html) => updateField("description_sk", html)}
                                         placeholder="Napíšte popis nehnuteľnosti v slovenčine..."
-                                        className="w-full px-4 py-3 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl text-sm text-[var(--color-foreground)] placeholder:text-[var(--color-muted)] focus:outline-none focus:border-[var(--color-primary)] focus:ring-1 focus:ring-[var(--color-primary)] transition-all resize-y shadow-sm"
                                     />
                                     <button
                                         type="button"
@@ -1268,21 +1267,17 @@ export default function PropertyForm({ initialData, mode }: PropertyFormProps) {
                                 </>
                             )}
                             {textLang === "en" && (
-                                <textarea
-                                    value={form.description_en}
-                                    onChange={(e) => updateField("description_en", e.target.value)}
-                                    rows={8}
+                                <TipTapEditor
+                                    content={form.description_en}
+                                    onChange={(html) => updateField("description_en", html)}
                                     placeholder="Auto-translated from Slovak when publishing. Edit to override..."
-                                    className="w-full px-4 py-3 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl text-sm text-[var(--color-foreground)] placeholder:text-[var(--color-muted)] focus:outline-none focus:border-[var(--color-primary)] focus:ring-1 focus:ring-[var(--color-primary)] transition-all resize-y shadow-sm"
                                 />
                             )}
                             {textLang === "cz" && (
-                                <textarea
-                                    value={form.description_cz}
-                                    onChange={(e) => updateField("description_cz", e.target.value)}
-                                    rows={8}
+                                <TipTapEditor
+                                    content={form.description_cz}
+                                    onChange={(html) => updateField("description_cz", html)}
                                     placeholder="Automaticky přeloženo ze slovenštiny při publikování. Upravte pro přepsání..."
-                                    className="w-full px-4 py-3 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl text-sm text-[var(--color-foreground)] placeholder:text-[var(--color-muted)] focus:outline-none focus:border-[var(--color-primary)] focus:ring-1 focus:ring-[var(--color-primary)] transition-all resize-y shadow-sm"
                                 />
                             )}
                         </div>
@@ -1304,30 +1299,24 @@ export default function PropertyForm({ initialData, mode }: PropertyFormProps) {
                                 {textLang !== "sk" && <span className="text-[11px] font-medium text-amber-500">Auto-preložené — klikni pre úpravu</span>}
                             </div>
                             {textLang === "sk" && (
-                                <textarea
-                                    value={form.location_description_sk}
-                                    onChange={(e) => updateField("location_description_sk", e.target.value)}
-                                    rows={5}
+                                <TipTapEditor
+                                    content={form.location_description_sk}
+                                    onChange={(html) => updateField("location_description_sk", html)}
                                     placeholder="Opíšte okolie a lokalitu..."
-                                    className="w-full px-4 py-3 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl text-sm text-[var(--color-foreground)] placeholder:text-[var(--color-muted)] focus:outline-none focus:border-[var(--color-primary)] focus:ring-1 focus:ring-[var(--color-primary)] transition-all resize-y shadow-sm"
                                 />
                             )}
                             {textLang === "en" && (
-                                <textarea
-                                    value={form.location_description_en}
-                                    onChange={(e) => updateField("location_description_en", e.target.value)}
-                                    rows={5}
+                                <TipTapEditor
+                                    content={form.location_description_en}
+                                    onChange={(html) => updateField("location_description_en", html)}
                                     placeholder="Auto-translated from Slovak when publishing. Edit to override..."
-                                    className="w-full px-4 py-3 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl text-sm text-[var(--color-foreground)] placeholder:text-[var(--color-muted)] focus:outline-none focus:border-[var(--color-primary)] focus:ring-1 focus:ring-[var(--color-primary)] transition-all resize-y shadow-sm"
                                 />
                             )}
                             {textLang === "cz" && (
-                                <textarea
-                                    value={form.location_description_cz}
-                                    onChange={(e) => updateField("location_description_cz", e.target.value)}
-                                    rows={5}
+                                <TipTapEditor
+                                    content={form.location_description_cz}
+                                    onChange={(html) => updateField("location_description_cz", html)}
                                     placeholder="Automaticky přeloženo ze slovenštiny při publikování. Upravte pro přepsání..."
-                                    className="w-full px-4 py-3 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl text-sm text-[var(--color-foreground)] placeholder:text-[var(--color-muted)] focus:outline-none focus:border-[var(--color-primary)] focus:ring-1 focus:ring-[var(--color-primary)] transition-all resize-y shadow-sm"
                                 />
                             )}
                         </div>
