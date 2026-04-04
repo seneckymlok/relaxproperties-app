@@ -113,11 +113,7 @@ export default function PhotoGallery({ images, title }: PhotoGalleryProps) {
             {/* ── Mobile: Original Swiper Gallery ────────────────── */}
             <div className="md:hidden relative">
                 <Swiper
-                    modules={[Navigation, Thumbs]}
-                    navigation={{
-                        nextEl: ".gallery-next-mobile",
-                        prevEl: ".gallery-prev-mobile",
-                    }}
+                    modules={[Thumbs]}
                     thumbs={{ swiper: thumbsSwiper && !thumbsSwiper.destroyed ? thumbsSwiper : null }}
                     onSlideChange={(s) => setMobileActiveIndex(s.activeIndex)}
                     className="w-full aspect-[16/10] rounded-xl overflow-hidden"
@@ -139,22 +135,6 @@ export default function PhotoGallery({ images, title }: PhotoGalleryProps) {
                         </SwiperSlide>
                     ))}
                 </Swiper>
-
-                {/* Navigation Arrows */}
-                {images.length > 1 && (
-                    <>
-                        <button className="gallery-prev-mobile absolute left-4 top-1/2 -translate-y-1/2 z-10 w-12 h-12 flex items-center justify-center bg-white/90 hover:bg-white rounded-full shadow-lg transition-all">
-                            <svg className="w-5 h-5 text-[var(--color-secondary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 19l-7-7 7-7" />
-                            </svg>
-                        </button>
-                        <button className="gallery-next-mobile absolute right-4 top-1/2 -translate-y-1/2 z-10 w-12 h-12 flex items-center justify-center bg-white/90 hover:bg-white rounded-full shadow-lg transition-all">
-                            <svg className="w-5 h-5 text-[var(--color-secondary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5l7 7-7 7" />
-                            </svg>
-                        </button>
-                    </>
-                )}
 
                 {/* Image Counter */}
                 <div className="absolute bottom-4 right-4 z-10 px-3 py-1.5 bg-black/60 text-white text-sm rounded-lg tabular-nums">
