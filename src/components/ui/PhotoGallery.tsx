@@ -20,6 +20,7 @@ export default function PhotoGallery({ images, title }: PhotoGalleryProps) {
     const [thumbsSwiper, setThumbsSwiper] = useState<SwiperType | null>(null);
     const [lightboxOpen, setLightboxOpen] = useState(false);
     const [lightboxIndex, setLightboxIndex] = useState(0);
+    const [mobileActiveIndex, setMobileActiveIndex] = useState(0);
 
     const openLightbox = useCallback((index: number) => {
         setLightboxIndex(index);
@@ -118,6 +119,7 @@ export default function PhotoGallery({ images, title }: PhotoGalleryProps) {
                         prevEl: ".gallery-prev-mobile",
                     }}
                     thumbs={{ swiper: thumbsSwiper && !thumbsSwiper.destroyed ? thumbsSwiper : null }}
+                    onSlideChange={(s) => setMobileActiveIndex(s.activeIndex)}
                     className="w-full aspect-[16/10] rounded-xl overflow-hidden"
                 >
                     {images.map((image, index) => (
@@ -155,8 +157,8 @@ export default function PhotoGallery({ images, title }: PhotoGalleryProps) {
                 )}
 
                 {/* Image Counter */}
-                <div className="absolute bottom-4 right-4 z-10 px-3 py-1.5 bg-black/60 text-white text-sm rounded-lg">
-                    {images.length} fotiek
+                <div className="absolute bottom-4 right-4 z-10 px-3 py-1.5 bg-black/60 text-white text-sm rounded-lg tabular-nums">
+                    {mobileActiveIndex + 1} / {images.length}
                 </div>
             </div>
 
