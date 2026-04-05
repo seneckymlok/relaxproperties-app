@@ -94,6 +94,28 @@ function generatePropertySEO(p: PropertyRecord) {
         return truncate(desc, 155);
     };
 
+    // Keyword tags — city, country (SK), type (SK) + feature keywords
+    const city = p.city || p.location_sk.split(',')[0].trim();
+    const tags: string[] = [];
+    // Core location + type keywords
+    tags.push(`${typeLbl.sk.toLowerCase()} ${countryLbl.sk.toLowerCase()}`);
+    tags.push(`${typeLbl.sk.toLowerCase()} pri mori`);
+    tags.push(`nehnuteľnosti ${countryLbl.sk.toLowerCase()}`);
+    if (city) tags.push(`${typeLbl.sk.toLowerCase()} ${city.toLowerCase()}`);
+    // Feature keywords
+    if (p.sea_view || p.first_line) tags.push('apartmán výhľad na more');
+    if (p.pool) tags.push('nehnuteľnosť s bazénom');
+    if (p.luxury) tags.push(`luxusná nehnuteľnosť ${countryLbl.sk.toLowerCase()}`);
+    if (p.new_build) tags.push('novostavba pri mori');
+    if (p.first_line) tags.push('prvá línia more');
+    if (p.golf) tags.push('nehnuteľnosť pri golfovom ihrisku');
+    // Price bracket keyword
+    if (!p.price_on_request) {
+        if (p.price < 100000) tags.push('lacné nehnuteľnosti pri mori');
+        else if (p.price < 300000) tags.push('stredné nehnuteľnosti pri mori');
+        else tags.push('luxusné nehnuteľnosti pri mori');
+    }
+
     return {
         meta_title_sk,
         meta_title_en,
@@ -101,6 +123,7 @@ function generatePropertySEO(p: PropertyRecord) {
         meta_description_sk: buildDesc('sk'),
         meta_description_en: buildDesc('en'),
         meta_description_cz: buildDesc('cz'),
+        tags: [...new Set(tags)], // deduplicate
     };
 }
 
@@ -162,7 +185,7 @@ export async function POST(request: NextRequest) {
         const toProcess = properties.filter(p => p.publish_status !== 'trashed');
 
         for (const p of toProcess) {
-            if (!force && p.meta_title_sk) {
+            if (!force && p.meta_title_sk && p.tags?.length > 0) {
                 results.properties.skipped++;
                 continue;
             }
