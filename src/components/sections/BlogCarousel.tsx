@@ -3,14 +3,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { FreeMode } from "swiper/modules";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 import MagneticButton from "@/components/ui/MagneticButton";
 import type { Dictionary } from "@/lib/dictionaries";
-
-import "swiper/css";
-import "swiper/css/free-mode";
 
 interface BlogArticle {
     id: string;
@@ -137,25 +132,13 @@ export default function BlogCarousel({ lang = 'sk', dictionary, initialArticles 
                     </div>
                 ) : (
                     <>
-                        {/* Mobile: Swipeable Carousel */}
-                        <div className="md:hidden -mx-[var(--container-px)] px-[var(--container-px)]">
-                            <Swiper
-                                modules={[FreeMode]}
-                                slidesPerView={1.15}
-                                spaceBetween={12}
-                                freeMode
-                                breakpoints={{
-                                    480: { slidesPerView: 1.3, spaceBetween: 16 },
-                                    640: { slidesPerView: 2, spaceBetween: 16 },
-                                }}
-                                className="blog-swiper"
-                            >
-                                {articles.map((article) => (
-                                    <SwiperSlide key={article.id} className="!h-auto">
-                                        <BlogCard article={article} mobile />
-                                    </SwiperSlide>
-                                ))}
-                            </Swiper>
+                        {/* Mobile: Native CSS scroll-snap carousel */}
+                        <div className="md:hidden flex overflow-x-auto snap-x snap-mandatory scrollbar-hide space-x-3 sm:space-x-4 pb-4 -mx-[var(--container-px)] px-[var(--container-px)]">
+                            {articles.map((article) => (
+                                <div key={article.id} className="w-[85vw] sm:w-[60vw] flex-shrink-0 snap-center">
+                                    <BlogCard article={article} mobile />
+                                </div>
+                            ))}
                         </div>
 
                         {/* Desktop: Grid */}
