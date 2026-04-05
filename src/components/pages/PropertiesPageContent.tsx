@@ -99,7 +99,7 @@ export default function PropertiesPageContent({ properties }: PropertiesPageCont
                     className="absolute inset-0 bg-cover bg-center opacity-30"
                     style={{
                         backgroundImage:
-                            "url('https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1920&q=80')",
+                            "url('https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&q=30')",
                     }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-primary)] via-transparent to-transparent" />

@@ -384,7 +384,7 @@ export default function PropertiesContent({ lang, properties }: PropertiesConten
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-[clamp(1rem,3vw,1.5rem)]">
-                            {filteredProperties.map((property) => (
+                            {filteredProperties.map((property, index) => (
                                 <PropertyCard
                                     key={property.id}
                                     id={property.id}
@@ -400,6 +400,7 @@ export default function PropertiesContent({ lang, properties }: PropertiesConten
                                     lang={lang}
                                     distanceFromSea={property.distanceFromSea}
                                     propertyIdExternal={property.propertyIdExternal}
+                                    priority={index === 0}
                                 />
                             ))}
                         </div>

@@ -28,6 +28,7 @@ interface PropertyCardProps {
   previewTags?: string[];
   distanceFromSea?: number | null;
   propertyIdExternal?: string | null;
+  priority?: boolean;
 }
 
 export default function PropertyCard({
@@ -46,6 +47,7 @@ export default function PropertyCard({
   previewTags = [],
   distanceFromSea,
   propertyIdExternal,
+  priority = false,
 }: PropertyCardProps) {
   const uniqueId = useId().replace(/:/g, "");
   const { isFavorite, toggleFavorite } = useFavorites();
@@ -117,8 +119,9 @@ export default function PropertyCard({
                   alt={`${title} - foto ${index + 1}`}
                   fill
                   sizes="(max-width: 640px) 85vw, (max-width: 768px) 60vw, (max-width: 1024px) 50vw, 25vw"
-                  quality={65}
-                  loading={index === 0 ? "eager" : "lazy"}
+                  quality={45}
+                  priority={priority && index === 0}
+                  loading={priority && index === 0 ? undefined : index === 0 ? "eager" : "lazy"}
                   className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
                 />
               </SwiperSlide>
