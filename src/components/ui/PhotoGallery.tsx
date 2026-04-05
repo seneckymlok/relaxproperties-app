@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useState, useCallback } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Thumbs, FreeMode } from "swiper/modules";
+import { Thumbs, FreeMode } from "swiper/modules";
 import type { Swiper as SwiperType } from "swiper";
 
 import "swiper/css";
@@ -58,7 +58,7 @@ export default function PhotoGallery({ images, title }: PhotoGalleryProps) {
                     className={`hidden md:block aspect-[21/9] rounded-2xl overflow-hidden ${cellBase}`}
                     onClick={() => openLightbox(0)}
                 >
-                    <Image src={images[0]} alt={`${title} - 1`} fill className={imgHover} priority />
+                    <Image src={images[0]} alt={`${title} - 1`} fill sizes="100vw" className={imgHover} priority />
                 </div>
             ) : (
                 <div className="hidden md:grid grid-cols-4 grid-rows-2 aspect-[21/9] gap-[3px] rounded-2xl overflow-hidden">
@@ -71,6 +71,7 @@ export default function PhotoGallery({ images, title }: PhotoGalleryProps) {
                             src={images[0]}
                             alt={`${title} - 1`}
                             fill
+                            sizes="50vw"
                             className={imgHover}
                             priority
                         />
@@ -92,6 +93,7 @@ export default function PhotoGallery({ images, title }: PhotoGalleryProps) {
                                     src={img}
                                     alt={`${title} - ${globalIdx + 1}`}
                                     fill
+                                    sizes="25vw"
                                     className={`${imgHover} ${showOverlay ? "brightness-[0.45] group-hover:brightness-[0.55]" : ""}`}
                                 />
                                 {showOverlay && (
@@ -128,8 +130,10 @@ export default function PhotoGallery({ images, title }: PhotoGalleryProps) {
                                     src={image}
                                     alt={`${title} - foto ${index + 1}`}
                                     fill
+                                    sizes="100vw"
                                     className="object-cover"
                                     priority={index === 0}
+                                    loading={index === 0 ? "eager" : "lazy"}
                                 />
                             </div>
                         </SwiperSlide>
@@ -164,7 +168,9 @@ export default function PhotoGallery({ images, title }: PhotoGalleryProps) {
                                         src={image}
                                         alt={`Thumbnail ${index + 1}`}
                                         fill
+                                        sizes="25vw"
                                         className="object-cover"
+                                        loading="lazy"
                                     />
                                 </div>
                             </SwiperSlide>
@@ -196,7 +202,9 @@ export default function PhotoGallery({ images, title }: PhotoGalleryProps) {
                             alt={`${title} - ${lightboxIndex + 1}`}
                             width={1920}
                             height={1080}
+                            sizes="(max-width: 1536px) 100vw, 1536px"
                             className="object-contain w-full h-full"
+                            priority
                         />
                     </div>
 
