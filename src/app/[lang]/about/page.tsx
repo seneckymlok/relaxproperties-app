@@ -55,8 +55,7 @@ const teamMembers = [
         role: "Property Sales Manager ES",
         image: "/images/team/viera_dvorakova.jpg",
         phones: [
-            { number: "+421 911 353 550", label: "" },
-            { number: "+420 739 049 614", label: "" }
+            { number: "+421 911 353 550", label: "" }
         ],
         email: "spanielsko@relaxproperties.sk",
         languages: ["sk", "es"],
