@@ -203,35 +203,36 @@ export default function PropertyCard({
           </h3>
           <p className="text-[var(--color-muted)] text-xs sm:text-sm mb-4 line-clamp-2">{location}</p>
 
-          <div className="flex items-center gap-0 text-xs sm:text-sm text-[var(--color-muted)] mt-auto">
-            <div className="flex items-center gap-1.5">
-              <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[var(--color-muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+          <div className="flex items-center justify-center gap-0 text-[11px] text-[var(--color-muted)] mt-auto whitespace-nowrap">
+            <div className="flex items-center gap-1">
+              <svg className="w-3 h-3 flex-shrink-0 text-[var(--color-muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M3 7.5v9M21 7.5v9M3 16.5h18M3 12h18M7.5 12V9a1.5 1.5 0 011.5-1.5h6A1.5 1.5 0 0116.5 9v3" />
               </svg>
               <span>{beds}</span>
             </div>
-            <span className="mx-2 text-[var(--color-border-dark)]">|</span>
-            <div className="flex items-center gap-1.5">
-              <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[var(--color-muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+            <span className="mx-1.5 text-[var(--color-border-dark)]">|</span>
+            <div className="flex items-center gap-1">
+              <svg className="w-3 h-3 flex-shrink-0 text-[var(--color-muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M4 12V5.5A2.5 2.5 0 016.5 3v0A2.5 2.5 0 019 5.5V6" />
                 <path strokeLinecap="round" strokeLinejoin="round" d="M2 12h20v4a4 4 0 01-4 4H6a4 4 0 01-4-4v-4z" />
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 20v1.5M18 20v1.5" />
               </svg>
               <span>{baths}</span>
             </div>
-            <span className="mx-2 text-[var(--color-border-dark)]">|</span>
-            <div className="flex items-center gap-1.5">
-              <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[var(--color-muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+            <span className="mx-1.5 text-[var(--color-border-dark)]">|</span>
+            <div className="flex items-center gap-1">
+              <svg className="w-3 h-3 flex-shrink-0 text-[var(--color-muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" />
               </svg>
               <span>{area} m²</span>
             </div>
             {distanceFromSea != null && distanceFromSea > 0 && (
               <>
-                <span className="mx-2 text-[var(--color-border-dark)]">|</span>
+                <span className="mx-1.5 text-[var(--color-border-dark)]">|</span>
                 <div className="flex items-center gap-1">
-                  <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[var(--color-muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 17c2.4-1.6 4.8-1.6 7.2 0 2.4 1.6 4.8 1.6 7.2 0 2.4-1.6 3.6-1.6 3.6-1.6" />
+                  <svg className="w-3 h-3 flex-shrink-0 text-[var(--color-muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 13c2.4-1.6 4.8-1.6 7.2 0 2.4 1.6 4.8 1.6 7.2 0 2.4-1.6 3.6-1.6 3.6-1.6" />
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 18c2.4-1.6 4.8-1.6 7.2 0 2.4 1.6 4.8 1.6 7.2 0 2.4-1.6 3.6-1.6 3.6-1.6" />
                   </svg>
                   <span>{distanceFromSea >= 1000 ? `${(distanceFromSea / 1000).toFixed(1)}km` : `${distanceFromSea}m`}</span>
                 </div>
