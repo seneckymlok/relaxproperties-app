@@ -30,6 +30,9 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
         ? `${property.title} — ${property.location}. ${property.priceFormatted}. ${property.locationDescription.replace(/<[^>]*>/g, '').slice(0, 140)}`
         : `${property.title} — ${property.location}. ${property.priceFormatted}. ${property.beds} ${validLang === 'en' ? 'beds' : validLang === 'cz' ? 'ložnice' : 'spálne'}, ${property.area} m².`;
 
+    const META_BASE = { sk: 'https://relaxproperties.sk', en: 'https://relaxproperties.eu', cz: 'https://relaxproperties.cz' };
+    const canonical = `${META_BASE[validLang]}/${validLang}/properties/${id}`;
+
     return {
         title,
         description,
@@ -43,10 +46,21 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
                 "apartmán pri mori predaj", "nehnuteľnosti pri mori", "Relax Properties",
             ]),
         ],
+        alternates: {
+            canonical,
+            languages: {
+                sk: `${META_BASE.sk}/sk/properties/${id}`,
+                en: `${META_BASE.en}/en/properties/${id}`,
+                cs: `${META_BASE.cz}/cz/properties/${id}`,
+            },
+        },
         openGraph: {
             title,
             description,
-            images: property.images.length > 0 ? [property.images[0]] : undefined,
+            type: 'website',
+            images: property.images.length > 0
+                ? [{ url: property.images[0], width: 1200, height: 800, alt: property.title }]
+                : undefined,
         },
     };
 }
@@ -287,8 +301,73 @@ export default async function PropertyDetailPage({ params }: PropertyDetailPageP
     // YouTube video embed
     const videoId = property.videoUrl ? getYouTubeId(property.videoUrl) : null;
 
+    // ── Structured data (JSON-LD) ────────────────────────────────────────────
+    const BASE_URLS = { sk: 'https://relaxproperties.sk', en: 'https://relaxproperties.eu', cz: 'https://relaxproperties.cz' };
+    const COUNTRY_ISO: Record<string, string> = { bg: 'BG', hr: 'HR', es: 'ES', gr: 'GR' };
+    const canonical = `${BASE_URLS[lang]}/${lang}/properties/${id}`;
+
+    const propertyJsonLd = {
+        '@context': 'https://schema.org',
+        '@type': 'RealEstateListing',
+        name: property.title,
+        description: property.description
+            ? property.description.replace(/<[^>]*>/g, '').slice(0, 300)
+            : undefined,
+        url: canonical,
+        image: property.images,
+        price: property.price,
+        priceCurrency: 'EUR',
+        address: {
+            '@type': 'PostalAddress',
+            addressLocality: property.location,
+            addressCountry: COUNTRY_ISO[property.country] || property.country.toUpperCase(),
+        },
+        floorSize: {
+            '@type': 'QuantitativeValue',
+            value: property.area,
+            unitCode: 'MTK',
+        },
+        numberOfRooms: property.beds,
+        numberOfBathroomsTotal: property.baths,
+        ...(property.latitude && property.longitude ? {
+            geo: {
+                '@type': 'GeoCoordinates',
+                latitude: property.latitude,
+                longitude: property.longitude,
+            },
+        } : {}),
+        amenityFeature: allAmenities.map(key => ({
+            '@type': 'LocationFeatureSpecification',
+            name: amenityLabels[key] || key,
+            value: true,
+        })),
+        offers: {
+            '@type': 'Offer',
+            price: property.price,
+            priceCurrency: 'EUR',
+            availability: 'https://schema.org/InStock',
+            seller: {
+                '@type': 'RealEstateAgent',
+                name: 'Relax Properties',
+                url: 'https://relaxproperties.sk',
+            },
+        },
+    };
+
+    const breadcrumbJsonLd = {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+            { '@type': 'ListItem', position: 1, name: t.home, item: `${BASE_URLS[lang]}/${lang}` },
+            { '@type': 'ListItem', position: 2, name: t.properties, item: `${BASE_URLS[lang]}/${lang}/properties` },
+            { '@type': 'ListItem', position: 3, name: property.title, item: canonical },
+        ],
+    };
+
     return (
         <>
+            <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(propertyJsonLd) }} />
+            <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
             {/* Main Content */}
             <section className="bg-[var(--color-background)]" style={{ paddingTop: '5.5rem', paddingBottom: '3rem' }}>
                 {/* Breadcrumb + ID badge — contained */}

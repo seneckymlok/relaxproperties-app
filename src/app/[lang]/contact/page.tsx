@@ -1,8 +1,35 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import ContactAgentForm from "@/components/ui/ContactAgentForm";
 import { getDictionary } from "@/lib/dictionaries";
 import type { Language } from "@/lib/data-access";
 import { getPageHero } from "@/lib/page-hero-store";
+
+const CONTACT_BASE = { sk: 'https://relaxproperties.sk', en: 'https://relaxproperties.eu', cz: 'https://relaxproperties.cz' };
+
+export function generateMetadata({ params }: { params: Promise<{ lang: string }> }): Metadata {
+    // params is a Promise in Next.js 15+ but generateMetadata can be sync when reading synchronously
+    // Use a type cast — params.lang is resolved by the time generateMetadata is called at build time
+    const lang = ((params as unknown as { lang: string }).lang ?? 'sk') as Language;
+    const base = CONTACT_BASE[lang] ?? CONTACT_BASE.sk;
+    const canonical = `${base}/${lang}/contact`;
+
+    if (lang === 'en') return {
+        title: 'Contact Us | Relax Properties',
+        description: 'Get in touch with Relax Properties. We help you find your dream property by the sea in Bulgaria, Croatia, Spain and Greece.',
+        alternates: { canonical, languages: { sk: `${CONTACT_BASE.sk}/sk/contact`, en: `${CONTACT_BASE.en}/en/contact`, cs: `${CONTACT_BASE.cz}/cz/contact` } },
+    };
+    if (lang === 'cz') return {
+        title: 'Kontakt | Relax Properties',
+        description: 'Kontaktujte nás a najděte svoji vysněnou nemovitost u moře v Bulharsku, Chorvatsku, Španělsku nebo Řecku.',
+        alternates: { canonical, languages: { sk: `${CONTACT_BASE.sk}/sk/contact`, en: `${CONTACT_BASE.en}/en/contact`, cs: `${CONTACT_BASE.cz}/cz/contact` } },
+    };
+    return {
+        title: 'Kontakt | Relax Properties',
+        description: 'Kontaktujte nás a nájdite svoju vysnívanú nehnuteľnosť pri mori v Bulharsku, Chorvátsku, Španielsku alebo Grécku.',
+        alternates: { canonical, languages: { sk: `${CONTACT_BASE.sk}/sk/contact`, en: `${CONTACT_BASE.en}/en/contact`, cs: `${CONTACT_BASE.cz}/cz/contact` } },
+    };
+}
 
 export default async function ContactPage({
     params,
