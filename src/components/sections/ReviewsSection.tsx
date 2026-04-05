@@ -289,17 +289,16 @@ export default function ReviewsSection({ lang = "sk", dictionary }: ReviewsSecti
 
                     {/* Dots indicator */}
                     {reviews.length > 1 && (
-                        <div className="flex justify-center gap-1.5 mt-4">
+                        <div className="flex justify-center mt-4">
                             {reviews.map((_, idx) => (
                                 <button
                                     key={idx}
                                     onClick={() => setMobileIndex(idx)}
-                                    className={`exclude-touch-size h-1.5 rounded-full transition-all duration-300 ${idx === mobileIndex
-                                        ? "bg-[var(--color-primary)] w-5"
-                                        : "bg-[var(--color-border-dark)] w-1.5"
-                                        }`}
+                                    className="exclude-touch-size flex items-center justify-center w-[44px] h-[44px]"
                                     aria-label={`Review ${idx + 1}`}
-                                />
+                                >
+                                    <span className={`h-1.5 rounded-full transition-all duration-300 ${idx === mobileIndex ? "bg-[var(--color-primary)] w-5" : "bg-[var(--color-border-dark)] w-1.5"}`} />
+                                </button>
                             ))}
                         </div>
                     )}
@@ -323,17 +322,16 @@ export default function ReviewsSection({ lang = "sk", dictionary }: ReviewsSecti
 
                     {/* Progress dots */}
                     {reviews.length > VISIBLE_COUNT_DESKTOP && (
-                        <div className="flex justify-center gap-1.5 mt-6">
+                        <div className="flex justify-center mt-6">
                             {Array.from({ length: reviews.length - VISIBLE_COUNT_DESKTOP + 1 }).map((_, idx) => (
                                 <button
                                     key={idx}
                                     onClick={() => { setCurrentIndex(idx); setIsTransitioning(false); }}
-                                    className={`exclude-touch-size h-1.5 rounded-full transition-all duration-300 ${idx === currentIndex
-                                        ? "bg-[var(--color-primary)] w-5"
-                                        : "bg-[var(--color-border-dark)] w-1.5"
-                                        }`}
+                                    className="exclude-touch-size flex items-center justify-center w-[44px] h-[44px]"
                                     aria-label={`Page ${idx + 1}`}
-                                />
+                                >
+                                    <span className={`h-1.5 rounded-full transition-all duration-300 ${idx === currentIndex ? "bg-[var(--color-primary)] w-5" : "bg-[var(--color-border-dark)] w-1.5"}`} />
+                                </button>
                             ))}
                         </div>
                     )}
