@@ -1,10 +1,52 @@
 export const revalidate = 300;
 
+import type { Metadata } from "next";
 import { Suspense } from "react";
 import PropertiesContent from "@/components/sections/PropertiesContent";
 import { getDictionary } from "@/lib/dictionaries";
 import { getPropertiesServer, type Language } from "@/lib/data-access";
 import { getPageHero } from "@/lib/page-hero-store";
+
+export function generateMetadata({ params }: { params: { lang: string } }): Metadata {
+  const lang = params.lang;
+  if (lang === 'cz') {
+    return {
+      title: "Nemovitosti u moře na prodej | Relax Properties",
+      description: "Prohlédněte si nabídku apartmánů, domů a vil u moře v Bulharsku, Chorvatsku, Španělsku a Řecku. Levné i luxusní nemovitosti u moře.",
+      keywords: [
+        "Prodej apartmánů u moře", "Zahraniční nemovitosti", "Levné nemovitosti u moře",
+        "Apartmány u moře na prodej", "Domy u moře", "Vily u moře", "Rekreační nemovitosti",
+        "Investiční apartmány", "Apartmán s výhledem na moře", "Apartmány v první linii u moře",
+        "Reality Bulharsko", "Reality Chorvatsko", "Reality Španělsko", "Reality Řecko",
+        "Slunečné pobřeží", "Costa del Sol", "Chalkidiki", "Makarská riviéra",
+      ],
+    };
+  }
+  if (lang === 'en') {
+    return {
+      title: "Properties for Sale by the Sea | Relax Properties",
+      description: "Browse apartments, houses and villas for sale by the sea in Bulgaria, Croatia, Spain and Greece. Affordable and luxury beachfront real estate.",
+      keywords: [
+        "properties for sale by the sea", "apartments by the sea", "beachfront real estate",
+        "houses by the sea for sale", "villas by the sea", "Mediterranean property",
+        "Bulgaria real estate", "Croatia real estate", "Spain real estate", "Greece real estate",
+        "Sunny Beach", "Costa del Sol", "Chalkidiki", "Makarska riviera",
+      ],
+    };
+  }
+  return {
+    title: "Nehnuteľnosti pri mori na predaj | Relax Properties",
+    description: "Prezrite si ponuku apartmánov, domov a víl pri mori v Bulharsku, Chorvátsku, Španielsku a Grécku. Lacné aj luxusné nehnuteľnosti pri mori.",
+    keywords: [
+      "Predaj apartmánov pri mori", "Zahraničné reality", "Lacné nehnuteľnosti pri mori",
+      "Apartmány pri mori na predaj", "Domy pri mori predaj", "Vily pri mori", "Dovolenkové nehnuteľnosti",
+      "Investičné apartmány pri mori", "Apartmány v prvej línii pri mori",
+      "Reality Bulharsko", "Reality Chorvátsko", "Reality Španielsko", "Reality Grécko",
+      "Slnečné pobrežie", "Costa del Sol", "Chalkidiki", "Makarská riviéra",
+      "lacné apartmány", "lacné domy pri mori", "Luxusné vily pri mori",
+    ],
+  };
+}
 
 // Loading fallback for Suspense
 function LoadingFallback() {

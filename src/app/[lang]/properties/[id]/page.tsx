@@ -9,6 +9,7 @@ export async function generateStaticParams() {
     );
 }
 
+import type { Metadata } from "next";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { notFound } from "next/navigation";
@@ -17,6 +18,38 @@ import PropertyCard from "@/components/ui/PropertyCard";
 import PropertyMapSection from "@/components/ui/PropertyMapSection";
 import { getPropertyByIdServer, getSimilarPropertiesServer, type Language } from "@/lib/data-access";
 import { getDictionary } from "@/lib/dictionaries";
+
+export async function generateMetadata({ params }: { params: Promise<{ id: string; lang: string }> }): Promise<Metadata> {
+    const { id, lang } = await params;
+    const validLang = (['sk', 'en', 'cz'].includes(lang) ? lang : 'sk') as Language;
+    const property = await getPropertyByIdServer(id, validLang);
+    if (!property) return { title: 'Property not found' };
+
+    const title = `${property.title} | Relax Properties`;
+    const description = property.locationDescription
+        ? `${property.title} — ${property.location}. ${property.priceFormatted}. ${property.locationDescription.replace(/<[^>]*>/g, '').slice(0, 140)}`
+        : `${property.title} — ${property.location}. ${property.priceFormatted}. ${property.beds} ${validLang === 'en' ? 'beds' : validLang === 'cz' ? 'ložnice' : 'spálne'}, ${property.area} m².`;
+
+    return {
+        title,
+        description,
+        keywords: [
+            property.title, property.location, property.country,
+            ...(validLang === 'cz' ? [
+                "apartmán u moře prodej", "nemovitosti u moře", "Relax Properties",
+            ] : validLang === 'en' ? [
+                "apartment for sale by the sea", "property by the sea", "Relax Properties",
+            ] : [
+                "apartmán pri mori predaj", "nehnuteľnosti pri mori", "Relax Properties",
+            ]),
+        ],
+        openGraph: {
+            title,
+            description,
+            images: property.images.length > 0 ? [property.images[0]] : undefined,
+        },
+    };
+}
 
 const PhotoGallery = dynamic(() => import("@/components/ui/PhotoGallery"), {
     loading: () => (
@@ -47,25 +80,10 @@ interface PropertyDetailPageProps {
 }
 
 function getAgentContact(lang: Language) {
-    if (lang === 'sk') {
-        return {
-            phone1: '+421 911 819 152', phone1Raw: '+421911819152',
-            phone2: '+421 911 989 895', phone2Raw: '+421911989895',
-            email: 'info@relaxproperties.sk',
-        };
-    }
-    if (lang === 'cz') {
-        return {
-            phone1: '+420 739 049 593', phone1Raw: '+420739049593',
-            phone2: '+421 911 989 895', phone2Raw: '+421911989895',
-            email: 'info@relaxproperties.cz',
-        };
-    }
-    // EN
     return {
-        phone1: '+421 911 989 895', phone1Raw: '+421911989895',
-        phone2: '+421 911 819 152', phone2Raw: '+421911819152',
-        email: 'info@relaxproperties.sk',
+        phoneSK: '+421 911 819 152', phoneSKRaw: '+421911819152',
+        phoneCZ: '+420 739 049 593', phoneCZRaw: '+420739049593',
+        email: lang === 'cz' ? 'info@relaxproperties.cz' : 'info@relaxproperties.sk',
     };
 }
 
@@ -499,22 +517,24 @@ export default async function PropertyDetailPage({ params }: PropertyDetailPageP
                                     <span className="block w-full h-px bg-[var(--color-border)] mb-4" />
                                     <div className="space-y-3">
                                         <a
-                                            href={`tel:${agentContact.phone1Raw}`}
+                                            href={`tel:${agentContact.phoneSKRaw}`}
                                             className="flex items-center gap-3 text-sm text-[var(--color-teal)] md:text-[var(--color-foreground)] hover:text-[var(--color-teal)] transition-colors font-medium"
                                         >
                                             <svg className="w-4 h-4 text-[var(--color-primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
                                                 <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
                                             </svg>
-                                            {agentContact.phone1}
+                                            <span>{agentContact.phoneSK}</span>
+                                            <span className="text-[10px] font-semibold text-[var(--color-muted)] uppercase">SK</span>
                                         </a>
                                         <a
-                                            href={`tel:${agentContact.phone2Raw}`}
+                                            href={`tel:${agentContact.phoneCZRaw}`}
                                             className="flex items-center gap-3 text-sm text-[var(--color-teal)] md:text-[var(--color-foreground)] hover:text-[var(--color-teal)] transition-colors"
                                         >
                                             <svg className="w-4 h-4 text-[var(--color-primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
                                                 <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
                                             </svg>
-                                            {agentContact.phone2}
+                                            <span>{agentContact.phoneCZ}</span>
+                                            <span className="text-[10px] font-semibold text-[var(--color-muted)] uppercase">CZ</span>
                                         </a>
                                         <a
                                             href={`mailto:${agentContact.email}`}

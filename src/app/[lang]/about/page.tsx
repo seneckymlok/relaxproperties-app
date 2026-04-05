@@ -1,9 +1,33 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { getDictionary } from "@/lib/dictionaries";
 import type { Language } from "@/lib/data-access";
 import { getPageHero } from "@/lib/page-hero-store";
 import MagneticButton from "@/components/ui/MagneticButton";
+
+export function generateMetadata({ params }: { params: { lang: string } }): Metadata {
+  const lang = params.lang;
+  if (lang === 'cz') {
+    return {
+      title: "O nás | Relax Properties — Realitní kancelář u moře",
+      description: "Relax Properties s.r.o. — slovenská a česká realitní kancelář specializující se na prodej nemovitostí u moře v Bulharsku, Chorvatsku, Španělsku a Řecku.",
+      keywords: ["Relax Properties", "Relax Properties s.r.o.", "Relax Properties recenze", "Realitní kancelář Relax Properties", "Zahraniční reality s českým servisem", "Český makléř v zahraničí"],
+    };
+  }
+  if (lang === 'en') {
+    return {
+      title: "About Us | Relax Properties — Real Estate by the Sea",
+      description: "Relax Properties s.r.o. — your trusted real estate partner for properties by the sea in Bulgaria, Croatia, Spain and Greece.",
+      keywords: ["Relax Properties", "about Relax Properties", "Mediterranean real estate agency", "real estate by the sea"],
+    };
+  }
+  return {
+    title: "O nás | Relax Properties — Realitná kancelária pri mori",
+    description: "Relax Properties s.r.o. — slovenská realitná kancelária špecializujúca sa na predaj nehnuteľností pri mori v Bulharsku, Chorvátsku, Španielsku a Grécku.",
+    keywords: ["Relax Properties", "Relax Properties s.r.o.", "Relax Properties recenzie", "Realitná kancelária Relax Properties", "Zahraničné reality so slovenským servisom", "Slovenský maklér v zahraničí"],
+  };
+}
 
 // Team members data
 const teamMembers = [
