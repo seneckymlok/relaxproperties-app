@@ -103,7 +103,7 @@ export default function PropertiesContent({ lang, properties }: PropertiesConten
     ]);
     const isPriceFiltered = priceRange[0] !== priceStats.min || priceRange[1] !== priceStats.max;
     const [sortBy, setSortBy] = useState(initialSort);
-    const [searchQuery, setSearchQuery] = useState("");
+    const [searchQuery, setSearchQuery] = useState(searchParams.get("searchQuery") || "");
     const [featuresExpanded, setFeaturesExpanded] = useState(false);
     const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
