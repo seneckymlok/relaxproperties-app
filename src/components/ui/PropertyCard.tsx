@@ -208,7 +208,7 @@ export default function PropertyCard({
           </h3>
           <p className="text-[var(--color-muted)] text-xs sm:text-sm mb-4 line-clamp-2">{location}</p>
 
-          <div className="flex items-center justify-center gap-0 text-[11px] text-[var(--color-muted)] mt-auto whitespace-nowrap">
+          <div className="flex items-center justify-start gap-0 text-[11px] text-[var(--color-muted)] mt-auto whitespace-nowrap">
             <div className="flex items-center gap-1">
               <svg className="w-3 h-3 flex-shrink-0 text-[var(--color-muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M3 7.5v9M21 7.5v9M3 16.5h18M3 12h18M7.5 12V9a1.5 1.5 0 011.5-1.5h6A1.5 1.5 0 0116.5 9v3" />
