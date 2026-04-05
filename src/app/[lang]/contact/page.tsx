@@ -122,9 +122,9 @@ export default async function ContactPage({
                                             </svg>
                                             <p className="text-sm font-medium text-[var(--color-secondary)]">{t.companyInfo.phoneLabel}</p>
                                         </div>
-                                        <div className="space-y-2 sm:space-y-3 pl-7">
+                                        <div className="space-y-3 pl-7">
                                             {t.companyInfo.phones.map((phone: { name: string; number: string; raw: string }, i: number) => (
-                                                <div key={i} className="flex items-center justify-between gap-4 text-sm">
+                                                <div key={i} className="flex flex-col gap-0.5 text-sm">
                                                     <span className="text-[var(--color-foreground)]">{phone.name}</span>
                                                     <a href={`tel:${phone.raw}`} className="text-[var(--color-teal)] md:text-[var(--color-primary)] hover:text-[var(--color-teal)] transition-colors font-medium">{phone.number}</a>
                                                 </div>
