@@ -59,7 +59,7 @@ export default function CountryBanners({ lang = 'sk', dictionary, properties = [
         {
             id: "spain",
             name: getCountryName("spain"),
-            image: "/images/countries/spain.webp",
+            image: "/images/countries/spain.webp?v=2",
             properties: getCount("spain"),
         },
         {
