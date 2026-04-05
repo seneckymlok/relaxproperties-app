@@ -32,19 +32,19 @@ export default function Footer({ lang, dictionary }: FooterProps) {
     const socials = [
         {
             label: "Facebook",
-            href: "#",
+            href: "https://www.facebook.com/relaxproperties.sk/",
             icon: <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z" />,
             fill: true,
         },
         {
             label: "Instagram",
-            href: "#",
+            href: "https://www.instagram.com/relaxproperties/",
             icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37zm1.5-4.87h.01M7.5 3h9a4.5 4.5 0 014.5 4.5v9a4.5 4.5 0 01-4.5 4.5h-9A4.5 4.5 0 013 16.5v-9A4.5 4.5 0 017.5 3z" />,
             fill: false,
         },
         {
             label: "YouTube",
-            href: "#",
+            href: "https://www.youtube.com/@relaxproperties",
             icon: <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z" />,
             fill: true,
         },
@@ -112,6 +112,8 @@ export default function Footer({ lang, dictionary }: FooterProps) {
                                 <MagneticButton key={social.label} strength={0.3}>
                                     <a
                                         href={social.href}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
                                         className="w-8 h-8 rounded-full border border-white/8 flex items-center justify-center text-white/25 hover:text-white hover:border-[var(--color-accent)]/50 hover:bg-[var(--color-accent)]/10 transition-all duration-300"
                                         aria-label={social.label}
                                     >
