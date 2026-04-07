@@ -24,6 +24,21 @@ interface BlogPost {
     video_url?: string;
 }
 
+// Category name translations (DB stores Slovak names)
+const categoryTranslations: Record<string, Record<string, string>> = {
+    'Bulharsko': { en: 'Bulgaria', cz: 'Bulharsko', sk: 'Bulharsko' },
+    'Chorvátsko': { en: 'Croatia', cz: 'Chorvatsko', sk: 'Chorvátsko' },
+    'Grécko': { en: 'Greece', cz: 'Řecko', sk: 'Grécko' },
+    'Španielsko': { en: 'Spain', cz: 'Španělsko', sk: 'Španielsko' },
+    'Nehnuteľnosti': { en: 'Real Estate', cz: 'Nemovitosti', sk: 'Nehnuteľnosti' },
+    'Investície': { en: 'Investments', cz: 'Investice', sk: 'Investície' },
+    'Lifestyle': { en: 'Lifestyle', cz: 'Lifestyle', sk: 'Lifestyle' },
+};
+
+function translateCategory(category: string, lang: string): string {
+    return categoryTranslations[category]?.[lang] || category;
+}
+
 function getYouTubeId(url: string): string | null {
     const patterns = [
         /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/,
@@ -157,7 +172,7 @@ export default function BlogPostPage() {
                             </Link>
                             <span className="w-1 h-1 rounded-full bg-white/30" />
                             <span className="px-3 py-1 text-xs font-medium uppercase tracking-wider text-white/90 bg-white/15 backdrop-blur-md rounded-full">
-                                {post.category}
+                                {translateCategory(post.category, validLang)}
                             </span>
                         </div>
 
@@ -361,7 +376,7 @@ export default function BlogPostPage() {
                                     </div>
                                 </div>
                                 <span className="px-4 py-1.5 bg-[var(--color-surface)] rounded-full text-sm text-[var(--color-muted)]">
-                                    {post.category}
+                                    {translateCategory(post.category, validLang)}
                                 </span>
                             </div>
                         </div>
@@ -399,7 +414,7 @@ export default function BlogPostPage() {
                                                 <div className="w-full h-full bg-[var(--color-surface)]" />
                                             )}
                                             <span className="absolute top-3 left-3 px-3 py-1 text-[10px] font-medium uppercase tracking-wider text-white/90 bg-white/20 backdrop-blur-sm rounded-full">
-                                                {relatedPost.category}
+                                                {translateCategory(relatedPost.category, validLang)}
                                             </span>
                                         </div>
                                         <div className="p-5 flex flex-col flex-1">

@@ -20,14 +20,17 @@ interface PropertyMapSectionProps {
     zoom?: number | null;
     title?: string;
     location?: string;
+    lang?: string;
 }
 
-export default function PropertyMapSection({ lat, lng, zoom, title, location }: PropertyMapSectionProps) {
+export default function PropertyMapSection({ lat, lng, zoom, title, location, lang = 'sk' }: PropertyMapSectionProps) {
     if (!lat || !lng) return null;
+
+    const heading = lang === 'en' ? 'Location' : lang === 'cz' ? 'Lokalita' : 'Lokalita';
 
     return (
         <div className="py-6 border-t border-[var(--color-border)]">
-            <h2 className="font-serif text-lg text-[var(--color-secondary)] mb-1">Lokalita</h2>
+            <h2 className="font-serif text-lg text-[var(--color-secondary)] mb-1">{heading}</h2>
             <span className="block w-8 h-px bg-[var(--color-accent)] mb-4" />
             {location && (
                 <p className="text-sm text-[var(--color-muted)] mb-4 flex items-center gap-2">

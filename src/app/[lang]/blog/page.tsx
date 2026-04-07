@@ -22,6 +22,21 @@ interface BlogPost {
     featured: boolean;
 }
 
+// Category name translations (DB stores Slovak names)
+const categoryTranslations: Record<string, Record<string, string>> = {
+    'Bulharsko': { en: 'Bulgaria', cz: 'Bulharsko', sk: 'Bulharsko' },
+    'Chorvátsko': { en: 'Croatia', cz: 'Chorvatsko', sk: 'Chorvátsko' },
+    'Grécko': { en: 'Greece', cz: 'Řecko', sk: 'Grécko' },
+    'Španielsko': { en: 'Spain', cz: 'Španělsko', sk: 'Španielsko' },
+    'Nehnuteľnosti': { en: 'Real Estate', cz: 'Nemovitosti', sk: 'Nehnuteľnosti' },
+    'Investície': { en: 'Investments', cz: 'Investice', sk: 'Investície' },
+    'Lifestyle': { en: 'Lifestyle', cz: 'Lifestyle', sk: 'Lifestyle' },
+};
+
+function translateCategory(category: string, lang: string): string {
+    return categoryTranslations[category]?.[lang] || category;
+}
+
 export default function BlogPage() {
     const params = useParams();
     const lang = (params?.lang as string) || "sk";
@@ -126,7 +141,7 @@ export default function BlogPage() {
                                             <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
                                             <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
                                                 <span className="inline-block px-3 py-1 text-xs font-medium uppercase tracking-wider text-white/90 bg-white/20 backdrop-blur-sm rounded-full mb-4">
-                                                    {post.category}
+                                                    {translateCategory(post.category, validLang)}
                                                 </span>
                                                 <h3 className="font-serif text-xl md:text-2xl lg:text-3xl text-white mb-3">
                                                     {post.title}
@@ -184,7 +199,7 @@ export default function BlogPage() {
                                         : "border-[var(--color-border)] text-[var(--color-foreground)] hover:border-[var(--color-teal)] hover:text-[var(--color-teal)]"
                                         }`}
                                 >
-                                    {category}
+                                    {translateCategory(category, validLang)}
                                 </button>
                             ))}
                         </div>
@@ -222,7 +237,7 @@ export default function BlogPage() {
                                                 </div>
                                             )}
                                             <span className="absolute top-4 left-4 px-3 py-1 text-xs font-medium uppercase tracking-wider text-white/90 bg-white/20 backdrop-blur-sm rounded-full">
-                                                {post.category}
+                                                {translateCategory(post.category, validLang)}
                                             </span>
                                         </div>
                                         <div className="p-6 flex flex-col flex-1">

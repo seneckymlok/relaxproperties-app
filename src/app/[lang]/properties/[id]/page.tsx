@@ -584,6 +584,7 @@ export default async function PropertyDetailPage({ params }: PropertyDetailPageP
                                 zoom={property.mapZoom}
                                 title={property.title}
                                 location={property.location}
+                                lang={lang}
                             />
                         </div>
 
