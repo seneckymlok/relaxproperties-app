@@ -117,6 +117,7 @@ export interface PropertyRecord {
 
     // Publishing
     featured: boolean;
+    reserved: boolean;
     publish_status: 'draft' | 'published' | 'trashed';
 
     // Export

@@ -54,7 +54,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     try {
         const properties = await getPropertiesServer('sk');
         for (const property of properties) {
-            const path = `/properties/${property.id}`;
+            const path = `/properties/${property.slug || property.id}`;
             entries.push({
                 url:             `${BASE.sk}/sk${path}`,
                 lastModified:    new Date(),

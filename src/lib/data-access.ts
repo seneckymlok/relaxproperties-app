@@ -28,6 +28,7 @@ export interface PublicProperty {
     type: string;
     images: string[];
     featured: boolean;
+    reserved: boolean;
     year?: number | null;
     parking?: number;
     pool?: boolean;
@@ -95,6 +96,7 @@ export function toPublicProperty(p: PropertyRecord, lang: Language = 'sk'): Publ
         type: p.property_type,
         images: (p.images || []).map((img) => typeof img === 'string' ? img : img.url),
         featured: p.featured,
+        reserved: p.reserved ?? false,
         year: p.year,
         parking: p.parking,
         pool: p.pool,
@@ -177,8 +179,10 @@ export async function getSimilarPropertiesServer(
  */
 export async function getPropertyByIdServer(id: string, lang: Language = 'sk'): Promise<PublicProperty | null> {
     try {
-        const { getPropertyById } = await import('./property-store');
-        const record = await getPropertyById(id);
+        const { getPropertyById, getPropertyBySlug } = await import('./property-store');
+        // Try UUID lookup first, then fall back to slug
+        const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+        const record = isUUID ? await getPropertyById(id) : await getPropertyBySlug(id);
         if (!record || record.publish_status !== 'published') return null;
         return toPublicProperty(record, lang);
     } catch (error) {

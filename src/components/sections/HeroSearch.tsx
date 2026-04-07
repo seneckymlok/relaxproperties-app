@@ -192,8 +192,8 @@ export default function HeroSearch({ lang = 'sk', dictionary, priceRange }: Hero
         aiPlaceholder: lang === 'en' ? 'Describe what you are looking for (e.g. Villa in Croatia with pool under 500k)...' : lang === 'cz' ? 'Popište, co hledáte (např. Vila v Chorvatsku s bazénem do 500k)...' : 'Opíšte čo hľadáte (napr. Vila v Chorvátsku s bazénom do 500k)...',
         aiMobilePlaceholder: lang === 'en' ? 'Describe what you are looking for...' : lang === 'cz' ? 'Popište, co hledáte...' : 'Opíšte, čo hľadáte...',
         searching: lang === 'en' ? 'Searching...' : lang === 'cz' ? 'Hledám...' : 'Hľadám...',
-        propertyId: lang === 'en' ? 'Property ID' : lang === 'cz' ? 'ID nemovitosti' : 'ID nehnuteľnosti',
-        idPlaceholder: 'ID',
+        propertyId: lang === 'en' ? 'Search' : lang === 'cz' ? 'Vyhledávání' : 'Vyhľadávanie',
+        idPlaceholder: lang === 'en' ? 'ID / Keyword / Complex' : lang === 'cz' ? 'ID / Klíčové slovo / Komplex' : 'ID / Kľúčové slovo / Komplex',
         min: 'Min',
         max: 'Max',
     };
@@ -416,6 +416,7 @@ export default function HeroSearch({ lang = 'sk', dictionary, priceRange }: Hero
             if (data.success && data.filters) {
                 const params = new URLSearchParams();
                 const f = data.filters;
+                if (f.searchQuery) params.set("searchQuery", f.searchQuery);
                 if (f.country !== "all") params.set("country", f.country);
                 if (f.propertyType !== "all") params.set("type", f.propertyType);
                 if (f.bedrooms !== "all") params.set("beds", f.bedrooms);
@@ -576,6 +577,25 @@ export default function HeroSearch({ lang = 'sk', dictionary, priceRange }: Hero
 
                     {searchMode === 'classic' ? (
                         <>
+                            {/* Search Input — top of modal for instant access */}
+                            <div className="mb-6">
+                                <label className="block text-[10px] uppercase tracking-[0.15em] text-[var(--color-muted)] mb-2">
+                                    {t.propertyId}
+                                </label>
+                                <div className="relative">
+                                    <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-muted)] pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                    </svg>
+                                    <input
+                                        type="text"
+                                        placeholder={t.idPlaceholder}
+                                        value={filters.propertyId}
+                                        onChange={(e) => handleFilterChange("propertyId", e.target.value)}
+                                        className="w-full bg-white border border-[var(--color-border)] rounded-xl pl-10 pr-3 py-3 text-sm text-[var(--color-foreground)] focus:outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]/10 transition-all"
+                                    />
+                                </div>
+                            </div>
+
                             {/* Main Filters */}
                             <div className="space-y-5 mb-8">
                                 <div>
@@ -643,23 +663,6 @@ export default function HeroSearch({ lang = 'sk', dictionary, priceRange }: Hero
                                     <ToggleSwitch checked={filters.luxury} onChange={(v) => handleFilterChange("luxury", v)} label={t.luxury} />
                                     <ToggleSwitch checked={filters.golf} onChange={(v) => handleFilterChange("golf", v)} label={t.golf} />
                                     <ToggleSwitch checked={filters.mountains} onChange={(v) => handleFilterChange("mountains", v)} label={t.mountains} />
-                                </div>
-                            </div>
-
-                            {/* Property ID Search */}
-                            <div className="border-t border-[var(--color-border)]/50 pt-5 mt-6">
-                                <label className="block text-[10px] uppercase tracking-[0.15em] text-[var(--color-muted)] mb-2">
-                                    {t.propertyId}
-                                </label>
-                                <div className="relative">
-                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-muted)] text-sm font-medium">#</span>
-                                    <input
-                                        type="text"
-                                        placeholder={t.idPlaceholder}
-                                        value={filters.propertyId}
-                                        onChange={(e) => handleFilterChange("propertyId", e.target.value)}
-                                        className="w-full bg-white border border-[var(--color-border)] rounded-xl pl-8 pr-3 py-3 text-sm text-[var(--color-foreground)] focus:outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]/10 transition-all"
-                                    />
                                 </div>
                             </div>
 

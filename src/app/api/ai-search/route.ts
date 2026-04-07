@@ -29,11 +29,15 @@ Return a JSON object with these fields:
    - bedrooms: "all" | "1" | "2" | "3" | "4+"
    - sort: "featured" | "price-asc" | "price-desc" | "newest" | "area-desc"
 
-2. PRICE FILTERS (numbers in euros, use null if not specified):
+2. KEYWORD SEARCH (for text matching against property titles, locations, descriptions):
+   - searchQuery: string | null
+   Use this for specific names, complexes, addresses, or keywords the user is looking for (e.g. "Majestic", "Vinamar", "Costa del Sol"). This will do a text search across property titles, locations and descriptions. Use null if the query is purely about filters (country, type, price) with no specific keyword.
+
+3. PRICE FILTERS (numbers in euros, use null if not specified):
    - priceMin: number | null
    - priceMax: number | null
 
-3. BOOLEAN FEATURE FILTERS (set to true ONLY if explicitly mentioned or clearly implied):
+4. BOOLEAN FEATURE FILTERS (set to true ONLY if explicitly mentioned or clearly implied):
    - seaView: sea/ocean view
    - firstLine: first line to sea/beachfront
    - pool: has swimming pool
@@ -157,6 +161,10 @@ export async function POST(request: NextRequest) {
             bedrooms: VALID_BEDROOMS.includes(String(filters.bedrooms)) ? String(filters.bedrooms) : "all",
             sort: VALID_SORT.includes(filters.sort) ? filters.sort : "featured",
         };
+
+        // Sanitize searchQuery — extract keyword for text search
+        const searchQuery = typeof filters.searchQuery === 'string' ? filters.searchQuery.trim() : "";
+        if (searchQuery) sanitizedFilters.searchQuery = searchQuery;
 
         // Sanitize price — accept number or numeric string
         const priceMin = Number(filters.priceMin);

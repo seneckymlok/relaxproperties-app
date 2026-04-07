@@ -232,7 +232,9 @@ export default function PropertiesPageContent({ properties }: PropertiesPageCont
                                                 area={property.area}
                                                 images={property.images}
                                                 featured={property.featured}
+                                                reserved={property.reserved}
                                                 previewTags={property.previewTags}
+                                                slug={property.slug}
                                             />
                                         ))}
                                     </div>

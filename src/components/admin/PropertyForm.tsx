@@ -26,6 +26,7 @@ interface PropertyFormData {
     available_from: string;
     property_id_external: string;
     featured: boolean;
+    reserved: boolean;
 
     // Location
     country: string;
@@ -336,6 +337,7 @@ export default function PropertyForm({ initialData, mode }: PropertyFormProps) {
                 available_from: (d.available_from as string) || "",
                 property_id_external: (d.property_id_external as string) || "",
                 featured: (d.featured as boolean) || false,
+                reserved: (d.reserved as boolean) || false,
                 country: (d.country as string) || "bulgaria",
                 city: (d.city as string) || "",
                 location_sk: (d.location_sk as string) || "",
@@ -407,7 +409,7 @@ export default function PropertyForm({ initialData, mode }: PropertyFormProps) {
         return {
             title_sk: "", property_type: "studio_apartment_flat", status: "", ownership: "",
             disposition: "", price: "", price_on_request: false, available_from: "",
-            property_id_external: "", featured: false, country: "bulgaria", city: "",
+            property_id_external: "", featured: false, reserved: false, country: "bulgaria", city: "",
             location_sk: "", location_type: "", distance_from_sea: "", beds: "", baths: "", area: "",
             land_area: "", floors: "1", floor_number: "1", year: "", parking: "0",
             offer_type: "sale", unit: "per_property", house_type: "", building_type: "",
@@ -450,6 +452,7 @@ export default function PropertyForm({ initialData, mode }: PropertyFormProps) {
                 available_from: form.available_from || null,
                 property_id_external: form.property_id_external || null,
                 featured: form.featured,
+                reserved: form.reserved,
                 country: form.country,
                 city: form.city || "Nezadané",
                 location_sk: form.location_sk || "Nezadané",
@@ -767,6 +770,7 @@ export default function PropertyForm({ initialData, mode }: PropertyFormProps) {
             available_from: form.available_from || null,
             property_id_external: form.property_id_external || null,
             featured: form.featured,
+            reserved: form.reserved,
             country: form.country,
             city: form.city,
             location_sk: form.location_sk,
@@ -1522,6 +1526,7 @@ export default function PropertyForm({ initialData, mode }: PropertyFormProps) {
                             <h3 className="text-xs font-semibold uppercase tracking-wider text-[var(--color-muted)] mb-4">Export & Publikovanie</h3>
                             <div className="space-y-5">
                                 <Toggle label="Odporúčaná nehnuteľnosť" checked={form.featured} onChange={v => updateField("featured", v)} description="Zobrazí sa na hlavnej stránke a bude zvýraznená v zozname" />
+                                <Toggle label="Rezervovaná" checked={form.reserved} onChange={v => updateField("reserved", v)} description="Klient zaplatil zálohu — zobrazí sa výrazný badge 'Rezervované'" />
                                 <div>
                                     <label className="block text-[13px] font-semibold text-[var(--color-foreground)] mb-2">Export na portály</label>
                                     <div className="space-y-2">

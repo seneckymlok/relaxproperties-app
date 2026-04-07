@@ -64,7 +64,7 @@ export default function HeroSlider({ lang = 'sk', dictionary, featuredProperties
                 country: translateCountry(p.country, lang),
                 title: p.title,
                 image,
-                ctaLink: `/${lang}/properties/${p.id}`,
+                ctaLink: `/${lang}/properties/${p.slug || p.id}`,
                 ctaLabel: viewDetailsLabel,
             };
         });

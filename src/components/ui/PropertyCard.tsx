@@ -22,10 +22,12 @@ interface PropertyCardProps {
   area: number;
   images: string[];
   featured?: boolean;
+  reserved?: boolean;
   compact?: boolean;
   lang?: string;
   dictionary?: Dictionary;
   previewTags?: string[];
+  slug?: string | null;
   distanceFromSea?: number | null;
   propertyIdExternal?: string | null;
   priority?: boolean;
@@ -41,10 +43,12 @@ export default function PropertyCard({
   area,
   images,
   featured = false,
+  reserved = false,
   compact = false,
   lang = 'sk',
   dictionary,
   previewTags = [],
+  slug,
   distanceFromSea,
   propertyIdExternal,
   priority = false,
@@ -95,7 +99,7 @@ export default function PropertyCard({
   };
 
   return (
-    <Link href={`/${lang}/properties/${id}`} className="block h-full">
+    <Link href={`/${lang}/properties/${slug || id}`} className="block h-full">
       <article className="group h-full bg-white rounded-2xl overflow-hidden shadow-[var(--shadow-sm)] hover:shadow-[var(--shadow-lg)] transition-all duration-300 hover:-translate-y-1 flex flex-col">
         {/* Image carousel — Swiper for smooth native swiping */}
         <div className={`relative ${compact ? "h-[clamp(10rem,28vw,12rem)]" : "aspect-[4/3]"} overflow-hidden bg-[var(--color-surface)] property-image-watermark`}>
@@ -167,9 +171,16 @@ export default function PropertyCard({
           )}
 
           {/* Featured Badge */}
-          {featured && (
+          {featured && !reserved && (
             <span className={`absolute left-3 z-10 px-3 py-1 text-[10px] font-medium uppercase tracking-widest bg-[var(--color-accent)] text-white rounded-full ${previewTags.length > 0 ? "top-10" : "top-3"}`}>
               {featuredLabel}
+            </span>
+          )}
+
+          {/* Reserved Badge */}
+          {reserved && (
+            <span className={`absolute left-3 z-10 px-3 py-1 text-[10px] font-semibold uppercase tracking-widest bg-[#E65100] text-white rounded-full shadow-md ${previewTags.length > 0 ? "top-10" : "top-3"}`}>
+              {lang === 'en' ? 'Reserved' : lang === 'cz' ? 'Rezervováno' : 'Rezervované'}
             </span>
           )}
 

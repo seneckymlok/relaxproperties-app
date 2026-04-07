@@ -19,7 +19,9 @@ interface FavoriteProperty {
     area: number;
     images: string[];
     featured: boolean;
+    reserved: boolean;
     previewTags?: string[];
+    slug?: string | null;
     distanceFromSea?: number | null;
     propertyIdExternal?: string | null;
 }
@@ -111,7 +113,9 @@ export default function FavoritesPage() {
                                     baths={property.baths}
                                     area={property.area}
                                     images={property.images}
+                                    reserved={property.reserved}
                                     previewTags={property.previewTags}
+                                    slug={property.slug}
                                     lang={lang}
                                     distanceFromSea={property.distanceFromSea}
                                     propertyIdExternal={property.propertyIdExternal}

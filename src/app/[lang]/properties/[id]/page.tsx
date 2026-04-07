@@ -5,14 +5,17 @@ export async function generateStaticParams() {
     const properties = await getPublishedProperties();
     const langs = ['sk', 'en', 'cz'];
     return langs.flatMap(lang =>
-        properties.map(p => ({ lang, id: p.id }))
+        properties.flatMap(p => [
+            { lang, id: p.slug },
+            { lang, id: p.id }, // keep UUID paths for backwards compatibility
+        ])
     );
 }
 
 import type { Metadata } from "next";
 import Link from "next/link";
 import dynamic from "next/dynamic";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import ContactAgentForm from "@/components/ui/ContactAgentForm";
 import PropertyCard from "@/components/ui/PropertyCard";
 import PropertyMapSection from "@/components/ui/PropertyMapSection";
@@ -31,7 +34,8 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
         : `${property.title} — ${property.location}. ${property.priceFormatted}. ${property.beds} ${validLang === 'en' ? 'beds' : validLang === 'cz' ? 'ložnice' : 'spálne'}, ${property.area} m².`;
 
     const META_BASE = { sk: 'https://relaxproperties.sk', en: 'https://relaxproperties.eu', cz: 'https://relaxproperties.cz' };
-    const canonical = `${META_BASE[validLang]}/${validLang}/properties/${id}`;
+    const slug = property.slug || id;
+    const canonical = `${META_BASE[validLang]}/${validLang}/properties/${slug}`;
 
     return {
         title,
@@ -49,9 +53,9 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
         alternates: {
             canonical,
             languages: {
-                sk: `${META_BASE.sk}/sk/properties/${id}`,
-                en: `${META_BASE.en}/en/properties/${id}`,
-                cs: `${META_BASE.cz}/cz/properties/${id}`,
+                sk: `${META_BASE.sk}/sk/properties/${slug}`,
+                en: `${META_BASE.en}/en/properties/${slug}`,
+                cs: `${META_BASE.cz}/cz/properties/${slug}`,
             },
         },
         openGraph: {
@@ -114,6 +118,12 @@ export default async function PropertyDetailPage({ params }: PropertyDetailPageP
 
     if (!property) {
         notFound();
+    }
+
+    // 301 redirect from UUID to slug for SEO
+    const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+    if (isUUID && property.slug) {
+        redirect(`/${lang}/properties/${property.slug}`);
     }
 
     const agentContact = getAgentContact(lang);
@@ -304,7 +314,7 @@ export default async function PropertyDetailPage({ params }: PropertyDetailPageP
     // ── Structured data (JSON-LD) ────────────────────────────────────────────
     const BASE_URLS = { sk: 'https://relaxproperties.sk', en: 'https://relaxproperties.eu', cz: 'https://relaxproperties.cz' };
     const COUNTRY_ISO: Record<string, string> = { bg: 'BG', hr: 'HR', es: 'ES', gr: 'GR' };
-    const canonical = `${BASE_URLS[lang]}/${lang}/properties/${id}`;
+    const canonical = `${BASE_URLS[lang]}/${lang}/properties/${property.slug || id}`;
 
     const propertyJsonLd = {
         '@context': 'https://schema.org',
@@ -665,7 +675,9 @@ export default async function PropertyDetailPage({ params }: PropertyDetailPageP
                                         area={p.area}
                                         images={p.images}
                                         featured={p.featured}
+                                        reserved={p.reserved}
                                         previewTags={p.previewTags}
+                                        slug={p.slug}
                                         lang={lang}
                                         distanceFromSea={p.distanceFromSea}
                                         propertyIdExternal={p.propertyIdExternal}

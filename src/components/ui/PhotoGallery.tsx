@@ -196,14 +196,13 @@ export default function PhotoGallery({ images, title }: PhotoGalleryProps) {
                     </button>
 
                     {/* Image */}
-                    <div className="relative w-full max-w-6xl max-h-[90vh] mx-4" onClick={(e) => e.stopPropagation()}>
+                    <div className="relative w-full h-full max-w-[90vw] max-h-[90vh] mx-auto my-auto" onClick={(e) => e.stopPropagation()}>
                         <Image
                             src={images[lightboxIndex]}
                             alt={`${title} - ${lightboxIndex + 1}`}
-                            width={1920}
-                            height={1080}
-                            sizes="(max-width: 1536px) 100vw, 1536px"
-                            className="object-contain w-full h-full"
+                            fill
+                            sizes="90vw"
+                            className="object-contain"
                             priority
                         />
                     </div>

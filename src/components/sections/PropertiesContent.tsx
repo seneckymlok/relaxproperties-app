@@ -51,6 +51,11 @@ const labels = {
     },
 };
 
+/** Normalize text: lowercase + strip diacritics for accent-agnostic matching */
+function normalize(text: string): string {
+    return text.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+}
+
 export default function PropertiesContent({ lang, properties }: PropertiesContentProps) {
     const searchParams = useSearchParams();
     const router = useRouter();
@@ -117,15 +122,13 @@ export default function PropertiesContent({ lang, properties }: PropertiesConten
     }, []);
     useEffect(() => () => { document.body.style.overflow = ""; }, []);
 
-    // Search by ID or keyword
+    // Search by ID or keyword — exact ID match navigates directly
     const handleSearch = () => {
         if (!searchQuery.trim()) return;
         const q = searchQuery.trim();
-        // Check for exact external ID match
         const match = properties.find(p => p.propertyIdExternal === q);
         if (match) {
-            router.push(`/${lang}/properties/${match.id}`);
-            return;
+            router.push(`/${lang}/properties/${match.slug || match.id}`);
         }
     };
 
@@ -133,13 +136,14 @@ export default function PropertiesContent({ lang, properties }: PropertiesConten
     const filteredProperties = useMemo(() => {
         let result = [...properties];
 
-        // Keyword search filter
+        // Keyword search filter (diacritic-agnostic)
         if (searchQuery.trim()) {
-            const q = searchQuery.trim().toLowerCase();
+            const q = normalize(searchQuery.trim());
             result = result.filter(p =>
-                p.title.toLowerCase().includes(q) ||
-                p.location.toLowerCase().includes(q) ||
-                (p.propertyIdExternal && p.propertyIdExternal.toLowerCase().includes(q))
+                normalize(p.title).includes(q) ||
+                normalize(p.location).includes(q) ||
+                (p.propertyIdExternal && normalize(p.propertyIdExternal).includes(q)) ||
+                (p.description && normalize(p.description).includes(q))
             );
         }
 
@@ -396,7 +400,9 @@ export default function PropertiesContent({ lang, properties }: PropertiesConten
                                     area={property.area}
                                     images={property.images}
                                     featured={property.featured}
+                                    reserved={property.reserved}
                                     previewTags={property.previewTags}
+                                    slug={property.slug}
                                     lang={lang}
                                     distanceFromSea={property.distanceFromSea}
                                     propertyIdExternal={property.propertyIdExternal}

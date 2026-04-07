@@ -17,7 +17,9 @@ interface NewOffersProperty {
     area: number;
     images: string[];
     featured: boolean;
+    reserved: boolean;
     previewTags?: string[];
+    slug?: string | null;
     distanceFromSea?: number | null;
     propertyIdExternal?: string | null;
 }
@@ -60,7 +62,9 @@ export default function NewOffers({ lang = 'sk', dictionary, properties = [] }: 
                                 area={property.area}
                                 images={property.images}
                                 featured={property.featured}
+                                reserved={property.reserved}
                                 previewTags={property.previewTags}
+                                slug={property.slug}
                                 lang={lang}
                                 dictionary={dictionary}
                                 distanceFromSea={property.distanceFromSea}
@@ -84,7 +88,9 @@ export default function NewOffers({ lang = 'sk', dictionary, properties = [] }: 
                                 area={property.area}
                                 images={property.images}
                                 featured={property.featured}
+                                reserved={property.reserved}
                                 previewTags={property.previewTags}
+                                slug={property.slug}
                                 lang={lang}
                                 dictionary={dictionary}
                                 distanceFromSea={property.distanceFromSea}

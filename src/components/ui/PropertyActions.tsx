@@ -53,19 +53,25 @@ const CONTENT_W = PAGE_W - MARGIN * 2;
 // HELPER: Load image as base64
 // ============================================
 
-async function loadImageAsBase64(url: string): Promise<string | null> {
-    try {
-        const response = await fetch(url);
-        const blob = await response.blob();
-        return new Promise((resolve) => {
-            const reader = new FileReader();
-            reader.onloadend = () => resolve(reader.result as string);
-            reader.onerror = () => resolve(null);
-            reader.readAsDataURL(blob);
-        });
-    } catch {
-        return null;
+async function loadImageAsBase64(url: string, retries = 2): Promise<string | null> {
+    for (let attempt = 0; attempt <= retries; attempt++) {
+        try {
+            const response = await fetch(url);
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            const blob = await response.blob();
+            const result = await new Promise<string | null>((resolve) => {
+                const reader = new FileReader();
+                reader.onloadend = () => resolve(reader.result as string);
+                reader.onerror = () => resolve(null);
+                reader.readAsDataURL(blob);
+            });
+            if (result) return result;
+        } catch {
+            if (attempt === retries) return null;
+            await new Promise(r => setTimeout(r, 500 * (attempt + 1)));
+        }
     }
+    return null;
 }
 
 // ============================================
