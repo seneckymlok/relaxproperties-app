@@ -90,8 +90,9 @@ function xmlNum(val: number | null | undefined): string {
 //    The transformer is intentionally easy to adjust field by field.
 
 function propertyToRealsoftXmlItem(p: PropertyRecord): string {
-    const isoCountry = COUNTRY_TO_ISO[p.country] ?? p.country.toUpperCase().slice(0, 2);
-    const countryNameSk = COUNTRY_TO_SK[p.country] ?? p.country;
+    const countryKey = (p.country ?? '').toLowerCase();
+    const isoCountry = COUNTRY_TO_ISO[countryKey] ?? countryKey.toUpperCase().slice(0, 2);
+    const countryNameSk = COUNTRY_TO_SK[countryKey] ?? p.country;
     const subtype = TYPE_TO_REALSOFT_SUBTYPE[p.property_type] ?? p.property_type;
 
     const primaryImage = (p.images || [])[0];
@@ -249,7 +250,7 @@ function mapValue(value: string | null | undefined, map: Record<string, number>)
 }
 
 function propertyToSoftrealXmlItem(p: PropertyRecord): string {
-    const countryId = COUNTRY_TO_SOFTREAL_ID[p.country] ?? 0;
+    const countryId = COUNTRY_TO_SOFTREAL_ID[(p.country ?? '').toLowerCase()] ?? 0;
     const realityType = TYPE_TO_SOFTREAL_RT[p.property_type] ?? 4;
     const relationType = toRelationType(p.offer_type);
     const price = p.price_on_request ? '0' : String(p.price || 0);

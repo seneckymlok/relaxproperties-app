@@ -115,7 +115,7 @@ function toPortalAdvertisement(p: PropertyRecord) {
         source_id: p.property_id_external || p.id,
         street: '',
         location: {
-            state_id: COUNTRY_STATE_ID[p.country] ?? 0,
+            state_id: COUNTRY_STATE_ID[(p.country ?? '').toLowerCase()] ?? 0,
             county_id: 0,
             district_id: 0,
             region_id: 0,
