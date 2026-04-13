@@ -163,34 +163,34 @@ export default function BlogPostPage() {
                         <div className="flex items-center gap-4 mb-5">
                             <Link
                                 href={`/${validLang}/blog`}
-                                className="inline-flex items-center gap-1.5 text-white/60 hover:text-white text-sm transition-colors"
+                                className="inline-flex items-center gap-1.5 text-[var(--color-teal)]/80 hover:text-[var(--color-teal)] text-sm transition-colors font-medium"
                             >
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 19l-7-7 7-7" />
                                 </svg>
                                 {t.backToBlog}
                             </Link>
-                            <span className="w-1 h-1 rounded-full bg-white/30" />
-                            <span className="px-3 py-1 text-xs font-medium uppercase tracking-wider text-white/90 bg-white/15 backdrop-blur-md rounded-full">
+                            <span className="w-1 h-1 rounded-full bg-[var(--color-teal)]/40" />
+                            <span className="px-3 py-1 text-xs font-medium uppercase tracking-wider text-[var(--color-teal)] bg-[var(--color-teal)]/15 backdrop-blur-md rounded-full border border-[var(--color-teal)]/30">
                                 {translateCategory(post.category, validLang)}
                             </span>
                         </div>
 
                         {/* Title */}
-                        <h1 className="font-serif text-3xl md:text-4xl lg:text-5xl text-white max-w-3xl mb-6 leading-tight">
+                        <h1 className="font-serif text-3xl md:text-4xl lg:text-5xl text-[var(--color-teal)] max-w-3xl mb-6 leading-tight drop-shadow-sm">
                             {post.title}
                         </h1>
 
                         {/* Author row */}
                         <div className="flex items-center gap-3">
-                            <div className="w-9 h-9 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white text-xs font-medium">
+                            <div className="w-9 h-9 rounded-full bg-[var(--color-teal)]/20 backdrop-blur-sm flex items-center justify-center text-[var(--color-teal)] text-xs font-medium border border-[var(--color-teal)]/30">
                                 {post.author.split(" ").map(n => n[0]).join("")}
                             </div>
-                            <span className="text-white/80 text-sm font-medium">{post.author}</span>
-                            <span className="w-1 h-1 rounded-full bg-white/30" />
-                            <span className="text-white/50 text-sm">{formattedDate}</span>
-                            <span className="w-1 h-1 rounded-full bg-white/30" />
-                            <span className="text-white/50 text-sm">{post.readTime} {t.readTime}</span>
+                            <span className="text-[var(--color-teal)] text-sm font-semibold">{post.author}</span>
+                            <span className="w-1 h-1 rounded-full bg-[var(--color-teal)]/40" />
+                            <span className="text-[var(--color-teal)]/70 text-sm">{formattedDate}</span>
+                            <span className="w-1 h-1 rounded-full bg-[var(--color-teal)]/40" />
+                            <span className="text-[var(--color-teal)]/70 text-sm">{post.readTime} {t.readTime}</span>
                         </div>
                     </div>
                 </div>
