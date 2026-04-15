@@ -214,7 +214,7 @@ export default async function PropertyDetailPage({ params }: PropertyDetailPageP
     const allAmenities = [...mainAmenities, ...additionalAmenities];
 
     // Get similar properties — targeted SQL query, no full catalogue load
-    const similarProperties = await getSimilarPropertiesServer(id, property.country, lang, 3);
+    const similarProperties = await getSimilarPropertiesServer(property.id, property.country, lang, 3);
 
     // Stats bar items - conditionally show all available data
     const stats = [
