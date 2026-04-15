@@ -71,9 +71,10 @@ async function applyWatermark(imageBuffer: Buffer, mimeType: string): Promise<{ 
         blend: 'over',
     }]);
 
-    // Always output WebP for best performance
-    const outputBuffer = await composited.webp({ quality: 82 }).toBuffer();
-    return { buffer: outputBuffer, ext: 'webp' };
+    // Output JPEG for maximum portal compatibility (nehnutelnosti.sk rejects WebP).
+    // Next.js <Image> still serves AVIF/WebP to browsers via automatic format negotiation.
+    const outputBuffer = await composited.jpeg({ quality: 85 }).toBuffer();
+    return { buffer: outputBuffer, ext: 'jpg' };
 }
 
 /**
@@ -136,9 +137,9 @@ export async function POST(request: NextRequest) {
         let ext: string;
 
         if (skipWatermark) {
-            // Convert to WebP even without watermark
-            finalBuffer = await sharp(inputBuffer).webp({ quality: 82 }).toBuffer();
-            ext = 'webp';
+            // Convert to JPEG even without watermark
+            finalBuffer = await sharp(inputBuffer).jpeg({ quality: 85 }).toBuffer();
+            ext = 'jpg';
         } else {
             // Apply watermark
             const result = await applyWatermark(inputBuffer, fileType);
