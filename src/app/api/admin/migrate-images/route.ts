@@ -40,140 +40,128 @@ export async function GET() {
 }
 
 /**
- * POST /api/admin/migrate-images — Convert all WebP property images to JPG
+ * POST /api/admin/migrate-images?limit=N
  *
- * For each property:
- *   1. Download each .webp image from Vercel Blob
+ * Processes up to `limit` WebP images per call (default 5) to avoid
+ * serverless timeout. Call repeatedly until remaining === 0.
+ *
+ * For each image:
+ *   1. Download WebP from Vercel Blob
  *   2. Convert to JPEG via Sharp
- *   3. Upload the JPEG to Vercel Blob
- *   4. Delete the old WebP blob
- *   5. Update the property's images array in the database
- *
- * Also migrates images inside draft_data if present.
+ *   3. Upload JPEG to Vercel Blob
+ *   4. Delete old WebP blob
+ *   5. Update property images in the database
  */
 export async function POST(request: NextRequest) {
     if (!(await isAuthenticated())) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const properties = await getAllProperties();
-    const results: { id: string; title: string; migrated: number; errors: string[] }[] = [];
-    let totalMigrated = 0;
-    let totalErrors = 0;
+    const { searchParams } = new URL(request.url);
+    const limit = Math.min(parseInt(searchParams.get('limit') ?? '5', 10), 20);
 
-    for (const p of properties) {
-        const images = p.images || [];
-        const webpImages = images.filter(img => {
+    const properties = await getAllProperties();
+
+    // Collect all properties that still have WebP images
+    const pending = properties.filter(p =>
+        (p.images || []).some(img => {
             const url = typeof img === 'string' ? img : img.url;
             return url.endsWith('.webp');
-        });
+        })
+    );
 
-        if (webpImages.length === 0) continue;
+    const migrated: { propertyId: string; title: string; count: number }[] = [];
+    const errors: string[] = [];
+    let imagesDone = 0;
 
-        const errors: string[] = [];
-        let migrated = 0;
-        const updatedImages = [...images];
+    for (const p of pending) {
+        if (imagesDone >= limit) break;
 
-        for (let i = 0; i < updatedImages.length; i++) {
-            const img = updatedImages[i];
+        const images = [...(p.images || [])];
+        let propertyMigrated = 0;
+
+        for (let i = 0; i < images.length; i++) {
+            if (imagesDone >= limit) break;
+
+            const img = images[i];
             const url = typeof img === 'string' ? img : img.url;
             if (!url.endsWith('.webp')) continue;
 
             try {
-                // Download the WebP image
                 const response = await fetch(url);
                 if (!response.ok) {
-                    errors.push(`Failed to fetch ${url}: ${response.status}`);
+                    errors.push(`Fetch failed ${url}: ${response.status}`);
                     continue;
                 }
 
                 const webpBuffer = Buffer.from(await response.arrayBuffer());
+                const jpegBuffer = await sharp(webpBuffer).jpeg({ quality: 85 }).toBuffer();
 
-                // Convert to JPEG
-                const jpegBuffer = await sharp(webpBuffer)
-                    .jpeg({ quality: 85 })
-                    .toBuffer();
-
-                // Generate new filename: same path but .jpg extension
-                const oldUrl = new URL(url);
-                const pathParts = oldUrl.pathname.split('/');
-                const oldFilename = pathParts[pathParts.length - 1];
-                const newFilename = oldFilename.replace(/\.webp$/, '.jpg');
-
-                // Reconstruct the blob path (e.g. "properties/1234-abc.jpg")
-                // Vercel Blob pathnames look like: /properties/1234-abc.webp
+                const pathParts = new URL(url).pathname.split('/');
                 const blobPath = pathParts.slice(-2).join('/').replace(/\.webp$/, '.jpg');
 
-                // Upload JPEG to Vercel Blob
                 const blob = await put(blobPath, jpegBuffer, {
                     access: 'public',
                     addRandomSuffix: false,
                 });
 
-                // Delete the old WebP blob
                 await del(url);
 
-                // Update the image entry
-                if (typeof updatedImages[i] === 'string') {
-                    updatedImages[i] = blob.url as unknown as typeof updatedImages[0];
+                if (typeof images[i] === 'string') {
+                    images[i] = blob.url as unknown as typeof images[0];
                 } else {
-                    (updatedImages[i] as { url: string; alt: string; order: number }).url = blob.url;
+                    (images[i] as { url: string }).url = blob.url;
                 }
 
-                migrated++;
+                propertyMigrated++;
+                imagesDone++;
             } catch (err) {
-                const msg = err instanceof Error ? err.message : String(err);
-                errors.push(`Error converting ${url}: ${msg}`);
+                errors.push(`Error on ${url}: ${err instanceof Error ? err.message : String(err)}`);
             }
         }
 
-        if (migrated > 0) {
-            // Update the property in the database
-            const updatePayload: Record<string, unknown> = {
-                images: updatedImages,
-            };
+        if (propertyMigrated > 0) {
+            const updatePayload: Record<string, unknown> = { images };
 
-            // Also update draft_data.images if present
+            // Mirror changes into draft_data.images if present
             if (p.draft_data && Array.isArray((p.draft_data as Record<string, unknown>).images)) {
-                const draftImages = (p.draft_data as Record<string, unknown>).images as Array<{ url: string; alt: string; order: number } | string>;
-                const updatedDraftImages = draftImages.map(img => {
-                    const url = typeof img === 'string' ? img : img.url;
-                    // Find the matching migrated image by old URL pattern
-                    const matchIdx = images.findIndex(origImg => {
-                        const origUrl = typeof origImg === 'string' ? origImg : origImg.url;
-                        return origUrl === url;
+                const draftImgs = (p.draft_data as Record<string, unknown>).images as Array<{ url: string } | string>;
+                const updatedDraft = draftImgs.map(di => {
+                    const dUrl = typeof di === 'string' ? di : di.url;
+                    const idx = (p.images || []).findIndex(orig => {
+                        const oUrl = typeof orig === 'string' ? orig : orig.url;
+                        return oUrl === dUrl;
                     });
-                    if (matchIdx >= 0 && updatedImages[matchIdx]) {
-                        const newUrl = typeof updatedImages[matchIdx] === 'string'
-                            ? updatedImages[matchIdx] as unknown as string
-                            : (updatedImages[matchIdx] as { url: string }).url;
-                        if (typeof img === 'string') return newUrl;
-                        return { ...img, url: newUrl };
+                    if (idx >= 0) {
+                        const newUrl = typeof images[idx] === 'string'
+                            ? images[idx] as unknown as string
+                            : (images[idx] as { url: string }).url;
+                        return typeof di === 'string' ? newUrl : { ...di, url: newUrl };
                     }
-                    return img;
+                    return di;
                 });
-                updatePayload.draft_data = { ...p.draft_data, images: updatedDraftImages };
+                updatePayload.draft_data = { ...p.draft_data, images: updatedDraft };
             }
 
             await updateProperty(p.id, updatePayload as Parameters<typeof updateProperty>[1]);
+            migrated.push({ propertyId: p.id, title: p.title_sk || p.id, count: propertyMigrated });
         }
-
-        totalMigrated += migrated;
-        totalErrors += errors.length;
-        results.push({
-            id: p.id,
-            title: p.title_sk || p.id,
-            migrated,
-            errors,
-        });
     }
 
+    // Count remaining after this batch
+    const remainingProperties = await getAllProperties();
+    const remaining = remainingProperties.reduce((sum, p) =>
+        sum + (p.images || []).filter(img => {
+            const url = typeof img === 'string' ? img : img.url;
+            return url.endsWith('.webp');
+        }).length, 0
+    );
+
     return NextResponse.json({
-        summary: {
-            propertiesProcessed: results.length,
-            totalImagesMigrated: totalMigrated,
-            totalErrors,
-        },
-        details: results,
+        migrated: imagesDone,
+        remaining,
+        done: remaining === 0,
+        details: migrated,
+        errors,
     });
 }
