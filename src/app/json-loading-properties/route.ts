@@ -74,23 +74,22 @@ function getRealEstateState(p: PropertyRecord): number {
 }
 
 /**
- * Country → state_id mapping for nehnutelnosti.sk location schema
- * 11 = Bulharsko (confirmed from old feed data)
- * Other country codes should be verified with the portal.
+ * Country → state_id mapping for nehnutelnosti.sk location schema.
+ * IDs come from the portal's official state reference table.
  */
 const COUNTRY_STATE_ID: Record<string, number> = {
+    slovakia: 1,
+    czechia: 2,
+    austria: 5,
+    germany: 6,
+    spain: 7,
+    italy: 8,
+    croatia: 9,
     bulgaria: 11,
-    spain: 12,
-    croatia: 13,
-    italy: 14,
-    portugal: 15,
-    greece: 16,
-    montenegro: 17,
-    austria: 18,
-    france: 19,
-    germany: 20,
-    czechia: 21,
-    slovakia: 22,
+    france: 17,
+    portugal: 24,
+    greece: 32,
+    montenegro: 47,
 };
 
 // ============================================
