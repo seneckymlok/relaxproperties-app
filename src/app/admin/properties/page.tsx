@@ -5,6 +5,11 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { PropertyRecord } from "@/lib/property-store";
 
+// Source labels for the feed badge
+const sourceLabels: Record<string, string> = {
+    grekodom: "Grekodom",
+};
+
 // ============================================
 // CONSTANTS
 // ============================================
@@ -193,6 +198,13 @@ export default function PropertiesListPage() {
     const [loading, setLoading] = useState(true);
     const [statusFilter, setStatusFilter] = useState<string>("all");
     const [search, setSearch] = useState("");
+    const [sourceFilter, setSourceFilter] = useState<"all" | "imported" | "manual">("all");
+
+    // Read ?source=imported from URL on first mount
+    useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        if (params.get("source") === "imported") setSourceFilter("imported");
+    }, []);
 
     // Sorting
     const [sortKey, setSortKey] = useState<SortKey>("date");
@@ -431,6 +443,34 @@ export default function PropertiesListPage() {
         }
     }, [selectedIds]);
 
+    const bulkPublish = useCallback(async () => {
+        const publishable = properties.filter(p => selectedIds.has(p.id) && p.publish_status === 'draft');
+        if (publishable.length === 0) return;
+        if (!confirm(`Publikovať ${publishable.length} nehnuteľností?`)) return;
+        setSaving(true);
+        try {
+            await Promise.all(
+                publishable.map(p =>
+                    fetch(`/api/admin/properties/${p.id}`, {
+                        method: "PUT",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ save_mode: "publish" }),
+                    })
+                )
+            );
+            setProperties(prev => prev.map(p =>
+                selectedIds.has(p.id) && p.publish_status === 'draft'
+                    ? { ...p, publish_status: 'published' as const, manually_edited: true }
+                    : p
+            ));
+            setSelectedIds(new Set());
+        } catch (err) {
+            console.error("Bulk publish error:", err);
+        } finally {
+            setSaving(false);
+        }
+    }, [selectedIds, properties]);
+
     const hasPendingChanges = Object.keys(pendingExports).length > 0;
 
     const saveExportChanges = async () => {
@@ -514,6 +554,13 @@ export default function PropertiesListPage() {
             result = result.filter(p => p.publish_status !== 'trashed');
         } else {
             result = result.filter(p => p.publish_status === statusFilter);
+        }
+
+        // Source filter
+        if (sourceFilter === "imported") {
+            result = result.filter(p => p.source && p.source !== 'manual');
+        } else if (sourceFilter === "manual") {
+            result = result.filter(p => !p.source || p.source === 'manual');
         }
 
         // Search (supports title, city, country, and listing ID)
@@ -617,7 +664,9 @@ export default function PropertiesListPage() {
         });
     };
 
-    const activeFiltersCount = (countryFilter.size > 0 ? 1 : 0) + (cityFilter.size > 0 ? 1 : 0) + (dateFilter.size > 0 ? 1 : 0);
+    const activeFiltersCount = (countryFilter.size > 0 ? 1 : 0) + (cityFilter.size > 0 ? 1 : 0) + (dateFilter.size > 0 ? 1 : 0) + (sourceFilter !== 'all' ? 1 : 0);
+
+    const importedCount = useMemo(() => properties.filter(p => p.source && p.source !== 'manual').length, [properties]);
 
     const clearAllFilters = () => {
         setCountryFilter(new Set());
@@ -625,6 +674,7 @@ export default function PropertiesListPage() {
         setDateFilter(new Set());
         setSearch("");
         setStatusFilter("all");
+        setSourceFilter("all");
     };
 
     // ============================================
@@ -637,7 +687,12 @@ export default function PropertiesListPage() {
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                 <div>
                     <h1 className="text-3xl font-serif text-[var(--color-secondary)]">Nehnuteľnosti</h1>
-                    <p className="text-sm text-[var(--color-muted)] mt-1">{properties.length} celkovo</p>
+                    <p className="text-sm text-[var(--color-muted)] mt-1">
+                        {properties.filter(p => p.publish_status !== 'trashed').length} celkovo
+                        {importedCount > 0 && (
+                            <> · <button onClick={() => setSourceFilter("imported")} className="text-[var(--color-primary)] hover:underline">📡 {importedCount} importovaných</button></>
+                        )}
+                    </p>
                 </div>
                 <Link
                     href="/admin/properties/new"
@@ -694,6 +749,24 @@ export default function PropertiesListPage() {
                 <MultiSelectFilter label="Krajina" options={countryOptions} selected={countryFilter} onChange={setCountryFilter} />
                 <MultiSelectFilter label="Mesto" options={cityOptions} selected={cityFilter} onChange={setCityFilter} />
                 <MultiSelectFilter label="Dátum pridania" options={dateOptions} selected={dateFilter} onChange={setDateFilter} />
+
+                {/* Source filter */}
+                <button
+                    type="button"
+                    onClick={() => setSourceFilter(f => f === "imported" ? "all" : "imported")}
+                    className={`flex items-center gap-2 px-3.5 py-2 text-xs font-semibold rounded-xl border transition-all shadow-sm ${
+                        sourceFilter === "imported"
+                            ? "bg-[var(--color-primary)] text-white border-[var(--color-primary)]"
+                            : "bg-white text-[var(--color-muted)] border-[var(--color-border)] hover:border-[var(--color-primary)]"
+                    }`}
+                >
+                    📡 Importované
+                    {importedCount > 0 && (
+                        <span className={`text-[10px] font-bold rounded-full px-1.5 py-0.5 leading-none ${sourceFilter === "imported" ? "bg-white/25 text-white" : "bg-[var(--color-surface)] text-[var(--color-muted)]"}`}>
+                            {importedCount}
+                        </span>
+                    )}
+                </button>
 
                 {activeFiltersCount > 0 && (
                     <button
@@ -779,6 +852,19 @@ export default function PropertiesListPage() {
                                 </button>
                                 <div className="h-5 w-px bg-[var(--color-border)]" />
                             </>
+                        )}
+
+                        {/* Publish drafts */}
+                        {hasNonTrashed && selected.some(p => p.publish_status === 'draft') && (
+                            <button
+                                type="button"
+                                onClick={bulkPublish}
+                                disabled={saving}
+                                className="px-3 py-1.5 text-xs font-semibold bg-emerald-500/10 text-emerald-700 hover:bg-emerald-500/20 rounded-lg transition-colors disabled:opacity-50"
+                                title="Publikovať vybrané koncepty"
+                            >
+                                ✓ Publikovať
+                            </button>
                         )}
 
                         {/* Trash — for non-trashed items */}
@@ -918,9 +1004,26 @@ export default function PropertiesListPage() {
                                                     )}
                                                     <div>
                                                         <p className="text-sm font-semibold text-[var(--color-secondary)] group-hover:text-[var(--color-primary)] transition-colors">{p.title_sk}</p>
-                                                        {p.featured && (
-                                                            <span className="text-[10px] text-[var(--color-accent)] font-semibold mt-0.5 block">★ Odporúčané</span>
-                                                        )}
+                                                        <div className="flex flex-wrap items-center gap-1.5 mt-0.5">
+                                                            {p.featured && (
+                                                                <span className="text-[10px] text-[var(--color-accent)] font-semibold">★ Odporúčané</span>
+                                                            )}
+                                                            {p.source && p.source !== 'manual' && p.publish_status === 'draft' && (
+                                                                <span className="inline-flex items-center gap-0.5 text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-700">
+                                                                    📡 Nové z feedu
+                                                                </span>
+                                                            )}
+                                                            {p.source && p.source !== 'manual' && p.publish_status === 'published' && (
+                                                                <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-blue-50 text-blue-600">
+                                                                    📡 {sourceLabels[p.source] || p.source}
+                                                                </span>
+                                                            )}
+                                                            {p.source && p.source !== 'manual' && p.manually_edited && (
+                                                                <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-emerald-50 text-emerald-600" title="Ručne upravené — sync neprepíše">
+                                                                    🔒 Chránené
+                                                                </span>
+                                                            )}
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </td>
