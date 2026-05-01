@@ -47,6 +47,26 @@ const COUNTRY_TO_SK: Record<string, string> = {
     slovakia: 'Slovensko',
 };
 
+/**
+ * Disposition → number of rooms for the RealSoft <rooms> field.
+ * nehnutelnosti.sk uses this count to categorise the listing (štúdio = 1, 2-izbový = 2, …).
+ * Falls back to p.beds if disposition is not set.
+ */
+const DISPOSITION_TO_ROOMS: Record<string, number> = {
+    studio: 1,
+    '1kk': 1,
+    '2kk': 2,
+    '3kk': 3,
+    '4kk': 4,
+    '5kk': 5,
+    '6kk': 6,
+    '1_room': 1,
+    '2_room': 2,
+    '3_room': 3,
+    '4_room': 4,
+    '5_room_plus': 5,
+};
+
 /** Our property_type → RealSoft subtype codes (Slovak portals) */
 const TYPE_TO_REALSOFT_SUBTYPE: Record<string, string> = {
     villa: 'vila',
@@ -118,7 +138,7 @@ function propertyToRealsoftXmlItem(p: PropertyRecord): string {
     <priceOnRequest>${xmlBool(p.price_on_request)}</priceOnRequest>
     <currency>EUR</currency>
     <area>${xmlNum(p.area)}</area>
-    <rooms>${xmlNum(p.beds)}</rooms>
+    <rooms>${xmlNum(p.disposition ? (DISPOSITION_TO_ROOMS[p.disposition] ?? p.beds) : p.beds)}</rooms>
     <bathrooms>${xmlNum(p.baths)}</bathrooms>
     <floor>${xmlNum(p.floor_number)}</floor>
     <floors>${xmlNum(p.floors)}</floors>
