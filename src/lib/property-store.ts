@@ -126,6 +126,12 @@ export interface PropertyRecord {
     // Draft versioning
     draft_data: Record<string, unknown> | null;
 
+    // Feed import tracking
+    source: string;                 // 'manual' | 'grekodom' | …
+    feed_source_id: string | null;  // FK to feed_sources
+    external_feed_uid: string | null;
+    manually_edited: boolean;       // if true, syncs skip this row
+
     // Timestamps
     created_at: string;
     updated_at: string;
@@ -297,9 +303,13 @@ export async function createProperty(input: Partial<PropertyInput>): Promise<Pro
 export async function updateProperty(id: string, input: Partial<PropertyInput>): Promise<PropertyRecord> {
     const supabase = getAdminClient();
 
+    // If this is an imported property being manually edited, flag it so future
+    // syncs leave it alone.
+    const updatePayload = { ...input, manually_edited: true };
+
     const { data, error } = await supabase
         .from('properties')
-        .update(input)
+        .update(updatePayload)
         .eq('id', id)
         .select()
         .single();
@@ -381,6 +391,7 @@ export async function publishProperty(id: string, payload: Partial<PropertyInput
             ...payload,
             publish_status: 'published',
             draft_data: null,
+            manually_edited: true, // publishing counts as a manual edit
         })
         .eq('id', id)
         .select()
