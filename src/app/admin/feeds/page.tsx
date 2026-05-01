@@ -303,6 +303,145 @@ function SyncPanel({ feedId, feedName, onClose }: { feedId: string; feedName: st
 }
 
 // ============================================
+// DELETE CONFIRMATION MODAL
+// ============================================
+
+function DeleteFeedModal({
+    feed,
+    onClose,
+    onDeleted,
+}: {
+    feed: FeedSource;
+    onClose: () => void;
+    onDeleted: () => void;
+}) {
+    const [propertiesMode, setPropertiesMode] = useState<"keep" | "trash" | "permanent">("keep");
+    const [deleting, setDeleting] = useState(false);
+    const [error, setError] = useState("");
+
+    const confirm = async () => {
+        setDeleting(true);
+        setError("");
+        try {
+            const qs = propertiesMode !== "keep" ? `?deleteProperties=${propertiesMode}` : "";
+            const res = await fetch(`/api/admin/feeds/${feed.id}${qs}`, { method: "DELETE" });
+            if (!res.ok) {
+                const j = await res.json();
+                setError(j.error || "Chyba pri mazaní");
+                return;
+            }
+            onDeleted();
+            onClose();
+        } catch (e) {
+            setError((e as Error).message);
+        } finally {
+            setDeleting(false);
+        }
+    };
+
+    const options: { value: "keep" | "trash" | "permanent"; label: string; description: string; color: string }[] = [
+        {
+            value: "keep",
+            label: "Ponechať nehnuteľnosti",
+            description: "Importované nehnuteľnosti zostanú v databáze, len stratia väzbu na feed. Môžete ich ďalej spravovať ručne.",
+            color: "border-gray-200",
+        },
+        {
+            value: "trash",
+            label: "Presunúť do koša",
+            description: "Všetky importované nehnuteľnosti z tohto feedu sa presunú do koša. Obnoviť ich môžete do 30 dní.",
+            color: "border-amber-300",
+        },
+        {
+            value: "permanent",
+            label: "Natrvalo vymazať",
+            description: "Všetky importované nehnuteľnosti z tohto feedu sa natrvalo a nezvratne vymažú z databázy.",
+            color: "border-red-400",
+        },
+    ];
+
+    return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={onClose}>
+            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg" onClick={e => e.stopPropagation()}>
+                {/* Header */}
+                <div className="p-6 border-b border-gray-100 flex items-start gap-3">
+                    <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
+                        <svg className="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 className="text-lg font-semibold text-gray-900">Vymazať feed</h2>
+                        <p className="text-sm text-gray-500 mt-0.5">
+                            <span className="font-medium text-gray-700">{feed.name}</span>
+                            {feed.last_stats?.added ? ` · ${feed.last_stats.added} nehnuteľností importovaných` : ""}
+                        </p>
+                    </div>
+                    <button onClick={onClose} className="ml-auto text-gray-400 hover:text-gray-600 text-xl leading-none">×</button>
+                </div>
+
+                {/* Options */}
+                <div className="p-6 space-y-3">
+                    <p className="text-sm text-gray-600 mb-4">Čo sa má stať s nehnuteľnosťami importovanými z tohto feedu?</p>
+                    {options.map(opt => (
+                        <label
+                            key={opt.value}
+                            className={`flex items-start gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all ${
+                                propertiesMode === opt.value
+                                    ? `${opt.color} bg-gray-50`
+                                    : "border-gray-100 hover:border-gray-200"
+                            }`}
+                        >
+                            <input
+                                type="radio"
+                                name="propertiesMode"
+                                value={opt.value}
+                                checked={propertiesMode === opt.value}
+                                onChange={() => setPropertiesMode(opt.value)}
+                                className="mt-0.5 accent-[var(--color-primary)]"
+                            />
+                            <div>
+                                <p className={`text-sm font-semibold ${opt.value === "permanent" ? "text-red-600" : "text-gray-800"}`}>
+                                    {opt.label}
+                                </p>
+                                <p className="text-xs text-gray-500 mt-0.5">{opt.description}</p>
+                            </div>
+                        </label>
+                    ))}
+
+                    {propertiesMode === "permanent" && (
+                        <div className="flex items-center gap-2 px-4 py-3 bg-red-50 border border-red-200 rounded-xl">
+                            <svg className="w-4 h-4 text-red-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+                            </svg>
+                            <p className="text-xs text-red-700 font-medium">Táto akcia je nezvratná. Nehnuteľnosti sa nedajú obnoviť.</p>
+                        </div>
+                    )}
+
+                    {error && <p className="text-red-600 text-sm font-medium">{error}</p>}
+                </div>
+
+                {/* Actions */}
+                <div className="p-6 border-t border-gray-100 flex gap-3 justify-end">
+                    <button onClick={onClose} className="px-4 py-2 rounded-xl text-sm text-gray-600 hover:bg-gray-50 border border-gray-200">
+                        Zrušiť
+                    </button>
+                    <button
+                        onClick={confirm}
+                        disabled={deleting}
+                        className={`px-5 py-2 rounded-xl text-sm font-semibold text-white disabled:opacity-50 transition-opacity ${
+                            propertiesMode === "permanent" ? "bg-red-600 hover:bg-red-700" : "bg-[var(--color-primary)] hover:opacity-90"
+                        }`}
+                    >
+                        {deleting ? "Mažem…" : propertiesMode === "permanent" ? "Natrvalo vymazať" : "Vymazať feed"}
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+// ============================================
 // MAIN PAGE
 // ============================================
 
@@ -311,7 +450,7 @@ export default function FeedsPage() {
     const [loading, setLoading] = useState(true);
     const [modalFeed, setModalFeed] = useState<FeedSource | null | "new">(null);
     const [syncFeed, setSyncFeed] = useState<FeedSource | null>(null);
-    const [deleteId, setDeleteId] = useState<string | null>(null);
+    const [deleteFeed, setDeleteFeed] = useState<FeedSource | null>(null);
 
     const load = useCallback(async () => {
         setLoading(true);
@@ -325,12 +464,6 @@ export default function FeedsPage() {
     }, []);
 
     useEffect(() => { load(); }, [load]);
-
-    const handleDelete = async (id: string) => {
-        if (!confirm("Naozaj vymazať tento feed? Importované nehnuteľnosti zostanú.")) return;
-        await fetch(`/api/admin/feeds/${id}`, { method: "DELETE" });
-        load();
-    };
 
     return (
         <div className="min-h-screen bg-[var(--color-bg)] p-6">
@@ -414,7 +547,7 @@ export default function FeedsPage() {
                                         <button onClick={() => setModalFeed(feed)} className="px-3.5 py-2 rounded-xl text-sm font-semibold border border-[var(--color-border)] text-[var(--color-secondary)] hover:bg-gray-50">
                                             Upraviť
                                         </button>
-                                        <button onClick={() => handleDelete(feed.id)} className="px-3.5 py-2 rounded-xl text-sm border border-red-200 text-red-500 hover:bg-red-50">
+                                        <button onClick={() => setDeleteFeed(feed)} className="px-3.5 py-2 rounded-xl text-sm border border-red-200 text-red-500 hover:bg-red-50">
                                             Zmazať
                                         </button>
                                     </div>
@@ -447,6 +580,13 @@ export default function FeedsPage() {
                     feedId={syncFeed.id}
                     feedName={syncFeed.name}
                     onClose={() => { setSyncFeed(null); load(); }}
+                />
+            )}
+            {deleteFeed && (
+                <DeleteFeedModal
+                    feed={deleteFeed}
+                    onClose={() => setDeleteFeed(null)}
+                    onDeleted={load}
                 />
             )}
         </div>

@@ -101,6 +101,40 @@ export async function deleteFeedSource(id: string): Promise<void> {
     if (error) throw new Error(`Failed to delete feed source: ${error.message}`);
 }
 
+/**
+ * Delete all properties imported from a given feed.
+ *
+ * mode 'trash'     — sets publish_status = 'trashed' (recoverable for 30 days)
+ * mode 'permanent' — hard-deletes from the DB immediately
+ *
+ * Returns the count of affected properties.
+ */
+export async function deletePropertiesByFeedSource(
+    feedId: string,
+    mode: 'trash' | 'permanent'
+): Promise<number> {
+    const supabase = getAdminClient();
+
+    if (mode === 'trash') {
+        const { data, error } = await supabase
+            .from('properties')
+            .update({ publish_status: 'trashed', updated_at: new Date().toISOString() })
+            .eq('feed_source_id', feedId)
+            .neq('publish_status', 'trashed') // skip already-trashed
+            .select('id');
+        if (error) throw new Error(`Failed to trash properties: ${error.message}`);
+        return (data || []).length;
+    } else {
+        const { data, error } = await supabase
+            .from('properties')
+            .delete()
+            .eq('feed_source_id', feedId)
+            .select('id');
+        if (error) throw new Error(`Failed to delete properties: ${error.message}`);
+        return (data || []).length;
+    }
+}
+
 export async function updateFeedStatus(
     id: string,
     status: 'ok' | 'error' | 'running',
