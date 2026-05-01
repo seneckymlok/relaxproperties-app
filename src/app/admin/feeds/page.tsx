@@ -3,19 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import type { FeedSource, FeedFilterConfig } from "@/lib/feed-store";
-
-// ============================================
-// CONSTANTS
-// ============================================
-
-const GREKODOM_ESTATE_TYPES = [
-    "Flat", "Maisonette", "Duplex", "Detached house", "Villa",
-    "Land", "Commercial property", "Hotel", "Business", "Building", "Complex",
-];
-
-const FORMAT_LABELS: Record<string, string> = {
-    grekodom_xml: "Grekodom XML",
-};
+import { FORMAT_LABELS, FORMAT_FILTER_CAPABILITIES } from "@/lib/importers/registry";
 
 // ============================================
 // HELPERS
@@ -126,8 +114,18 @@ function FeedModal({
                     {/* Format */}
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Formát</label>
-                        <select value={format} onChange={e => setFormat(e.target.value)} className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]">
-                            <option value="grekodom_xml">Grekodom XML</option>
+                        <select
+                            value={format}
+                            onChange={e => {
+                                setFormat(e.target.value);
+                                // Reset filter config when format changes — old config may not apply
+                                setFilter(EMPTY_FILTER);
+                            }}
+                            className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
+                        >
+                            {Object.entries(FORMAT_LABELS).map(([val, label]) => (
+                                <option key={val} value={val}>{label}</option>
+                            ))}
                         </select>
                     </div>
                     {/* Cron */}
@@ -144,38 +142,51 @@ function FeedModal({
                         <span className="text-sm font-medium text-gray-700">Aktívny</span>
                     </label>
 
-                    {/* ---- Filters ---- */}
-                    <div className="border-t border-gray-100 pt-5">
-                        <h3 className="text-sm font-semibold text-gray-800 mb-3">Filtre importu</h3>
+                    {/* ---- Filters — driven by FORMAT_FILTER_CAPABILITIES ---- */}
+                    {(() => {
+                        const caps = FORMAT_FILTER_CAPABILITIES[format];
+                        if (!caps) return null;
+                        return (
+                            <div className="border-t border-gray-100 pt-5">
+                                <h3 className="text-sm font-semibold text-gray-800 mb-1">Filtre importu</h3>
+                                <p className="text-xs text-gray-400 mb-3">Prázdne pole = importovať všetko.</p>
 
-                        {/* Estate types */}
-                        <div className="mb-4">
-                            <label className="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Typy nehnuteľností (prázdne = všetky)</label>
-                            <div className="flex flex-wrap gap-2">
-                                {GREKODOM_ESTATE_TYPES.map(et => {
-                                    const sel = (filter.estate_types || []).includes(et);
-                                    return (
-                                        <button key={et} type="button" onClick={() => toggleEstateType(et)}
-                                            className={`px-3 py-1 rounded-full text-xs font-semibold transition-all border ${sel ? "bg-[var(--color-primary)] text-white border-[var(--color-primary)]" : "bg-white text-gray-600 border-gray-200 hover:border-[var(--color-primary)]"}`}>
-                                            {et}
-                                        </button>
-                                    );
-                                })}
-                            </div>
-                        </div>
+                                {/* Estate types — only if this format has them */}
+                                {caps.estateTypes && caps.estateTypes.length > 0 && (
+                                    <div className="mb-4">
+                                        <label className="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">
+                                            Typy nehnuteľností
+                                        </label>
+                                        <div className="flex flex-wrap gap-2">
+                                            {caps.estateTypes.map(et => {
+                                                const sel = (filter.estate_types || []).includes(et);
+                                                return (
+                                                    <button key={et} type="button" onClick={() => toggleEstateType(et)}
+                                                        className={`px-3 py-1 rounded-full text-xs font-semibold transition-all border ${sel ? "bg-[var(--color-primary)] text-white border-[var(--color-primary)]" : "bg-white text-gray-600 border-gray-200 hover:border-[var(--color-primary)]"}`}>
+                                                        {et}
+                                                    </button>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
+                                )}
 
-                        {/* Price range */}
-                        <div className="grid grid-cols-2 gap-3 mb-4">
-                            <div>
-                                <label className="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Cena od (€)</label>
-                                <input type="number" value={filter.price_min || ""} onChange={e => setFilter(f => ({ ...f, price_min: e.target.value ? Number(e.target.value) : null }))} placeholder="0" className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]" />
+                                {/* Price range — only if this format has prices */}
+                                {caps.priceRange && (
+                                    <div className="grid grid-cols-2 gap-3 mb-4">
+                                        <div>
+                                            <label className="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Cena od (€)</label>
+                                            <input type="number" value={filter.price_min || ""} onChange={e => setFilter(f => ({ ...f, price_min: e.target.value ? Number(e.target.value) : null }))} placeholder="0" className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]" />
+                                        </div>
+                                        <div>
+                                            <label className="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Cena do (€)</label>
+                                            <input type="number" value={filter.price_max || ""} onChange={e => setFilter(f => ({ ...f, price_max: e.target.value ? Number(e.target.value) : null }))} placeholder="bez limitu" className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]" />
+                                        </div>
+                                    </div>
+                                )}
                             </div>
-                            <div>
-                                <label className="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Cena do (€)</label>
-                                <input type="number" value={filter.price_max || ""} onChange={e => setFilter(f => ({ ...f, price_max: e.target.value ? Number(e.target.value) : null }))} placeholder="bez limitu" className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]" />
-                            </div>
-                        </div>
-                    </div>
+                        );
+                    })()}
 
                     {error && <p className="text-red-600 text-sm">{error}</p>}
                 </div>

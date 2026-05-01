@@ -13,7 +13,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { getAllFeedSources, getFeedSourceById, updateFeedStatus } from '@/lib/feed-store';
-import { importGrekodomFeed } from '@/lib/importers/grekodom';
+import { IMPORTERS } from '@/lib/importers/registry';
 
 async function isAuthenticated(request: NextRequest): Promise<boolean> {
     // Check admin session cookie
@@ -74,10 +74,6 @@ function isCronDue(cronExpr: string, lastRunISO: string | null): boolean {
     return false;
 }
 
-const FORMAT_IMPORTERS: Record<string, typeof importGrekodomFeed> = {
-    grekodom_xml: importGrekodomFeed,
-};
-
 export async function POST(request: NextRequest) {
     if (!(await isAuthenticated(request))) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -93,7 +89,7 @@ export async function POST(request: NextRequest) {
         const feed = await getFeedSourceById(body.feed_id);
         if (!feed) return NextResponse.json({ error: 'Feed not found' }, { status: 404 });
 
-        const importer = FORMAT_IMPORTERS[feed.format];
+        const importer = IMPORTERS[feed.format];
         if (!importer) {
             return NextResponse.json({ error: `No importer for format: ${feed.format}` }, { status: 400 });
         }
@@ -116,7 +112,7 @@ export async function POST(request: NextRequest) {
         console.log(`[sync-feeds] ${feeds.length} total feeds, ${due.length} due`);
 
         for (const feed of due) {
-            const importer = FORMAT_IMPORTERS[feed.format];
+            const importer = IMPORTERS[feed.format];
             if (!importer) {
                 results.push({ id: feed.id, name: feed.name, status: 'error', error: `Unknown format: ${feed.format}` });
                 continue;
