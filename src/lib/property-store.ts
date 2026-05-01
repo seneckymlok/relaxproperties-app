@@ -173,13 +173,27 @@ export function formatPrice(price: number): string {
  */
 export async function getAllProperties(): Promise<PropertyRecord[]> {
     const supabase = getAdminClient();
-    const { data, error } = await supabase
-        .from('properties')
-        .select('*')
-        .order('created_at', { ascending: false });
 
-    if (error) throw new Error(`Failed to fetch properties: ${error.message}`);
-    return (data || []) as PropertyRecord[];
+    // Supabase PostgREST caps results at 1000 rows by default.
+    // Paginate with .range() until we receive a partial page, meaning we've exhausted the table.
+    const PAGE = 1000;
+    const all: PropertyRecord[] = [];
+    let from = 0;
+
+    while (true) {
+        const { data, error } = await supabase
+            .from('properties')
+            .select('*')
+            .order('created_at', { ascending: false })
+            .range(from, from + PAGE - 1);
+
+        if (error) throw new Error(`Failed to fetch properties: ${error.message}`);
+        all.push(...((data || []) as PropertyRecord[]));
+        if (!data || data.length < PAGE) break; // last page — done
+        from += PAGE;
+    }
+
+    return all;
 }
 
 /**
@@ -407,19 +421,23 @@ export async function publishProperty(id: string, payload: Partial<PropertyInput
 export async function getPropertyCounts(): Promise<{ total: number; published: number; draft: number; trashed: number }> {
     const supabase = getAdminClient();
 
-    const { data, error } = await supabase
-        .from('properties')
-        .select('publish_status');
+    // Use DB-level COUNT queries (head:true means no rows returned, just the count).
+    // This is accurate regardless of table size and avoids the 1000-row PostgREST cap.
+    const [publishedRes, draftRes, trashedRes] = await Promise.all([
+        supabase.from('properties').select('*', { count: 'exact', head: true }).eq('publish_status', 'published'),
+        supabase.from('properties').select('*', { count: 'exact', head: true }).eq('publish_status', 'draft'),
+        supabase.from('properties').select('*', { count: 'exact', head: true }).eq('publish_status', 'trashed'),
+    ]);
 
-    if (error) throw new Error(`Failed to get counts: ${error.message}`);
+    if (publishedRes.error) throw new Error(`Failed to count published: ${publishedRes.error.message}`);
+    if (draftRes.error) throw new Error(`Failed to count drafts: ${draftRes.error.message}`);
+    if (trashedRes.error) throw new Error(`Failed to count trashed: ${trashedRes.error.message}`);
 
-    const records = data || [];
-    return {
-        total: records.filter(r => r.publish_status !== 'trashed').length,
-        published: records.filter(r => r.publish_status === 'published').length,
-        draft: records.filter(r => r.publish_status === 'draft').length,
-        trashed: records.filter(r => r.publish_status === 'trashed').length,
-    };
+    const published = publishedRes.count ?? 0;
+    const draft = draftRes.count ?? 0;
+    const trashed = trashedRes.count ?? 0;
+
+    return { total: published + draft, published, draft, trashed };
 }
 
 /**
