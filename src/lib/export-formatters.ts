@@ -97,6 +97,62 @@ function xmlBool(val: boolean | null | undefined): string {
     return val ? '1' : '0';
 }
 
+/**
+ * Convert HTML (from TipTap/rich-text editor) to plain text suitable for
+ * real-estate portal XML exports. Portals cannot render HTML tags.
+ *
+ * Strategy:
+ *  1. Block-level closing tags → newline so paragraph structure is preserved
+ *  2. <br> variants → newline
+ *  3. <li> openings → "• " bullet prefix
+ *  4. Strip all remaining tags
+ *  5. Decode common HTML entities
+ *  6. Collapse runs of spaces/tabs on each line; collapse 3+ consecutive newlines to 2
+ *  7. Trim leading/trailing whitespace
+ */
+function htmlToPlainText(html: string | null | undefined): string {
+    if (!html) return '';
+
+    let text = html;
+
+    // Block closing tags → newline (preserves paragraph breaks)
+    text = text.replace(/<\/(p|div|section|article|header|footer|h[1-6]|blockquote|pre|tr)>/gi, '\n');
+
+    // <br> variants → newline
+    text = text.replace(/<br\s*\/?>/gi, '\n');
+
+    // List items: add bullet prefix before the content
+    text = text.replace(/<li[^>]*>/gi, '\n• ');
+    text = text.replace(/<\/li>/gi, '');
+
+    // Strip all remaining HTML tags
+    text = text.replace(/<[^>]+>/g, '');
+
+    // Decode HTML entities
+    text = text
+        .replace(/&nbsp;/gi, ' ')
+        .replace(/&amp;/gi, '&')
+        .replace(/&lt;/gi, '<')
+        .replace(/&gt;/gi, '>')
+        .replace(/&quot;/gi, '"')
+        .replace(/&#39;|&apos;/gi, "'")
+        .replace(/&hellip;/gi, '…')
+        .replace(/&mdash;/gi, '—')
+        .replace(/&ndash;/gi, '–')
+        .replace(/&#(\d+);/g, (_, code) => String.fromCharCode(parseInt(code, 10)));
+
+    // Collapse horizontal whitespace within each line (but keep newlines)
+    text = text.replace(/[^\S\n]+/g, ' ');
+
+    // Trim each line
+    text = text.split('\n').map(l => l.trim()).join('\n');
+
+    // Collapse 3+ consecutive blank lines down to 2
+    text = text.replace(/\n{3,}/g, '\n\n');
+
+    return text.trim();
+}
+
 function xmlNum(val: number | null | undefined): string {
     return val != null ? String(val) : '';
 }
@@ -133,7 +189,7 @@ function propertyToRealsoftXmlItem(p: PropertyRecord): string {
     <subtype>${escapeXml(subtype)}</subtype>
     <transaction>predaj</transaction>
     <title>${escapeXml(p.title_sk)}</title>
-    <description>${escapeXml(p.description_sk || '')}</description>
+    <description>${escapeXml(htmlToPlainText(p.description_sk))}</description>
     <price>${p.price_on_request ? '0' : xmlNum(p.price)}</price>
     <priceOnRequest>${xmlBool(p.price_on_request)}</priceOnRequest>
     <currency>EUR</currency>
@@ -293,7 +349,7 @@ function propertyToSoftrealXmlItem(p: PropertyRecord): string {
     // --- <attributes> ---
     const attrs: [string, string | number][] = [
         ['title', p.title_cz || p.title_sk],
-        ['description', p.description_cz || p.description_sk || ''],
+        ['description', htmlToPlainText(p.description_cz || p.description_sk || '')],
         ['advert_price', price],
         ['advert_price_currency', 3],                         // EUR
         ['advert_price_owner', price],
@@ -377,7 +433,7 @@ function propertyToSoftrealXmlItem(p: PropertyRecord): string {
 
     // EN translations
     if (p.title_en) attrs.push(['title_en', p.title_en]);
-    if (p.description_en) attrs.push(['description_en', p.description_en]);
+    if (p.description_en) attrs.push(['description_en', htmlToPlainText(p.description_en)]);
 
     const attrsXml = attrs
         .filter(([, v]) => v !== '' && v !== null && v !== undefined)
