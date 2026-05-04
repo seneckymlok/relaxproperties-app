@@ -177,11 +177,13 @@ export default function PropertyCard({
             </span>
           )}
 
-          {/* Reserved Badge */}
+          {/* Reserved — diagonal corner ribbon (top-right) */}
           {reserved && (
-            <span className={`absolute left-3 z-10 px-3 py-1 text-[10px] font-semibold uppercase tracking-widest bg-[#E65100] text-white rounded-full shadow-md ${previewTags.length > 0 ? "top-10" : "top-3"}`}>
-              {lang === 'en' ? 'Reserved' : lang === 'cz' ? 'Rezervováno' : 'Rezervované'}
-            </span>
+            <div className="absolute top-0 right-0 z-[9] w-[92px] h-[92px] overflow-hidden pointer-events-none">
+              <div className="absolute top-[20px] right-[-26px] w-[120px] text-center bg-[#6B2737] text-white text-[8px] font-bold uppercase tracking-[0.14em] py-[6px] rotate-45 shadow-[0_2px_8px_rgba(0,0,0,0.25)]">
+                {lang === 'en' ? 'Reserved' : lang === 'cz' ? 'Rezervováno' : 'Rezervované'}
+              </div>
+            </div>
           )}
 
           {/* Property ID badge — bottom left of image */}

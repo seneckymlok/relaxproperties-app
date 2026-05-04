@@ -415,9 +415,32 @@ export default async function PropertyDetailPage({ params }: PropertyDetailPageP
                         <div className="lg:col-span-2">
                             {/* Property Header */}
                             <div className="pb-6 border-b border-[var(--color-border)]">
+                                {/* Reserved banner — full-width strip above the title row */}
+                                {property.reserved && (
+                                    <div className="flex items-center gap-3 mb-5 px-4 py-3 rounded-xl bg-[#6B2737]/8 border border-[#6B2737]/20">
+                                        <span className="flex-shrink-0 w-8 h-8 rounded-full bg-[#6B2737]/12 flex items-center justify-center">
+                                            <svg className="w-4 h-4 text-[#6B2737]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.8}>
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+                                            </svg>
+                                        </span>
+                                        <div>
+                                            <p className="text-[#6B2737] text-sm font-semibold uppercase tracking-widest leading-none">
+                                                {lang === 'en' ? 'Reserved' : lang === 'cz' ? 'Rezervováno' : 'Rezervované'}
+                                            </p>
+                                            <p className="text-[#6B2737]/70 text-xs mt-0.5">
+                                                {lang === 'en'
+                                                    ? 'This property is currently reserved'
+                                                    : lang === 'cz'
+                                                    ? 'Tato nemovitost je aktuálně rezervována'
+                                                    : 'Táto nehnuteľnosť je aktuálne rezervovaná'}
+                                            </p>
+                                        </div>
+                                    </div>
+                                )}
+
                                 <div className="flex flex-wrap items-start justify-between gap-4">
                                     <div>
-                                        {property.featured && (
+                                        {property.featured && !property.reserved && (
                                             <div className="mb-3">
                                                 <span className="inline-block px-3 py-1 text-xs font-medium uppercase tracking-wider text-[var(--color-accent)] bg-[var(--color-accent)]/10 rounded-full">
                                                     {t.featured}
