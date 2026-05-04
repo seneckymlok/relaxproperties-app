@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { DM_Sans, Libre_Baskerville, Instrument_Serif } from "next/font/google";
+import { DM_Sans, Libre_Baskerville, Instrument_Serif, Nunito } from "next/font/google";
 import "../globals.css";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
@@ -30,6 +30,13 @@ const instrumentSerif = Instrument_Serif({
   display: "swap",
   weight: "400",
   style: ["normal", "italic"],
+});
+
+const nunito = Nunito({
+  variable: "--font-nunito",
+  subsets: ["latin", "latin-ext"],
+  display: "swap",
+  weight: ["700", "800"],
 });
 
 export function generateMetadata({ params }: { params: { lang: string } }): Metadata {
@@ -143,7 +150,7 @@ export default async function RootLayout({
         <link rel="dns-prefetch" href="https://8v6qfutk2bxqslae.public.blob.vercel-storage.com" />
         <link rel="dns-prefetch" href="https://7lisadzjl63dspu3.public.blob.vercel-storage.com" />
       </head>
-      <body className={`${dmSans.variable} ${libreBaskerville.variable} ${instrumentSerif.variable} antialiased`}>
+      <body className={`${dmSans.variable} ${libreBaskerville.variable} ${instrumentSerif.variable} ${nunito.variable} antialiased`}>
         <SmoothScrollProvider>
           <FavoritesProvider>
             <CookieConsentProvider>

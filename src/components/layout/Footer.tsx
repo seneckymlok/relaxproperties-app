@@ -196,14 +196,12 @@ export default function Footer({ lang, dictionary }: FooterProps) {
                             </div>
                             <p className="text-[11px] text-white/15 tracking-wide">
                                 made by{" "}
-                                <a
-                                    href="https://nexystech.com"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="nexystech-link text-white/25 hover:text-[var(--color-accent)] transition-colors duration-200"
+                                <span
+                                    className="font-[family-name:var(--font-nunito)] font-bold text-[12px] text-white/30 hover:text-[#E85200] transition-colors duration-200 cursor-default tracking-normal"
+                                    style={{ fontFamily: 'var(--font-nunito, Nunito, sans-serif)' }}
                                 >
-                                    NexysTech
-                                </a>
+                                    Filip Hegedűs
+                                </span>
                             </p>
                         </div>
                     </div>
