@@ -57,4 +57,15 @@ export function proxy(request: NextRequest) {
     url.pathname = pathname === "/" ? `/${lang}` : `/${lang}${pathname}`;
     return NextResponse.redirect(url);
 }
-// Remove matcher config to rely on function logic
+
+export const config = {
+    matcher: [
+        /*
+         * Match all paths except:
+         * - _next/static, _next/image (Next.js internals)
+         * - favicon.ico, robots.txt, sitemap.xml and other static files
+         * - /api routes (handled separately)
+         */
+        '/((?!_next/static|_next/image|favicon\\.ico|robots\\.txt|sitemap.*|.*\\..*).*)',
+    ],
+};
