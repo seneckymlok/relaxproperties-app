@@ -177,6 +177,17 @@ export default function Footer({ lang, dictionary }: FooterProps) {
             {/* ─── Bottom Bar ─── */}
             <div className="relative border-t border-white/[0.06]">
                 <div className="container-custom py-5">
+                    {/* CZ legal details */}
+                    {lang === 'cz' && (
+                        <p className="text-center text-[10px] text-white/15 leading-relaxed mb-4">
+                            <span className="text-white/20 font-medium">Relax Properties CZ s.r.o.</span>
+                            {' · '}Tábor 534/50d, Ponava, 602 00 Brno
+                            {' · '}IČO: 17880131{' · '}DIČ: CZ17880131{' · '}IČ DPH: CZ17880131
+                            <br className="hidden sm:block" />
+                            <span className="hidden sm:inline">{' · '}</span>
+                            Zapsaná v obchodním rejstříku vedeném Krajským soudem v Brně, oddíl C, vložka 131974
+                        </p>
+                    )}
                     <div className="flex flex-col items-center gap-3 md:flex-row md:justify-between">
                         <p className="text-[11px] text-white/20 tracking-wide text-center md:text-left">
                             © {currentYear} Relax Properties. {dictionary.footer.allRights}
