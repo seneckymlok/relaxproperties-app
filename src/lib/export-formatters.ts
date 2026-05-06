@@ -49,11 +49,17 @@ const COUNTRY_TO_SK: Record<string, string> = {
 
 /**
  * Disposition → number of rooms for the RealSoft <rooms> field.
- * nehnutelnosti.sk uses this count to categorise the listing (štúdio = 1, 2-izbový = 2, …).
+ *
+ * nehnutelnosti.sk room-count convention (confirmed):
+ *   0 = garsónka / štúdio  (single open-plan space)
+ *   1 = 1-izbový byt
+ *   2 = 2-izbový byt
+ *   … and so on
+ *
  * Falls back to p.beds if disposition is not set.
  */
 const DISPOSITION_TO_ROOMS: Record<string, number> = {
-    studio: 1,
+    studio: 0,      // garsónka / štúdio → 0 rooms on nehnutelnosti.sk
     '1kk': 1,
     '2kk': 2,
     '3kk': 3,
@@ -77,6 +83,7 @@ const TYPE_TO_REALSOFT_SUBTYPE: Record<string, string> = {
     penthouse: 'byt',
     townhouse: 'radovy-dom',
     studio: 'byt',
+    studio_apartment_flat: 'byt',   // admin form value → byt subtype
 };
 
 // ============================================

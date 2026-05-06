@@ -24,7 +24,7 @@ export async function GET() {
             status: 200,
             headers: {
                 'Content-Type': 'application/xml; charset=utf-8',
-                'Cache-Control': 'public, max-age=3600, stale-while-revalidate=7200',
+                'Cache-Control': 'public, max-age=300, stale-while-revalidate=600',
                 'Access-Control-Allow-Origin': '*',
                 'Content-Disposition': 'inline; filename="realsoft-export.xml"',
             },
