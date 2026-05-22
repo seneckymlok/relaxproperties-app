@@ -277,16 +277,16 @@ function toRelationType(offerType: string): number {
     return offerType === 'rent' ? 2 : 1;
 }
 
-/** building_type → Softreal building_type_obligate */
+/** building_type (admin form slugs) → Softreal building_type_obligate */
 const BUILDING_TYPE_MAP: Record<string, number> = {
-    wood: 1, brick: 2, stone: 3, assembled: 4,
-    panel: 5, skeletal: 6, mixed: 7,
+    drevena: 1, tehlova: 2, kamenna: 3, montovana: 4,
+    panelova: 5, skeletova: 6, zmiesana: 7,
 };
 
-/** status → Softreal building_condition_obligate */
+/** status (admin form slugs) → Softreal building_condition_obligate */
 const BUILDING_CONDITION_MAP: Record<string, number> = {
-    new_build: 6, original: 1, under_construction: 4,
-    project_phase: 5, reconstructed: 9,
+    novostavba: 6, povodny_stav: 1, po_vystavbe: 4,
+    vo_faze_projektovania: 5, po_rekonstrukcii: 9,
 };
 
 /** object_kind mapping for houses (řadový, rohový, blokový, samostatný) */
@@ -294,9 +294,9 @@ const OBJECT_KIND_MAP: Record<string, number> = {
     terraced: 1, corner: 2, block: 3, individual: 4,
 };
 
-/** object_type_obligate (přízemní, patrový) */
+/** house_type (admin form slugs) → object_type_obligate (přízemní, patrový) */
 const OBJECT_TYPE_MAP: Record<string, number> = {
-    ground_floor: 1, storey: 2,
+    prizemi: 1, patrovy: 2,
 };
 
 /** disposition → flat_kind / house_kind codes */
@@ -311,9 +311,9 @@ const HOUSE_SUBTYPE_MAP: Record<string, number> = {
     family: 37, villa: 39, key: 40, wood: 41, low_energy: 42,
 };
 
-/** ownership → Softreal ownership codes */
+/** ownership (admin form slugs) → Softreal ownership codes */
 const OWNERSHIP_MAP: Record<string, number> = {
-    personal: 1, coop: 2, national: 3, equity: 4,
+    osobne: 1, druzstevne: 2, statna_vseobecna: 3, podielove: 4,
 };
 
 /** price unit for sell (za nemovitost, za m²) */

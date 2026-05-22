@@ -151,14 +151,13 @@
         "faqSubtitle": "FAQ",
         "faqTitle": "Časté dotazy",
         "companyInfo": {
-            "name": "Relax Properties s. r. o.",
+            "name": "Relax Properties CZ s r.o.",
             "address": [
-                "Na vyhliadke 2915/5",
-                "900 31 Stupava",
-                "Slovenská republika"
+                "Tábor 534/50d, Ponava",
+                "602 00 Brno"
             ],
-            "registration": "Společnost je zapsána v obchodním rejstříku vedeném Okresním soudem Bratislava I., oddíl Sro, vložka: 152886/B.",
-            "ids": "IČO: 53784961, DIČ: 2121506464, IČ DPH: SK2121506464",
+            "registration": "Společnost je zapsána v obchodním rejstříku vedeném Krajským soudem v Brně, oddíl C, vložka: 131974.",
+            "ids": "IČO: 17880131, DIČ: CZ17880131, IČ DPH: CZ17880131",
             "phoneLabel": "Tel.:",
             "emailLabel": "Mail:",
             "phones": [
