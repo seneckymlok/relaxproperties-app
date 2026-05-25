@@ -1,11 +1,15 @@
 /**
  * Grekodom XML Feed Importer
  *
- * Streams and parses the grekodom.xml feed, applies per-feed filters,
- * translates EN→SK/CZ via DeepL, then upserts into the properties table.
+ * Two-phase model:
+ *   1. analyze   — fetches XML, parses, applies filters, upserts into feed_items.
+ *                  No DeepL, no properties writes. Cheap to re-run.
+ *   2. materialize — takes a set of feed_items (selected by the admin) and
+ *                    creates/updates real rows in `properties`, translating via
+ *                    DeepL. Selected items already published get their
+ *                    price/images/specs refreshed, manually_edited rows are skipped.
  *
- * Feed structure: <feed><Realties><Realty>...</Realty>...</Realties></feed>
- * Size: ~54 MB / ~9,800 listings
+ * Feed: <feed><Realties><Realty>...</Realty>...</Realties></feed>
  */
 
 import { getAdminClient } from '@/lib/supabase';
@@ -35,7 +39,6 @@ const OFFER_TYPE_MAP: Record<string, string> = {
     'For Rent': 'rent',
 };
 
-/** Derives disposition from bedroom count */
 function bedsToDisposition(beds: number, estateType: string): string {
     if (estateType === 'Land' || estateType === 'Commercial property' ||
         estateType === 'Hotel' || estateType === 'Business') return '';
@@ -60,7 +63,6 @@ async function translateBatch(texts: string[], targetLang: 'SK' | 'CS', apiKey: 
     const proUrl = 'https://api.deepl.com/v2/translate';
     const url = apiKey.endsWith(':fx') ? freeUrl : proUrl;
 
-    // DeepL uses "CS" for Czech, "SK" for Slovak, source is English
     const params = new URLSearchParams();
     params.append('auth_key', apiKey);
     params.append('source_lang', 'EN');
@@ -70,10 +72,10 @@ async function translateBatch(texts: string[], targetLang: 'SK' | 'CS', apiKey: 
     const resp = await fetch(url, { method: 'POST', body: params });
     if (!resp.ok) {
         console.warn(`[grekodom] DeepL translate failed: ${resp.status}`);
-        return texts; // fall back to English
+        return texts;
     }
     const json = await resp.json() as { translations: { text: string }[] };
-    const results = [...texts]; // copy
+    const results = [...texts];
     nonEmpty.forEach(({ i }, idx) => {
         results[i] = json.translations[idx]?.text ?? texts[i];
     });
@@ -84,7 +86,7 @@ async function translateBatch(texts: string[], targetLang: 'SK' | 'CS', apiKey: 
 // XML PARSER
 // ============================================
 
-interface GrekodomRealty {
+export interface GrekodomRealty {
     UniqueId: string;
     OfferType: string;
     EstateType: string;
@@ -134,13 +136,10 @@ interface GrekodomRealty {
     images: string[];
 }
 
-/** Parse the grekodom XML text into an array of Realty objects */
 function parseGrekodomXml(xmlText: string): GrekodomRealty[] {
     const results: GrekodomRealty[] = [];
-
-    // Split on <Realty> boundaries (memory-safe for large files)
     const blocks = xmlText.split('<Realty>');
-    blocks.shift(); // drop everything before first <Realty>
+    blocks.shift();
 
     for (const block of blocks) {
         const end = block.indexOf('</Realty>');
@@ -148,7 +147,6 @@ function parseGrekodomXml(xmlText: string): GrekodomRealty[] {
 
         const r: Partial<GrekodomRealty> & { images: string[] } = { images: [] };
 
-        /** Extract first occurrence of a simple text tag */
         const tag = (name: string): string => {
             const m = content.match(new RegExp(`<${name}>([\\s\\S]*?)<\\/${name}>`));
             return m ? m[1].trim() : '';
@@ -207,7 +205,6 @@ function parseGrekodomXml(xmlText: string): GrekodomRealty[] {
         r.YearRenovation = tag('YearRenovation');
         r.PriceWithDiscount = tag('PriceWithDiscount');
 
-        // Extract image URLs from <Pictures><Image>url</Image>...</Pictures>
         const picMatch = content.match(/<Pictures>([\s\S]*?)<\/Pictures>/);
         if (picMatch) {
             const imgMatches = [...picMatch[1].matchAll(/<Image>([\s\S]*?)<\/Image>/g)];
@@ -241,102 +238,297 @@ function applyFilters(realty: GrekodomRealty, config: FeedFilterConfig): boolean
 }
 
 // ============================================
-// MAIN IMPORT FUNCTION
+// STATS
 // ============================================
 
 export interface ImportStats {
     total: number;
     filtered: number;
-    added: number;
-    updated: number;
+    added: number;        // new feed_items rows
+    updated: number;      // refreshed feed_items rows
     skipped: number;
     errors: number;
 }
 
-export async function importGrekodomFeed(
+export interface MaterializeStats {
+    total: number;
+    added: number;        // new properties rows
+    updated: number;      // refreshed properties rows
+    skipped: number;      // manually_edited or already linked
+    errors: number;
+}
+
+// ============================================
+// PHASE 1 — ANALYZE
+// ============================================
+
+/**
+ * Fetch + parse + filter the feed and upsert into feed_items.
+ * Does NOT touch properties and does NOT call DeepL.
+ */
+export async function analyzeGrekodomFeed(
     feed: FeedSource,
-    options: {
-        deeplApiKey?: string;
-        onProgress?: (stats: ImportStats) => void;
-    } = {}
+    options: { onProgress?: (stats: ImportStats) => void } = {}
 ): Promise<ImportStats> {
     const supabase = getAdminClient();
     const stats: ImportStats = { total: 0, filtered: 0, added: 0, updated: 0, skipped: 0, errors: 0 };
 
-    // ---- 1. Fetch the XML feed ----
-    console.log(`[grekodom] Fetching feed: ${feed.url}`);
+    console.log(`[grekodom] Analyze: fetching ${feed.url}`);
     const response = await fetch(feed.url, {
         headers: { 'Accept': 'application/xml, text/xml, */*' },
-        signal: AbortSignal.timeout(120_000), // 2 min timeout
+        signal: AbortSignal.timeout(120_000),
     });
     if (!response.ok) throw new Error(`Feed fetch failed: ${response.status} ${response.statusText}`);
-
     const xmlText = await response.text();
     console.log(`[grekodom] Feed fetched, ${(xmlText.length / 1024 / 1024).toFixed(1)} MB`);
 
-    // ---- 2. Parse ----
     const realties = parseGrekodomXml(xmlText);
     stats.total = realties.length;
     console.log(`[grekodom] Parsed ${stats.total} realties`);
 
-    // ---- 3. Apply filters ----
     const filtered = realties.filter(r => applyFilters(r, feed.filter_config));
     stats.filtered = filtered.length;
-    console.log(`[grekodom] After filters: ${stats.filtered}`);
 
-    // ---- 4. Process in batches ----
-    const BATCH = 20;
-    const deeplKey = options.deeplApiKey || process.env.DEEPL_API_KEY || '';
+    // ---- Mark which existing feed_items exist (to know add vs update,
+    //      and to flag removed_from_feed for items that disappeared)
+    const seenUids = new Set(filtered.map(r => r.UniqueId));
+
+    const BATCH = 100;
+    const now = new Date().toISOString();
 
     for (let i = 0; i < filtered.length; i += BATCH) {
         const batch = filtered.slice(i, i + BATCH);
-
-        // Check which already exist (to know add vs update, and skip manually_edited)
         const uids = batch.map(r => r.UniqueId);
+
         const { data: existing } = await supabase
+            .from('feed_items')
+            .select('external_uid')
+            .eq('feed_source_id', feed.id)
+            .in('external_uid', uids);
+        const existingSet = new Set((existing || []).map(e => e.external_uid as string));
+
+        const rows = batch.map(r => {
+            const price = parseFloat(r.PriceInitial) || 0;
+            const beds = parseInt(r.TotalBedrooms || r.Bedrooms || '0') || 0;
+            const baths = parseInt(r.TotalBathrooms || r.Bathrooms || '0') || 0;
+            const area = parseFloat(r.LivingArea) || 0;
+            const land = parseFloat(r.LotSize) || 0;
+            return {
+                feed_source_id: feed.id,
+                external_uid: r.UniqueId,
+                raw_data: r,
+                title: r.TitleEn || null,
+                estate_type: r.EstateType || null,
+                offer_type: r.OfferType || null,
+                price: r.PriceByRequest?.toLowerCase() === 'yes' ? 0 : price,
+                currency: r.Currency || null,
+                region: r.Region || null,
+                subregion: r.Subregion || null,
+                town: r.Town || null,
+                beds,
+                baths,
+                area,
+                land_area: land || null,
+                image_url: r.images[0] || null,
+                image_count: r.images.length,
+                last_seen_at: now,
+                removed_from_feed: false,
+                updated_at: now,
+            };
+        });
+
+        // Upsert by (feed_source_id, external_uid).
+        // selected/selected_property_id/first_seen_at are preserved by Postgres
+        // because we don't include them in the conflict update list.
+        const { error } = await supabase
+            .from('feed_items')
+            .upsert(rows, { onConflict: 'feed_source_id,external_uid' });
+
+        if (error) {
+            stats.errors += rows.length;
+            console.error('[grekodom] feed_items upsert error:', error.message);
+        } else {
+            for (const r of batch) {
+                if (existingSet.has(r.UniqueId)) stats.updated++;
+                else stats.added++;
+            }
+        }
+
+        options.onProgress?.(stats);
+    }
+
+    // ---- Refresh already-selected properties (price/images/specs only — no DeepL) ----
+    try {
+        await refreshSelectedProperties(feed.id);
+    } catch (err) {
+        console.warn('[grekodom] refreshSelectedProperties failed:', err);
+    }
+
+    // ---- Mark items previously seen but missing from this fetch ----
+    if (seenUids.size > 0) {
+        const { data: stale } = await supabase
+            .from('feed_items')
+            .select('id, external_uid')
+            .eq('feed_source_id', feed.id)
+            .eq('removed_from_feed', false);
+        const staleIds = (stale || [])
+            .filter(s => !seenUids.has(s.external_uid as string))
+            .map(s => s.id as string);
+        if (staleIds.length > 0) {
+            await supabase
+                .from('feed_items')
+                .update({ removed_from_feed: true, updated_at: now })
+                .in('id', staleIds);
+        }
+    }
+
+    return stats;
+}
+
+/**
+ * For all feed_items in this feed that are already selected (and whose linked
+ * property is not manually_edited), refresh non-translated fields on the
+ * properties row: price, images, area, beds, baths, status, lat/long.
+ * Does NOT call DeepL.
+ */
+async function refreshSelectedProperties(feedSourceId: string): Promise<void> {
+    const supabase = getAdminClient();
+
+    const { data: selectedItems } = await supabase
+        .from('feed_items')
+        .select('id, external_uid, raw_data, selected_property_id')
+        .eq('feed_source_id', feedSourceId)
+        .eq('selected', true)
+        .not('selected_property_id', 'is', null);
+
+    if (!selectedItems || selectedItems.length === 0) return;
+
+    const propIds = selectedItems.map(i => i.selected_property_id as string);
+    const { data: props } = await supabase
+        .from('properties')
+        .select('id, manually_edited')
+        .in('id', propIds);
+    const editable = new Set(
+        (props || []).filter(p => !p.manually_edited).map(p => p.id as string)
+    );
+
+    const now = new Date().toISOString();
+    for (const item of selectedItems) {
+        const propId = item.selected_property_id as string;
+        if (!editable.has(propId)) continue;
+
+        const r = item.raw_data as GrekodomRealty;
+        const price = parseFloat(r.PriceInitial || '0') || 0;
+        const priceOnRequest = r.PriceByRequest?.toLowerCase() === 'yes';
+        const isNew = r.IsNewBuilding === 'yes';
+        const isUnderConstruction = r.IsUnderConstruction === 'yes';
+
+        const images = (r.images || []).map((url, idx) => ({
+            url, alt: r.TitleEn || `Property ${r.UniqueId}`, order: idx,
+        }));
+
+        await supabase.from('properties')
+            .update({
+                price: priceOnRequest ? 0 : price,
+                price_on_request: priceOnRequest,
+                images,
+                area: parseFloat(r.LivingArea || '0') || 0,
+                beds: parseInt(r.TotalBedrooms || r.Bedrooms || '0') || 0,
+                baths: parseInt(r.TotalBathrooms || r.Bathrooms || '0') || 0,
+                status: isUnderConstruction ? 'under_construction' : isNew ? 'new_build' : 'original',
+                latitude: parseFloat(r.LatitudeNearBy) || null,
+                longitude: parseFloat(r.LongitudeNearBy) || null,
+                updated_at: now,
+            })
+            .eq('id', propId);
+    }
+}
+
+// ============================================
+// PHASE 2 — MATERIALIZE selected items into properties
+// ============================================
+
+interface FeedItemRow {
+    id: string;
+    feed_source_id: string;
+    external_uid: string;
+    raw_data: GrekodomRealty;
+    selected_property_id: string | null;
+}
+
+/**
+ * Materialize selected feed_items into the properties table.
+ * Translates titles + descriptions via DeepL.
+ */
+export async function materializeGrekodomItems(
+    feed: FeedSource,
+    itemIds: string[],
+    options: { deeplApiKey?: string; onProgress?: (stats: MaterializeStats) => void } = {}
+): Promise<MaterializeStats> {
+    const supabase = getAdminClient();
+    const stats: MaterializeStats = { total: itemIds.length, added: 0, updated: 0, skipped: 0, errors: 0 };
+
+    if (itemIds.length === 0) return stats;
+
+    const deeplKey = options.deeplApiKey || process.env.DEEPL_API_KEY || '';
+
+    const BATCH = 20;
+
+    for (let i = 0; i < itemIds.length; i += BATCH) {
+        const ids = itemIds.slice(i, i + BATCH);
+
+        const { data: items, error: fetchErr } = await supabase
+            .from('feed_items')
+            .select('id, feed_source_id, external_uid, raw_data, selected_property_id')
+            .in('id', ids);
+        if (fetchErr || !items) {
+            stats.errors += ids.length;
+            continue;
+        }
+
+        const batch = items as FeedItemRow[];
+
+        // Find any properties already linked to these UIDs (in case the property
+        // exists but the feed_item lost its link, eg legacy data).
+        const uids = batch.map(b => b.external_uid);
+        const { data: existingProps } = await supabase
             .from('properties')
             .select('id, external_feed_uid, manually_edited, slug')
             .eq('feed_source_id', feed.id)
             .in('external_feed_uid', uids);
+        const propByUid = new Map((existingProps || []).map(p => [p.external_feed_uid as string, p]));
 
-        const existingMap = new Map(
-            (existing || []).map(e => [e.external_feed_uid, e])
-        );
-
-        // Translate titles and descriptions for whole batch at once
-        const titles = batch.map(r => r.TitleEn || '');
-        const descs = batch.map(r => r.DescriptionEn || '');
+        const titles = batch.map(b => b.raw_data.TitleEn || '');
+        const descs = batch.map(b => b.raw_data.DescriptionEn || '');
         const allTexts = [...titles, ...descs];
 
-        let titlesSk = titles;
-        let titlesCs = titles;
-        let descsSk = descs;
-        let descsCs = descs;
-
+        let titlesSk = titles, titlesCs = titles, descsSk = descs, descsCs = descs;
         if (deeplKey && allTexts.some(t => t.trim())) {
             try {
-                const skTranslations = await translateBatch(allTexts, 'SK', deeplKey);
-                titlesSk = skTranslations.slice(0, batch.length);
-                descsSk = skTranslations.slice(batch.length);
-
-                const csTranslations = await translateBatch(allTexts, 'CS', deeplKey);
-                titlesCs = csTranslations.slice(0, batch.length);
-                descsCs = csTranslations.slice(batch.length);
+                const sk = await translateBatch(allTexts, 'SK', deeplKey);
+                titlesSk = sk.slice(0, batch.length); descsSk = sk.slice(batch.length);
+                const cs = await translateBatch(allTexts, 'CS', deeplKey);
+                titlesCs = cs.slice(0, batch.length); descsCs = cs.slice(batch.length);
             } catch (err) {
-                console.warn(`[grekodom] Translation error in batch ${i}-${i + BATCH}:`, err);
-                // Continue with English fallback
+                console.warn('[grekodom] DeepL batch error:', err);
             }
         }
 
-        // Upsert each property
         for (let j = 0; j < batch.length; j++) {
-            const r = batch[j];
+            const item = batch[j];
+            const r = item.raw_data;
             try {
-                const ex = existingMap.get(r.UniqueId);
-
-                // Skip if manually edited
+                const ex = propByUid.get(r.UniqueId);
                 if (ex?.manually_edited) {
                     stats.skipped++;
+                    await supabase.from('feed_items')
+                        .update({
+                            selected: true,
+                            selected_at: new Date().toISOString(),
+                            selected_property_id: ex.id,
+                            updated_at: new Date().toISOString(),
+                        })
+                        .eq('id', item.id);
                     continue;
                 }
 
@@ -351,44 +543,28 @@ export async function importGrekodomFeed(
                 const isNew = r.IsNewBuilding === 'yes';
                 const isUnderConstruction = r.IsUnderConstruction === 'yes';
 
-                // Build location string
                 const locationParts = [r.Subregion, r.Region].filter(Boolean);
                 const locationEn = locationParts.join(', ') || r.Town || 'Greece';
 
-                // Build images array (hotlinked)
                 const images = r.images.map((url, idx) => ({
-                    url,
-                    alt: r.TitleEn || `Property ${r.UniqueId}`,
-                    order: idx,
+                    url, alt: r.TitleEn || `Property ${r.UniqueId}`, order: idx,
                 }));
 
-                // Slug from title
-                const baseSlug = generateSlug(
-                    titlesSk[j] || r.TitleEn || `property-${r.UniqueId}`
-                );
+                const baseSlug = generateSlug(titlesSk[j] || r.TitleEn || `property-${r.UniqueId}`);
                 const slug = ex?.slug || `${baseSlug}-${r.UniqueId}`;
 
                 const record = {
-                    // Source tracking
                     source: 'grekodom',
                     feed_source_id: feed.id,
                     external_feed_uid: r.UniqueId,
                     manually_edited: false,
-
-                    // Slug
                     slug,
-
-                    // Titles
                     title_sk: titlesSk[j] || r.TitleEn,
                     title_en: r.TitleEn || null,
                     title_cz: titlesCs[j] || r.TitleEn || null,
-
-                    // Descriptions
                     description_sk: descsSk[j] || r.DescriptionEn || null,
                     description_en: r.DescriptionEn || null,
                     description_cz: descsCs[j] || r.DescriptionEn || null,
-
-                    // Location
                     location_sk: locationParts[0] || r.Town || 'Grécko',
                     location_en: locationEn,
                     location_cz: locationEn,
@@ -397,8 +573,6 @@ export async function importGrekodomFeed(
                     latitude: parseFloat(r.LatitudeNearBy) || null,
                     longitude: parseFloat(r.LongitudeNearBy) || null,
                     distance_from_sea: parseInt(r.DistanceFromSea) || null,
-
-                    // Specs
                     property_type: propertyType,
                     offer_type: offerType,
                     disposition: disposition || null,
@@ -410,16 +584,10 @@ export async function importGrekodomFeed(
                     floor_number: parseInt(r.Floor) || null,
                     year: parseInt(r.YearBuild) || null,
                     parking: r.ParkingPlace === 'yes' ? 1 : 0,
-
-                    // Price
                     price: priceOnRequest ? 0 : price,
                     price_on_request: priceOnRequest,
                     unit: 'per_property',
-
-                    // Status
                     status: isUnderConstruction ? 'under_construction' : isNew ? 'new_build' : 'original',
-
-                    // Boolean features
                     pool: r.Pool === 'yes',
                     balcony: false,
                     garden: false,
@@ -433,19 +601,13 @@ export async function importGrekodomFeed(
                     garage: r.Garage === 'yes',
                     fireplace: r.Fireplace === 'yes',
                     near_beach: (parseInt(r.DistanceFromSea) || 9999) <= 500,
-
-                    // Media
                     images,
                     hero_image_index: 0,
                     video_url: null,
                     pdf_images: [],
-
-                    // Publish — imported props start as draft (hidden)
                     publish_status: 'draft',
                     featured: false,
                     reserved: false,
-
-                    // Defaults for required fields
                     property_id_external: null,
                     ownership: null,
                     house_type: null,
@@ -469,13 +631,12 @@ export async function importGrekodomFeed(
                     near_golf: false,
                     yoga_room: false,
                     grand_garden: false,
-
                     updated_at: new Date().toISOString(),
                 };
 
+                let propertyId: string | null = null;
+
                 if (ex) {
-                    // Update existing — only update price, images, updated_at and non-translated fields
-                    // (manually_edited = false entries get full update)
                     const { error } = await supabase
                         .from('properties')
                         .update({
@@ -483,7 +644,6 @@ export async function importGrekodomFeed(
                             price_on_request: record.price_on_request,
                             images: record.images,
                             updated_at: record.updated_at,
-                            // Update specs that may change
                             area: record.area,
                             beds: record.beds,
                             baths: record.baths,
@@ -492,29 +652,86 @@ export async function importGrekodomFeed(
                             longitude: record.longitude,
                         })
                         .eq('id', ex.id);
-
                     if (error) { stats.errors++; console.error(`[grekodom] Update error ${r.UniqueId}:`, error.message); }
-                    else stats.updated++;
+                    else { stats.updated++; propertyId = ex.id; }
                 } else {
-                    // Insert new
-                    const { error } = await supabase.from('properties').insert(record);
+                    const { data: inserted, error } = await supabase
+                        .from('properties')
+                        .insert(record)
+                        .select('id')
+                        .single();
                     if (error) { stats.errors++; console.error(`[grekodom] Insert error ${r.UniqueId}:`, error.message); }
-                    else stats.added++;
+                    else { stats.added++; propertyId = inserted!.id as string; }
+                }
+
+                if (propertyId) {
+                    await supabase.from('feed_items')
+                        .update({
+                            selected: true,
+                            selected_at: new Date().toISOString(),
+                            selected_property_id: propertyId,
+                            updated_at: new Date().toISOString(),
+                        })
+                        .eq('id', item.id);
                 }
             } catch (err) {
                 stats.errors++;
-                console.error(`[grekodom] Error processing ${r.UniqueId}:`, err);
+                console.error(`[grekodom] materialize error ${r.UniqueId}:`, err);
             }
         }
 
         options.onProgress?.(stats);
-        console.log(`[grekodom] Batch ${i}-${i + batch.length}: +${stats.added} upd:${stats.updated} skip:${stats.skipped} err:${stats.errors}`);
-
-        // Small delay between batches to avoid overloading Supabase
-        if (i + BATCH < filtered.length) {
-            await new Promise(r => setTimeout(r, 200));
-        }
+        if (i + BATCH < itemIds.length) await new Promise(r => setTimeout(r, 200));
     }
 
     return stats;
+}
+
+/**
+ * Reverse of materialize — remove a previously-selected feed_item's property.
+ * Default: trash the property (recoverable). Optionally hard delete.
+ */
+export async function deselectGrekodomItems(
+    feed: FeedSource,
+    itemIds: string[],
+    mode: 'trash' | 'permanent' = 'trash'
+): Promise<{ removed: number; errors: number }> {
+    const supabase = getAdminClient();
+    let removed = 0, errors = 0;
+    if (itemIds.length === 0) return { removed, errors };
+
+    const { data: items } = await supabase
+        .from('feed_items')
+        .select('id, selected_property_id')
+        .in('id', itemIds)
+        .eq('feed_source_id', feed.id);
+
+    for (const it of items || []) {
+        const propId = it.selected_property_id as string | null;
+        try {
+            if (propId) {
+                if (mode === 'trash') {
+                    await supabase.from('properties')
+                        .update({ publish_status: 'trashed', updated_at: new Date().toISOString() })
+                        .eq('id', propId);
+                } else {
+                    await supabase.from('properties').delete().eq('id', propId);
+                }
+            }
+            await supabase.from('feed_items')
+                .update({
+                    selected: false,
+                    selected_at: null,
+                    selected_property_id: null,
+                    updated_at: new Date().toISOString(),
+                })
+                .eq('id', it.id);
+            removed++;
+        } catch (err) {
+            errors++;
+            console.error('[grekodom] deselect error:', err);
+        }
+    }
+
+    return { removed, errors };
 }

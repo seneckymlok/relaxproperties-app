@@ -96,7 +96,7 @@ export async function POST(request: NextRequest) {
 
         await updateFeedStatus(feed.id, 'running');
         try {
-            const stats = await importer(feed);
+            const stats = await importer.analyze(feed);
             await updateFeedStatus(feed.id, 'ok', stats);
             results.push({ id: feed.id, name: feed.name, status: 'ok', stats });
         } catch (err) {
@@ -120,7 +120,7 @@ export async function POST(request: NextRequest) {
 
             await updateFeedStatus(feed.id, 'running');
             try {
-                const stats = await importer(feed);
+                const stats = await importer.analyze(feed);
                 await updateFeedStatus(feed.id, 'ok', stats);
                 results.push({ id: feed.id, name: feed.name, status: 'ok', stats });
             } catch (err) {

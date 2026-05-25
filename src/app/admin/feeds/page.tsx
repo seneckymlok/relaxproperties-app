@@ -5,6 +5,8 @@ import Link from "next/link";
 import type { FeedSource, FeedFilterConfig } from "@/lib/feed-store";
 import { FORMAT_LABELS, FORMAT_FILTER_CAPABILITIES } from "@/lib/importers/registry";
 
+type FeedSourceWithCounts = FeedSource & { items_total?: number; items_selected?: number };
+
 // ============================================
 // HELPERS
 // ============================================
@@ -206,12 +208,16 @@ function FeedModal({
 // ============================================
 
 interface SyncStats {
-    total: number; filtered: number; added: number;
-    updated: number; skipped: number; errors: number;
+    total: number;     // total items in feed
+    filtered: number;  // items passing filters
+    added: number;     // new entries written to feed_items pool
+    updated: number;   // existing feed_items refreshed
+    skipped: number;
+    errors: number;
 }
 
 function SyncPanel({ feedId, feedName, onClose }: { feedId: string; feedName: string; onClose: () => void }) {
-    const [lines, setLines] = useState<string[]>(["Spúšťam synchronizáciu…"]);
+    const [lines, setLines] = useState<string[]>(["Spúšťam analýzu feedu…"]);
     const [stats, setStats] = useState<SyncStats | null>(null);
     const [done, setDone] = useState(false);
     const [errMsg, setErrMsg] = useState("");
@@ -264,19 +270,20 @@ function SyncPanel({ feedId, feedName, onClose }: { feedId: string; feedName: st
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={done ? onClose : undefined}>
             <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg" onClick={e => e.stopPropagation()}>
                 <div className="p-6 border-b border-gray-100">
-                    <h2 className="text-lg font-semibold text-gray-900">Synchronizácia: {feedName}</h2>
+                    <h2 className="text-lg font-semibold text-gray-900">Analýza feedu: {feedName}</h2>
+                    <p className="text-xs text-gray-500 mt-1">Položky sa načítavajú do zoznamu — na web sa <strong>nepublikujú automaticky</strong>. Vyberiete ich v nasledujúcom kroku.</p>
                 </div>
                 <div className="p-6 space-y-4">
                     {/* Stats grid */}
                     {stats && (
                         <div className="grid grid-cols-3 gap-3">
                             {([
-                                ["Nové", stats.added, "text-emerald-600"],
+                                ["Nové v zozname", stats.added, "text-emerald-600"],
                                 ["Aktualizované", stats.updated, "text-blue-600"],
-                                ["Preskočené", stats.skipped, "text-gray-500"],
                                 ["Chyby", stats.errors, "text-red-500"],
                                 ["Spolu v feede", stats.total, "text-gray-700"],
                                 ["Po filtri", stats.filtered, "text-amber-600"],
+                                ["Preskočené", stats.skipped, "text-gray-500"],
                             ] as [string, number, string][]).map(([label, val, cls]) => (
                                 <div key={label} className="bg-gray-50 rounded-xl p-3 text-center">
                                     <div className={`text-2xl font-bold ${cls}`}>{val ?? "—"}</div>
@@ -446,7 +453,7 @@ function DeleteFeedModal({
 // ============================================
 
 export default function FeedsPage() {
-    const [feeds, setFeeds] = useState<FeedSource[]>([]);
+    const [feeds, setFeeds] = useState<FeedSourceWithCounts[]>([]);
     const [loading, setLoading] = useState(true);
     const [modalFeed, setModalFeed] = useState<FeedSource | null | "new">(null);
     const [syncFeed, setSyncFeed] = useState<FeedSource | null>(null);
@@ -486,7 +493,7 @@ export default function FeedsPage() {
 
                 {/* Info banner */}
                 <div className="mb-6 bg-blue-50 border border-blue-200 rounded-2xl p-4 text-sm text-blue-800">
-                    <strong>Ako to funguje:</strong> Pridajte URL XML feedu, nastavte filtre a kliknite „Sync". Nové nehnuteľnosti sa importujú ako koncepty — skontrolujte ich v správcovi nehnuteľností a ručne publikujte. Ručne upravené záznamy sa pri ďalšom sync neprepíšu.
+                    <strong>Ako to funguje:</strong> 1. Pridajte URL feedu a kliknite „Analyzovať“ — systém načíta zoznam ponúk, ale <strong>nepublikuje ich</strong>. 2. Otvorte feed cez „Prehľadávať“, filtrujte podľa typu, ceny, lokality alebo referenčného čísla, a označte ponuky, ktoré chcete na webe. 3. Až po stlačení „Pridať do nehnuteľností“ sa preložia a zobrazia v správcovi a na webe.
                 </div>
 
                 {/* Feeds list */}
@@ -515,10 +522,11 @@ export default function FeedsPage() {
                                         </div>
                                         <p className="text-xs text-[var(--color-muted)] font-mono truncate mb-2">{feed.url}</p>
                                         <div className="flex flex-wrap gap-4 text-xs text-[var(--color-muted)]">
-                                            <span>Posledný sync: {fmtDate(feed.last_synced_at)}</span>
-                                            {feed.last_stats && (
-                                                <span>+{feed.last_stats.added} nových · {feed.last_stats.updated} aktualizovaných · {feed.last_stats.skipped} preskočených</span>
-                                            )}
+                                            <span>Posledná analýza: {fmtDate(feed.last_synced_at)}</span>
+                                            <span>
+                                                Zoznam: <strong>{feed.items_total ?? 0}</strong> položiek ·{" "}
+                                                <span className="text-emerald-600 font-semibold">{feed.items_selected ?? 0}</span> na webe
+                                            </span>
                                             {feed.schedule_cron && <span>🕐 {feed.schedule_cron}</span>}
                                         </div>
                                         {feed.last_error && (
@@ -537,12 +545,18 @@ export default function FeedsPage() {
                                     </div>
                                     {/* Actions */}
                                     <div className="flex gap-2 flex-shrink-0 flex-wrap">
+                                        <Link
+                                            href={`/admin/feeds/${feed.id}`}
+                                            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-semibold bg-[var(--color-primary)] text-white hover:opacity-90 transition-opacity"
+                                        >
+                                            Prehľadávať
+                                        </Link>
                                         <button
                                             onClick={() => setSyncFeed(feed)}
                                             disabled={!feed.enabled || feed.last_status === "running"}
-                                            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-semibold bg-[var(--color-primary)] text-white hover:opacity-90 disabled:opacity-40 transition-opacity"
+                                            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-semibold border border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-primary)]/5 disabled:opacity-40 transition-opacity"
                                         >
-                                            {feed.last_status === "running" ? "⟳ Beží…" : "⟳ Sync"}
+                                            {feed.last_status === "running" ? "⟳ Beží…" : "⟳ Analyzovať"}
                                         </button>
                                         <button onClick={() => setModalFeed(feed)} className="px-3.5 py-2 rounded-xl text-sm font-semibold border border-[var(--color-border)] text-[var(--color-secondary)] hover:bg-gray-50">
                                             Upraviť

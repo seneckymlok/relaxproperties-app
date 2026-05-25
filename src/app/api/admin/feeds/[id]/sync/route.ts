@@ -52,7 +52,7 @@ export async function POST(
             };
 
             try {
-                const stats = await importer(feed, {
+                const stats = await importer.analyze(feed, {
                     onProgress: (s) => send({ type: 'progress', stats: s }),
                 });
 
