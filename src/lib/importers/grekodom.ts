@@ -608,7 +608,9 @@ export async function materializeGrekodomItems(
                     publish_status: 'draft',
                     featured: false,
                     reserved: false,
-                    property_id_external: null,
+                    // The XML <UniqueId> is what Grekodom displays as "Object Code"
+                    // on grekodom.com — use it as the public reference number.
+                    property_id_external: r.UniqueId,
                     ownership: null,
                     house_type: null,
                     building_type: null,
@@ -650,6 +652,7 @@ export async function materializeGrekodomItems(
                             status: record.status,
                             latitude: record.latitude,
                             longitude: record.longitude,
+                            property_id_external: record.property_id_external,
                         })
                         .eq('id', ex.id);
                     if (error) { stats.errors++; console.error(`[grekodom] Update error ${r.UniqueId}:`, error.message); }
