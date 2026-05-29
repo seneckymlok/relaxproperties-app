@@ -31,6 +31,11 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "gdcdn.grekodom.com",
       },
+      {
+        // Kyero / Estatebud feeds hotlink images from estbd.io
+        protocol: "https",
+        hostname: "estbd.io",
+      },
     ],
   },
   experimental: {

@@ -6,7 +6,7 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
 const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
 // Valid values for enum filters
-const VALID_COUNTRIES = ["all", "spain", "croatia", "italy", "portugal", "greece", "montenegro", "bulgaria"];
+const VALID_COUNTRIES = ["all", "spain", "croatia", "italy", "portugal", "greece", "cyprus", "montenegro", "bulgaria"];
 const VALID_PROPERTY_TYPES = ["all", "villa", "apartment", "house", "land"];
 const VALID_BEDROOMS = ["all", "1", "2", "3", "4+"];
 const VALID_SORT = ["featured", "price-asc", "price-desc", "newest", "area-desc"];

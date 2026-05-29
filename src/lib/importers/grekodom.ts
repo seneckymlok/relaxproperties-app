@@ -15,6 +15,7 @@
 import { getAdminClient } from '@/lib/supabase';
 import type { FeedSource, FeedFilterConfig } from '@/lib/feed-store';
 import { generateSlug } from '@/lib/property-store';
+import { translateBatch as deeplTranslate, getDeeplKey, assertDeeplKey } from '@/lib/importers/_deepl';
 
 // ============================================
 // TYPE MAPPING TABLES
@@ -54,48 +55,8 @@ function bedsToDisposition(beds: number, estateType: string): string {
 // DEEPL TRANSLATION HELPER
 // ============================================
 
-/**
- * Translate EN source text → target language via DeepL.
- * Throws on non-OK responses (no silent English fallback — see prior bug
- * where form-encoded auth_key was being rejected and translations were
- * silently lost).
- */
-async function translateBatch(texts: string[], targetLang: 'SK' | 'CS', apiKey: string): Promise<string[]> {
-    if (!texts.length) return [];
-    const nonEmpty = texts.map((t, i) => ({ t, i })).filter(({ t }) => t && t.trim());
-    if (!nonEmpty.length) return texts.map(() => '');
-
-    // Free-tier keys end with ":fx"
-    const url = apiKey.endsWith(':fx')
-        ? 'https://api-free.deepl.com/v2/translate'
-        : 'https://api.deepl.com/v2/translate';
-
-    const resp = await fetch(url, {
-        method: 'POST',
-        headers: {
-            'Authorization': `DeepL-Auth-Key ${apiKey}`,
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            text: nonEmpty.map(({ t }) => t),
-            source_lang: 'EN',
-            target_lang: targetLang,
-            preserve_formatting: true,
-        }),
-    });
-
-    if (!resp.ok) {
-        const errText = await resp.text().catch(() => '');
-        throw new Error(`DeepL ${targetLang} failed: ${resp.status} ${errText.slice(0, 200)}`);
-    }
-
-    const json = await resp.json() as { translations: { text: string }[] };
-    const results = [...texts];
-    nonEmpty.forEach(({ i }, idx) => {
-        results[i] = json.translations[idx]?.text ?? texts[i];
-    });
-    return results;
-}
+const translateBatch = (texts: string[], targetLang: 'SK' | 'CS', apiKey: string) =>
+    deeplTranslate(texts, 'EN', targetLang, apiKey);
 
 // ============================================
 // XML PARSER
@@ -485,13 +446,8 @@ export async function materializeGrekodomItems(
 
     if (itemIds.length === 0) return stats;
 
-    const deeplKey = options.deeplApiKey || process.env.DEEPL_API_KEY || '';
-    if (!deeplKey) {
-        throw new Error(
-            'DEEPL_API_KEY not configured. Grekodom listings need translation; ' +
-            'set DEEPL_API_KEY in the environment before adding properties.'
-        );
-    }
+    const deeplKey = getDeeplKey(options.deeplApiKey);
+    assertDeeplKey(deeplKey, 'Grekodom');
 
     const BATCH = 20;
 
@@ -721,8 +677,8 @@ export async function retranslateGrekodomItems(
     options: { itemIds?: string[]; deeplApiKey?: string; onProgress?: (n: number, total: number) => void } = {}
 ): Promise<{ updated: number; skipped: number; errors: number; total: number }> {
     const supabase = getAdminClient();
-    const deeplKey = options.deeplApiKey || process.env.DEEPL_API_KEY || '';
-    if (!deeplKey) throw new Error('DEEPL_API_KEY not configured.');
+    const deeplKey = getDeeplKey(options.deeplApiKey);
+    assertDeeplKey(deeplKey, 'Grekodom');
 
     let q = supabase
         .from('feed_items')

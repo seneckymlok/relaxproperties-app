@@ -128,6 +128,7 @@ interface PropertyFormProps {
 const COUNTRY_OPTIONS = [
     { value: "bulgaria", label: "Bulharsko" },
     { value: "croatia", label: "Chorvátsko" },
+    { value: "cyprus", label: "Cyprus" },
     { value: "spain", label: "Španielsko" },
     { value: "greece", label: "Grécko" },
     { value: "slovakia", label: "Slovensko" },

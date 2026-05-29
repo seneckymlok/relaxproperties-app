@@ -208,6 +208,7 @@ const countriesMap: Record<string, Record<Language, string>> = {
     italy: { sk: 'Taliansko', en: 'Italy', cz: 'Itálie' },
     portugal: { sk: 'Portugalsko', en: 'Portugal', cz: 'Portugalsko' },
     greece: { sk: 'Grécko', en: 'Greece', cz: 'Řecko' },
+    cyprus: { sk: 'Cyprus', en: 'Cyprus', cz: 'Kypr' },
     montenegro: { sk: 'Čierna Hora', en: 'Montenegro', cz: 'Černá Hora' },
     bulgaria: { sk: 'Bulharsko', en: 'Bulgaria', cz: 'Bulharsko' },
 };

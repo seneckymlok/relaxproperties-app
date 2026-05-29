@@ -20,6 +20,12 @@ import {
     deselectGrekodomItems,
     retranslateGrekodomItems,
 } from '@/lib/importers/grekodom';
+import {
+    analyzeKyeroFeed,
+    materializeKyeroItems,
+    deselectKyeroItems,
+    retranslateKyeroItems,
+} from '@/lib/importers/kyero';
 
 export type { ImportStats, MaterializeStats };
 
@@ -46,6 +52,12 @@ export const IMPORTERS: Record<string, FeedImporter> = {
         deselect: deselectGrekodomItems,
         retranslate: retranslateGrekodomItems,
     },
+    kyero_xml: {
+        analyze: analyzeKyeroFeed,
+        materialize: materializeKyeroItems,
+        deselect: deselectKyeroItems,
+        retranslate: retranslateKyeroItems,
+    },
 };
 
 export function getImporter(format: string): FeedImporter {
@@ -61,6 +73,7 @@ export function getImporter(format: string): FeedImporter {
 
 export const FORMAT_LABELS: Record<string, string> = {
     grekodom_xml: 'Grekodom XML',
+    kyero_xml: 'Kyero v3 (Estatebud)',
 };
 
 export interface FormatFilterCapabilities {
@@ -74,6 +87,17 @@ export const FORMAT_FILTER_CAPABILITIES: Record<string, FormatFilterCapabilities
         estateTypes: [
             'Flat', 'Maisonette', 'Duplex', 'Detached house', 'Villa',
             'Land', 'Commercial property', 'Hotel', 'Business', 'Building', 'Complex',
+        ],
+        priceRange: true,
+        regions: true,
+    },
+    kyero_xml: {
+        // Kyero/Estatebud values observed in the feed
+        estateTypes: [
+            'Apartment', 'Apartment Building', 'Detached House',
+            'Semi-Detached House', 'Townhouse', 'Villa', 'Bungalow',
+            'Penthouse', 'Studio', 'Maisonette', 'Duplex',
+            'Land', 'Plot', 'Commercial', 'Office', 'Hotel',
         ],
         priceRange: true,
         regions: true,
