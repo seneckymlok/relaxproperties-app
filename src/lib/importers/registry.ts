@@ -18,6 +18,7 @@ import {
     analyzeGrekodomFeed,
     materializeGrekodomItems,
     deselectGrekodomItems,
+    retranslateGrekodomItems,
 } from '@/lib/importers/grekodom';
 
 export type { ImportStats, MaterializeStats };
@@ -35,6 +36,7 @@ export interface FeedImporter {
     analyze: (feed: FeedSource, options?: AnalyzeOptions) => Promise<ImportStats>;
     materialize: (feed: FeedSource, itemIds: string[], options?: MaterializeOptions) => Promise<MaterializeStats>;
     deselect: (feed: FeedSource, itemIds: string[], mode?: 'trash' | 'permanent') => Promise<{ removed: number; errors: number }>;
+    retranslate?: (feed: FeedSource, options?: { itemIds?: string[]; onProgress?: (done: number, total: number) => void }) => Promise<{ updated: number; skipped: number; errors: number; total: number }>;
 }
 
 export const IMPORTERS: Record<string, FeedImporter> = {
@@ -42,6 +44,7 @@ export const IMPORTERS: Record<string, FeedImporter> = {
         analyze: analyzeGrekodomFeed,
         materialize: materializeGrekodomItems,
         deselect: deselectGrekodomItems,
+        retranslate: retranslateGrekodomItems,
     },
 };
 

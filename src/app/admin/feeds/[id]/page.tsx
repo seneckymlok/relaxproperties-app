@@ -340,6 +340,8 @@ export default function FeedBrowsePage() {
     const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
     const [detailItem, setDetailItem] = useState<string | null>(null);
     const [bulkRun, setBulkRun] = useState<string[] | null>(null);
+    const [retranslating, setRetranslating] = useState(false);
+    const [retranslateMsg, setRetranslateMsg] = useState("");
 
     // Debounce search
     useEffect(() => {
@@ -422,14 +424,46 @@ export default function FeedBrowsePage() {
                             {data?.feed?.url}
                         </p>
                     </div>
-                    {facets && (
-                        <div className="flex gap-3 text-sm">
-                            <Pill label="Spolu" value={facets.totalAll} />
-                            <Pill label="Na webe" value={facets.totalSelected} color="emerald" />
-                            <Pill label="Čaká" value={facets.totalUnselected} color="amber" />
-                        </div>
-                    )}
+                    <div className="flex items-end gap-3 flex-wrap">
+                        {facets && facets.totalSelected > 0 && (
+                            <button
+                                onClick={async () => {
+                                    if (!confirm(`Spustiť preklad EN → SK a EN → CZ pre ${facets.totalSelected} publikovaných ponúk?`)) return;
+                                    setRetranslating(true);
+                                    setRetranslateMsg("");
+                                    try {
+                                        const res = await fetch(`/api/admin/feeds/${feedId}/retranslate`, { method: "POST" });
+                                        const j = await res.json();
+                                        if (!res.ok) setRetranslateMsg(`Chyba: ${j.error || res.status}`);
+                                        else setRetranslateMsg(`Preložené: ${j.updated} · preskočené: ${j.skipped} · chyby: ${j.errors}`);
+                                        load();
+                                    } catch (e) {
+                                        setRetranslateMsg(`Chyba: ${(e as Error).message}`);
+                                    } finally {
+                                        setRetranslating(false);
+                                    }
+                                }}
+                                disabled={retranslating}
+                                className="px-4 py-2 rounded-xl text-sm font-semibold border border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-primary)]/5 disabled:opacity-50"
+                                title="Preložiť všetky publikované ponuky z anglického originálu cez DeepL"
+                            >
+                                {retranslating ? "Prekladám…" : "↻ Preložiť publikované"}
+                            </button>
+                        )}
+                        {facets && (
+                            <div className="flex gap-3 text-sm">
+                                <Pill label="Spolu" value={facets.totalAll} />
+                                <Pill label="Na webe" value={facets.totalSelected} color="emerald" />
+                                <Pill label="Čaká" value={facets.totalUnselected} color="amber" />
+                            </div>
+                        )}
+                    </div>
                 </div>
+                {retranslateMsg && (
+                    <div className="mb-3 text-xs text-gray-600 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2">
+                        {retranslateMsg}
+                    </div>
+                )}
 
                 {/* Tabs */}
                 <div className="flex gap-1 bg-white rounded-xl border border-[var(--color-border)] p-1 w-fit mb-4">

@@ -26,6 +26,11 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "relaxproperties.sk",
       },
+      {
+        // Grekodom XML feed hotlinks images from its CDN
+        protocol: "https",
+        hostname: "gdcdn.grekodom.com",
+      },
     ],
   },
   experimental: {

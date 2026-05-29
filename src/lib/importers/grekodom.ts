@@ -54,26 +54,41 @@ function bedsToDisposition(beds: number, estateType: string): string {
 // DEEPL TRANSLATION HELPER
 // ============================================
 
+/**
+ * Translate EN source text → target language via DeepL.
+ * Throws on non-OK responses (no silent English fallback — see prior bug
+ * where form-encoded auth_key was being rejected and translations were
+ * silently lost).
+ */
 async function translateBatch(texts: string[], targetLang: 'SK' | 'CS', apiKey: string): Promise<string[]> {
     if (!texts.length) return [];
     const nonEmpty = texts.map((t, i) => ({ t, i })).filter(({ t }) => t && t.trim());
     if (!nonEmpty.length) return texts.map(() => '');
 
-    const freeUrl = 'https://api-free.deepl.com/v2/translate';
-    const proUrl = 'https://api.deepl.com/v2/translate';
-    const url = apiKey.endsWith(':fx') ? freeUrl : proUrl;
+    // Free-tier keys end with ":fx"
+    const url = apiKey.endsWith(':fx')
+        ? 'https://api-free.deepl.com/v2/translate'
+        : 'https://api.deepl.com/v2/translate';
 
-    const params = new URLSearchParams();
-    params.append('auth_key', apiKey);
-    params.append('source_lang', 'EN');
-    params.append('target_lang', targetLang);
-    nonEmpty.forEach(({ t }) => params.append('text', t));
+    const resp = await fetch(url, {
+        method: 'POST',
+        headers: {
+            'Authorization': `DeepL-Auth-Key ${apiKey}`,
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            text: nonEmpty.map(({ t }) => t),
+            source_lang: 'EN',
+            target_lang: targetLang,
+            preserve_formatting: true,
+        }),
+    });
 
-    const resp = await fetch(url, { method: 'POST', body: params });
     if (!resp.ok) {
-        console.warn(`[grekodom] DeepL translate failed: ${resp.status}`);
-        return texts;
+        const errText = await resp.text().catch(() => '');
+        throw new Error(`DeepL ${targetLang} failed: ${resp.status} ${errText.slice(0, 200)}`);
     }
+
     const json = await resp.json() as { translations: { text: string }[] };
     const results = [...texts];
     nonEmpty.forEach(({ i }, idx) => {
@@ -471,6 +486,12 @@ export async function materializeGrekodomItems(
     if (itemIds.length === 0) return stats;
 
     const deeplKey = options.deeplApiKey || process.env.DEEPL_API_KEY || '';
+    if (!deeplKey) {
+        throw new Error(
+            'DEEPL_API_KEY not configured. Grekodom listings need translation; ' +
+            'set DEEPL_API_KEY in the environment before adding properties.'
+        );
+    }
 
     const BATCH = 20;
 
@@ -503,15 +524,13 @@ export async function materializeGrekodomItems(
         const allTexts = [...titles, ...descs];
 
         let titlesSk = titles, titlesCs = titles, descsSk = descs, descsCs = descs;
-        if (deeplKey && allTexts.some(t => t.trim())) {
-            try {
-                const sk = await translateBatch(allTexts, 'SK', deeplKey);
-                titlesSk = sk.slice(0, batch.length); descsSk = sk.slice(batch.length);
-                const cs = await translateBatch(allTexts, 'CS', deeplKey);
-                titlesCs = cs.slice(0, batch.length); descsCs = cs.slice(batch.length);
-            } catch (err) {
-                console.warn('[grekodom] DeepL batch error:', err);
-            }
+        if (allTexts.some(t => t.trim())) {
+            // Let DeepL errors bubble up — silently storing English in
+            // all three locales was the previous bug.
+            const sk = await translateBatch(allTexts, 'SK', deeplKey);
+            titlesSk = sk.slice(0, batch.length); descsSk = sk.slice(batch.length);
+            const cs = await translateBatch(allTexts, 'CS', deeplKey);
+            titlesCs = cs.slice(0, batch.length); descsCs = cs.slice(batch.length);
         }
 
         for (let j = 0; j < batch.length; j++) {
@@ -685,6 +704,80 @@ export async function materializeGrekodomItems(
 
         options.onProgress?.(stats);
         if (i + BATCH < itemIds.length) await new Promise(r => setTimeout(r, 200));
+    }
+
+    return stats;
+}
+
+/**
+ * Re-run DeepL on already-materialized properties for this feed (or only
+ * a subset if itemIds is provided). Useful when the original materialize
+ * stored English fallback in all three locales (eg. broken DeepL key).
+ *
+ * Skips `manually_edited` properties.
+ */
+export async function retranslateGrekodomItems(
+    feed: FeedSource,
+    options: { itemIds?: string[]; deeplApiKey?: string; onProgress?: (n: number, total: number) => void } = {}
+): Promise<{ updated: number; skipped: number; errors: number; total: number }> {
+    const supabase = getAdminClient();
+    const deeplKey = options.deeplApiKey || process.env.DEEPL_API_KEY || '';
+    if (!deeplKey) throw new Error('DEEPL_API_KEY not configured.');
+
+    let q = supabase
+        .from('feed_items')
+        .select('id, raw_data, selected_property_id')
+        .eq('feed_source_id', feed.id)
+        .eq('selected', true)
+        .not('selected_property_id', 'is', null);
+    if (options.itemIds && options.itemIds.length > 0) q = q.in('id', options.itemIds);
+    const { data: items } = await q;
+    if (!items || items.length === 0) return { updated: 0, skipped: 0, errors: 0, total: 0 };
+
+    // Filter out manually_edited properties
+    const propIds = items.map(i => i.selected_property_id as string);
+    const { data: props } = await supabase
+        .from('properties')
+        .select('id, manually_edited')
+        .in('id', propIds);
+    const editable = new Set(
+        (props || []).filter(p => !p.manually_edited).map(p => p.id as string)
+    );
+
+    const BATCH = 20;
+    const stats = { updated: 0, skipped: 0, errors: 0, total: items.length };
+
+    for (let i = 0; i < items.length; i += BATCH) {
+        const batch = items.slice(i, i + BATCH);
+        const titles = batch.map(b => (b.raw_data as GrekodomRealty).TitleEn || '');
+        const descs = batch.map(b => (b.raw_data as GrekodomRealty).DescriptionEn || '');
+        const all = [...titles, ...descs];
+
+        const sk = await translateBatch(all, 'SK', deeplKey);
+        const cs = await translateBatch(all, 'CS', deeplKey);
+        const titlesSk = sk.slice(0, batch.length), descsSk = sk.slice(batch.length);
+        const titlesCs = cs.slice(0, batch.length), descsCs = cs.slice(batch.length);
+
+        for (let j = 0; j < batch.length; j++) {
+            const item = batch[j];
+            const propId = item.selected_property_id as string;
+            if (!editable.has(propId)) { stats.skipped++; continue; }
+            const r = item.raw_data as GrekodomRealty;
+            const { error } = await supabase.from('properties')
+                .update({
+                    title_sk: titlesSk[j] || r.TitleEn,
+                    title_en: r.TitleEn || null,
+                    title_cz: titlesCs[j] || r.TitleEn || null,
+                    description_sk: descsSk[j] || r.DescriptionEn || null,
+                    description_en: r.DescriptionEn || null,
+                    description_cz: descsCs[j] || r.DescriptionEn || null,
+                    updated_at: new Date().toISOString(),
+                })
+                .eq('id', propId);
+            if (error) { stats.errors++; console.error('[grekodom] retranslate update error:', error.message); }
+            else stats.updated++;
+        }
+        options.onProgress?.(stats.updated + stats.skipped + stats.errors, items.length);
     }
 
     return stats;
