@@ -36,6 +36,11 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "estbd.io",
       },
+      {
+        // KC Properties (Bulgaria) hotlinks images from its own domain
+        protocol: "https",
+        hostname: "kcproperties-bg.com",
+      },
     ],
   },
   experimental: {

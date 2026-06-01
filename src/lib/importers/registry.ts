@@ -26,6 +26,12 @@ import {
     deselectKyeroItems,
     retranslateKyeroItems,
 } from '@/lib/importers/kyero';
+import {
+    analyzeKCFeed,
+    materializeKCItems,
+    deselectKCItems,
+    retranslateKCItems,
+} from '@/lib/importers/kcproperties';
 
 export type { ImportStats, MaterializeStats };
 
@@ -58,6 +64,12 @@ export const IMPORTERS: Record<string, FeedImporter> = {
         deselect: deselectKyeroItems,
         retranslate: retranslateKyeroItems,
     },
+    kcproperties_xml: {
+        analyze: analyzeKCFeed,
+        materialize: materializeKCItems,
+        deselect: deselectKCItems,
+        retranslate: retranslateKCItems,
+    },
 };
 
 export function getImporter(format: string): FeedImporter {
@@ -74,6 +86,7 @@ export function getImporter(format: string): FeedImporter {
 export const FORMAT_LABELS: Record<string, string> = {
     grekodom_xml: 'Grekodom XML',
     kyero_xml: 'Kyero v3 (Estatebud)',
+    kcproperties_xml: 'KC Properties (Bulharsko)',
 };
 
 export interface FormatFilterCapabilities {
@@ -98,6 +111,16 @@ export const FORMAT_FILTER_CAPABILITIES: Record<string, FormatFilterCapabilities
             'Semi-Detached House', 'Townhouse', 'Villa', 'Bungalow',
             'Penthouse', 'Studio', 'Maisonette', 'Duplex',
             'Land', 'Plot', 'Commercial', 'Office', 'Hotel',
+        ],
+        priceRange: true,
+        regions: true,
+    },
+    kcproperties_xml: {
+        // KC Properties has no PropertyType field — these labels are
+        // inferred from the property name (see estateLabel in kcproperties.ts)
+        estateTypes: [
+            'Apartment', 'Studio', 'Penthouse', 'Maisonette',
+            'House', 'Villa', 'Land', 'Commercial',
         ],
         priceRange: true,
         regions: true,
