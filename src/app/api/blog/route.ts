@@ -37,7 +37,11 @@ export async function GET(request: Request) {
         // Extract unique categories from posts
         const categories = Array.from(new Set(posts.map(p => p.category).filter(Boolean)));
 
-        return NextResponse.json({ posts, categories });
+        return NextResponse.json({ posts, categories }, {
+            // Cache at the CDN so per-visitor loads don't each hit Supabase (egress).
+            // Admin edits revalidate within the window; 5 min staleness is fine for blog.
+            headers: { 'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600' },
+        });
     } catch (error) {
         console.error('Blog API error:', error);
         return NextResponse.json({ posts: [], categories: [] });

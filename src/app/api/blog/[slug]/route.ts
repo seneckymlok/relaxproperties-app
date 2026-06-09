@@ -38,7 +38,9 @@ export async function GET(
             video_url: p.video_url,
         };
 
-        return NextResponse.json({ post });
+        return NextResponse.json({ post }, {
+            headers: { 'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600' },
+        });
     } catch (error) {
         console.error('Blog post API error:', error);
         return NextResponse.json({ error: 'Internal error' }, { status: 500 });

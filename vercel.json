@@ -25,7 +25,7 @@
       ]
     },
     {
-      "source": "/api/(.*)",
+      "source": "/api/admin/(.*)",
       "headers": [
         {
           "key": "Cache-Control",

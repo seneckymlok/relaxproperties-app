@@ -212,13 +212,15 @@ export async function getPublishedProperties(): Promise<PropertyRecord[]> {
 }
 
 /**
- * Cached version of getPublishedProperties — revalidates every 5 min.
- * Tag 'properties' lets admin routes bust the cache instantly on publish/update/delete.
+ * Cached version of getPublishedProperties — revalidates every 30 min.
+ * Tag 'properties' lets admin routes bust the cache instantly on publish/update/delete,
+ * so the long interval only governs feed-sync changes (acceptably fresh within 30 min)
+ * while sharply cutting Supabase egress from background refills.
  */
 export const getCachedPublishedProperties = unstable_cache(
     getPublishedProperties,
     ['published-properties'],
-    { revalidate: 300, tags: ['properties'] }
+    { revalidate: 1800, tags: ['properties'] }
 );
 
 /**

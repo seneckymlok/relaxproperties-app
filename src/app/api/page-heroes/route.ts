@@ -9,7 +9,9 @@ export async function GET(request: NextRequest) {
 
     try {
         const hero = await getPageHero(pageKey);
-        return NextResponse.json({ image_url: hero?.image_url || null });
+        return NextResponse.json({ image_url: hero?.image_url || null }, {
+            headers: { 'Cache-Control': 'public, s-maxage=600, stale-while-revalidate=1200' },
+        });
     } catch {
         return NextResponse.json({ image_url: null });
     }

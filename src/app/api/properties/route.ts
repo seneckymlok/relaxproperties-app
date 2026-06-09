@@ -52,7 +52,10 @@ export async function GET(request: Request) {
         const records = await getPublishedProperties();
         const properties = records.map(r => toPublicProperty(r, lang));
 
-        return NextResponse.json({ properties });
+        return NextResponse.json({ properties }, {
+            // CDN-cache so per-visitor fetches don't each pull the full catalogue from Supabase.
+            headers: { 'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600' },
+        });
     } catch (error) {
         console.error('Failed to fetch public properties:', error);
         // Return empty array instead of error so the site doesn't break
