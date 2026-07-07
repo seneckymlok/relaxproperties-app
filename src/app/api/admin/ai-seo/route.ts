@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { groqChat } from '@/lib/groq';
 
 async function isAuthenticated(): Promise<boolean> {
     const cookieStore = await cookies();
@@ -37,17 +37,16 @@ PRAVIDLÁ PRE KEYWORDS:
 - Príklady: "luxusná vila chorvátsko", "apartmán pri mori", "novostavba split"`;
 
 /**
- * POST /api/admin/ai-seo — Generate SEO metadata using Gemini
+ * POST /api/admin/ai-seo — Generate SEO metadata using Groq (Llama)
  */
 export async function POST(request: NextRequest) {
     if (!(await isAuthenticated())) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const apiKey = process.env.GEMINI_API_KEY;
-    if (!apiKey) {
+    if (!process.env.GROQ_API_KEY) {
         return NextResponse.json(
-            { error: 'Gemini API kľúč nie je nastavený. Pridajte GEMINI_API_KEY do .env.local' },
+            { error: 'Groq API kľúč nie je nastavený. Pridajte GROQ_API_KEY do .env.local' },
             { status: 500 }
         );
     }
@@ -114,15 +113,13 @@ export async function POST(request: NextRequest) {
 
         const userPrompt = `Údaje o nehnuteľnosti:\n${details.join('\n')}\n\nVygeneruj SEO metadáta vo formáte JSON:`;
 
-        const genAI = new GoogleGenerativeAI(apiKey);
-        const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
-
-        const result = await model.generateContent([
-            { text: SYSTEM_PROMPT },
-            { text: userPrompt },
-        ]);
-
-        const rawText = result.response.text()?.trim() || '';
+        const rawText = await groqChat(
+            [
+                { role: 'system', content: SYSTEM_PROMPT },
+                { role: 'user', content: userPrompt },
+            ],
+            { json: true, temperature: 0.5 }
+        );
 
         // Parse JSON from the response (strip markdown code fences if present)
         const jsonStr = rawText.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim();

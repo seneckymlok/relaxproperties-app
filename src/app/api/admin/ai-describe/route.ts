@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { groqChat } from '@/lib/groq';
 
 async function isAuthenticated(): Promise<boolean> {
     const cookieStore = await cookies();
@@ -22,17 +22,16 @@ PRAVIDLÁ:
 - Dĺžka: 150-300 slov`;
 
 /**
- * POST /api/admin/ai-describe — Generate property description using Gemini
+ * POST /api/admin/ai-describe — Generate property description using Groq (Llama)
  */
 export async function POST(request: NextRequest) {
     if (!(await isAuthenticated())) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const apiKey = process.env.GEMINI_API_KEY;
-    if (!apiKey) {
+    if (!process.env.GROQ_API_KEY) {
         return NextResponse.json(
-            { error: 'Gemini API kľúč nie je nastavený. Pridajte GEMINI_API_KEY do .env.local' },
+            { error: 'Groq API kľúč nie je nastavený. Pridajte GROQ_API_KEY do .env.local' },
             { status: 500 }
         );
     }
@@ -93,15 +92,13 @@ export async function POST(request: NextRequest) {
 
         const userPrompt = `Údaje o nehnuteľnosti:\n${details.join('\n')}\n\nVytvor popis:`;
 
-        const genAI = new GoogleGenerativeAI(apiKey);
-        const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
-
-        const result = await model.generateContent([
-            { text: SYSTEM_PROMPT },
-            { text: userPrompt },
-        ]);
-
-        const description = result.response.text()?.trim();
+        const description = (await groqChat(
+            [
+                { role: 'system', content: SYSTEM_PROMPT },
+                { role: 'user', content: userPrompt },
+            ],
+            { temperature: 0.8 }
+        )).trim();
 
         if (!description) {
             return NextResponse.json(

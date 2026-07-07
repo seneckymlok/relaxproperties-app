@@ -26,6 +26,7 @@ export default function CountryBanners({ lang = 'sk', dictionary, properties = [
             bulgaria: { sk: 'Bulharsko', en: 'Bulgaria', cz: 'Bulharsko' },
             spain: { sk: 'Španielsko', en: 'Spain', cz: 'Španělsko' },
             greece: { sk: 'Grécko', en: 'Greece', cz: 'Řecko' },
+            cyprus: { sk: 'Cyprus', en: 'Cyprus', cz: 'Kypr' },
             italy: { sk: 'Taliansko', en: 'Italy', cz: 'Itálie' },
             portugal: { sk: 'Portugalsko', en: 'Portugal', cz: 'Portugalsko' },
             montenegro: { sk: 'Čierna Hora', en: 'Montenegro', cz: 'Černá Hora' },
@@ -68,6 +69,12 @@ export default function CountryBanners({ lang = 'sk', dictionary, properties = [
             image: "/images/countries/greece.webp",
             properties: getCount("greece"),
         },
+        {
+            id: "cyprus",
+            name: getCountryName("cyprus"),
+            image: "/images/countries/cyprus.webp",
+            properties: getCount("cyprus"),
+        },
     ];
 
     const propertiesLabel = lang === 'en' ? 'properties' : lang === 'cz' ? 'nemovitostí' : 'nehnuteľností';
@@ -84,7 +91,7 @@ export default function CountryBanners({ lang = 'sk', dictionary, properties = [
                     src={country.image}
                     alt={country.name}
                     fill
-                    sizes="(max-width: 640px) 75vw, (max-width: 768px) 45vw, 25vw"
+                    sizes="(max-width: 640px) 75vw, (max-width: 1280px) 45vw, 20vw"
                     quality={60}
                     className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
                 />
@@ -119,8 +126,8 @@ export default function CountryBanners({ lang = 'sk', dictionary, properties = [
     return (
         <section className="relative z-0 py-[clamp(1.5rem,4vw,3.5rem)] bg-[var(--color-surface)]">
             <div ref={sectionRef} className="container-custom">
-                {/* Mobile: Swipeable Carousel (Native CSS) */}
-                <div className="md:hidden flex overflow-x-auto snap-x snap-mandatory scrollbar-hide space-x-3 sm:space-x-4 pb-4 -mx-[var(--container-px)] px-[var(--container-px)]">
+                {/* Mobile + tablet: Swipeable Carousel (Native CSS) */}
+                <div className="xl:hidden flex overflow-x-auto snap-x snap-mandatory scrollbar-hide space-x-3 sm:space-x-4 pb-4 -mx-[var(--container-px)] px-[var(--container-px)]">
                     {countries.map((country) => (
                         <div key={country.id} className="w-[75vw] sm:w-[45vw] flex-shrink-0 snap-center">
                             <CountryCard country={country} />
@@ -128,8 +135,8 @@ export default function CountryBanners({ lang = 'sk', dictionary, properties = [
                     ))}
                 </div>
 
-                {/* Desktop: Grid */}
-                <div className="hidden md:grid grid-cols-4 gap-6">
+                {/* Desktop: single uniform row of 5 */}
+                <div className="hidden xl:grid grid-cols-5 gap-6">
                     {countries.map((country) => (
                         <div key={country.id} data-reveal>
                             <CountryCard country={country} />

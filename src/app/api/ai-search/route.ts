@@ -1,9 +1,5 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
 import { NextRequest, NextResponse } from "next/server";
-
-// Initialize Gemini
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
-const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+import { groqChat } from "@/lib/groq";
 
 // Valid values for enum filters
 const VALID_COUNTRIES = ["all", "spain", "croatia", "italy", "portugal", "greece", "cyprus", "montenegro", "bulgaria"];
@@ -121,20 +117,21 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        if (!process.env.GEMINI_API_KEY) {
+        if (!process.env.GROQ_API_KEY) {
             return NextResponse.json(
                 { error: "API key not configured" },
                 { status: 500 }
             );
         }
 
-        // Call Gemini
-        const result = await model.generateContent([
-            { text: SYSTEM_PROMPT },
-            { text: `User query (language: ${lang}): "${query}"\n\nExtract the filters as JSON:` },
-        ]);
-
-        const responseText = result.response.text();
+        // Call Groq (Llama) — deterministic JSON output for filter extraction
+        const responseText = await groqChat(
+            [
+                { role: "system", content: SYSTEM_PROMPT },
+                { role: "user", content: `User query (language: ${lang}): "${query}"\n\nExtract the filters as JSON:` },
+            ],
+            { json: true, temperature: 0.1 }
+        );
 
         // Parse the JSON from the response
         let filters;
