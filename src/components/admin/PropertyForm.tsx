@@ -155,7 +155,8 @@ const STATUS_OPTIONS = [
     { value: "", label: "— Nezadané —" },
     { value: "novostavba", label: "Novostavba" },
     { value: "povodny_stav", label: "Pôvodný stav" },
-    { value: "po_vystavbe", label: "Po výstavbe" },
+    // hodnota "po_vystavbe" je historická — existujúce záznamy v DB ju už majú uloženú
+    { value: "po_vystavbe", label: "Vo výstavbe" },
     { value: "po_rekonstrukcii", label: "Po rekonštrukcii" },
     { value: "vo_faze_projektovania", label: "Vo fáze projektovania" },
 ];

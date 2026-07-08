@@ -66,6 +66,12 @@ const DISPOSITION_TO_ROOMS: Record<string, number> = {
     '4kk': 4,
     '5kk': 5,
     '6kk': 6,
+    '1+kk': 1,
+    '2+kk': 2,
+    '3+kk': 3,
+    '4+kk': 4,
+    '5+kk': 5,
+    '6+kk': 6,
     '1_room': 1,
     '2_room': 2,
     '3_room': 3,
@@ -83,7 +89,8 @@ const TYPE_TO_REALSOFT_SUBTYPE: Record<string, string> = {
     penthouse: 'byt',
     townhouse: 'radovy-dom',
     studio: 'byt',
-    studio_apartment_flat: 'byt',   // admin form value → byt subtype
+    studio_apartment_flat: 'byt',           // admin form value → byt subtype
+    family_house_villa: 'rodinny-dom',      // admin form value → house subtype
 };
 
 // ============================================
@@ -117,7 +124,7 @@ function xmlBool(val: boolean | null | undefined): string {
  *  6. Collapse runs of spaces/tabs on each line; collapse 3+ consecutive newlines to 2
  *  7. Trim leading/trailing whitespace
  */
-function htmlToPlainText(html: string | null | undefined): string {
+export function htmlToPlainText(html: string | null | undefined): string {
     if (!html) return '';
 
     let text = html;
@@ -262,14 +269,16 @@ const COUNTRY_TO_SOFTREAL_ID: Record<string, number> = {
 
 /** Our property_type → Softreal reality_type integer codes */
 const TYPE_TO_SOFTREAL_RT: Record<string, number> = {
-    villa: 6,        // Domy a vily
-    apartment: 4,    // Byty
-    house: 6,        // Domy a vily
-    land: 3,         // Pozemky
-    commercial: 2,   // Komerční objekty
-    penthouse: 4,    // Byty
-    townhouse: 6,    // Domy a vily
-    studio: 4,       // Byty
+    villa: 6,                  // Domy a vily
+    apartment: 4,              // Byty
+    house: 6,                  // Domy a vily
+    land: 3,                   // Pozemky
+    commercial: 2,             // Komerční objekty
+    penthouse: 4,              // Byty
+    townhouse: 6,              // Domy a vily
+    studio: 4,                 // Byty
+    studio_apartment_flat: 4,  // Byty (admin form value)
+    family_house_villa: 6,     // Domy a vily (admin form value)
 };
 
 /** offer_type → Softreal relation_type (1=prodej, 2=pronájem) */
@@ -302,6 +311,7 @@ const OBJECT_TYPE_MAP: Record<string, number> = {
 /** disposition → flat_kind / house_kind codes */
 const DISPOSITION_MAP: Record<string, number> = {
     studio: 1, '1kk': 2, '2kk': 3, '3kk': 4, '4kk': 5, '5kk': 6, '6kk': 7,
+    '1+kk': 2, '2+kk': 3, '3+kk': 4, '4+kk': 5, '5+kk': 6, '6+kk': 7,
     '1_room': 9, '2_room': 10, '3_room': 11, '4_room': 12, '5_room_plus': 13,
     atypic: 16,
 };

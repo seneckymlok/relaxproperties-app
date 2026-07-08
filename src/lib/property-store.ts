@@ -201,27 +201,35 @@ export async function getAllProperties(): Promise<PropertyRecord[]> {
  */
 export async function getPublishedProperties(): Promise<PropertyRecord[]> {
     const supabase = getAdminClient();
-    const { data, error } = await supabase
-        .from('properties')
-        .select('*')
-        .eq('publish_status', 'published')
-        .order('created_at', { ascending: false });
+    
+    // Paginate to avoid PostgREST 1000 row limit
+    const PAGE = 1000;
+    const all: PropertyRecord[] = [];
+    let from = 0;
 
-    if (error) throw new Error(`Failed to fetch published properties: ${error.message}`);
-    return (data || []) as PropertyRecord[];
+    while (true) {
+        const { data, error } = await supabase
+            .from('properties')
+            .select('*')
+            .eq('publish_status', 'published')
+            .order('created_at', { ascending: false })
+            .range(from, from + PAGE - 1);
+
+        if (error) throw new Error(`Failed to fetch published properties: ${error.message}`);
+        all.push(...((data || []) as PropertyRecord[]));
+        if (!data || data.length < PAGE) break;
+        from += PAGE;
+    }
+
+    return all;
 }
 
 /**
- * Cached version of getPublishedProperties — revalidates every 30 min.
- * Tag 'properties' lets admin routes bust the cache instantly on publish/update/delete,
- * so the long interval only governs feed-sync changes (acceptably fresh within 30 min)
- * while sharply cutting Supabase egress from background refills.
+ * Next.js unstable_cache has a 2MB hard limit which crashes the site for large property catalogues.
+ * We rely on Route Segment Config (revalidate = 300) in page files instead.
+ * Exporting this alias for backwards compatibility with existing imports.
  */
-export const getCachedPublishedProperties = unstable_cache(
-    getPublishedProperties,
-    ['published-properties'],
-    { revalidate: 1800, tags: ['properties'] }
-);
+export const getCachedPublishedProperties = getPublishedProperties;
 
 /**
  * Fetch a small set of similar properties (same country, excluding current).
