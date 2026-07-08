@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import type { PropertyRecord, PropertyImage } from "@/lib/property-store";
@@ -120,6 +120,16 @@ interface PropertyFormProps {
     initialData?: PropertyRecord;
     mode: "create" | "edit";
 }
+
+// Slovak source fields paired with their auto-translated EN/CZ counterparts.
+const TRANSLATABLE_FIELD_PAIRS: Array<{ sk: string; en: string; cz: string }> = [
+    { sk: 'title_sk', en: 'title_en', cz: 'title_cz' },
+    { sk: 'description_sk', en: 'description_en', cz: 'description_cz' },
+    { sk: 'location_sk', en: 'location_en', cz: 'location_cz' },
+    { sk: 'location_description_sk', en: 'location_description_en', cz: 'location_description_cz' },
+    { sk: 'meta_title_sk', en: 'meta_title_en', cz: 'meta_title_cz' },
+    { sk: 'meta_description_sk', en: 'meta_description_en', cz: 'meta_description_cz' },
+];
 
 // ============================================
 // CONSTANTS
@@ -429,6 +439,19 @@ export default function PropertyForm({ initialData, mode }: PropertyFormProps) {
         };
     });
 
+    // Snapshot of the Slovak source fields as last persisted (i.e. as last translated),
+    // taken once from the raw initialData (not the draft-merged form). Used to detect
+    // exactly which field(s) changed since the last translation so only those get
+    // re-translated on the next publish, overwriting their stale EN/CZ values.
+    const originalSkValuesRef = useRef<Record<string, string> | null>(
+        mode === "edit" && initialData
+            ? TRANSLATABLE_FIELD_PAIRS.reduce((acc, { sk }) => {
+                acc[sk] = (initialData[sk as keyof PropertyRecord] as string) || "";
+                return acc;
+            }, {} as Record<string, string>)
+            : null
+    );
+
     // ============================================
     // AUTO-SAVE (DATABASE)
     // ============================================
@@ -577,53 +600,48 @@ export default function PropertyForm({ initialData, mode }: PropertyFormProps) {
     // DeepL TRANSLATION
     // ============================================
 
-    const translateFields = async (payload: Record<string, unknown>) => {
-        // Collect all translatable Slovak fields
-        const translatableFields = [
-            'title_sk', 'description_sk', 'location_sk',
-            'location_description_sk', 'meta_title_sk', 'meta_description_sk'
-        ];
-        const textsToTranslate = translatableFields.map(f => (payload[f] as string) || '');
+    const translateFields = async (payload: Record<string, unknown>, originalValues: Record<string, string> | null) => {
+        // A field's Slovak source is "changed" if we have no baseline (new property /
+        // property never translated yet, so everything must be translated), or its
+        // current value differs from the value it had when it was last translated.
+        const isSourceChanged = (skField: string) => {
+            if (!originalValues) return true;
+            return ((payload[skField] as string) || '') !== (originalValues[skField] || '');
+        };
 
-        // EN field names corresponding to translatableFields
-        const enFields = ['title_en', 'description_en', 'location_en', 'location_description_en', 'meta_title_en', 'meta_description_en'];
-        const czFields = ['title_cz', 'description_cz', 'location_cz', 'location_description_cz', 'meta_title_cz', 'meta_description_cz'];
+        const translateLang = async (targetLang: 'EN' | 'CS', targetKey: 'en' | 'cz') => {
+            // Re-translate fields whose SK source changed since the last translation
+            // (overwriting the now-stale EN/CZ value), plus any field whose target is
+            // still empty (first-time fill, without touching untouched manual entries).
+            const indices: number[] = [];
+            TRANSLATABLE_FIELD_PAIRS.forEach((pair, i) => {
+                const targetField = pair[targetKey];
+                const targetEmpty = !(payload[targetField] as string);
+                if (isSourceChanged(pair.sk) || targetEmpty) {
+                    indices.push(i);
+                }
+            });
+            if (indices.length === 0) return;
 
-        // Only translate EN fields that are empty (don't overwrite manual entries)
-        const needsEnTranslation = enFields.some(f => !(payload[f] as string));
-        if (needsEnTranslation) {
+            const texts = indices.map(i => (payload[TRANSLATABLE_FIELD_PAIRS[i].sk] as string) || '');
             try {
-                const enRes = await fetch('/api/admin/translate', {
+                const res = await fetch('/api/admin/translate', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ texts: textsToTranslate, targetLang: 'EN' }),
+                    body: JSON.stringify({ texts, targetLang }),
                 });
-                if (enRes.ok) {
-                    const { translations } = await enRes.json();
-                    enFields.forEach((f, i) => {
-                        if (!(payload[f] as string)) payload[f] = translations[i] || null;
+                if (res.ok) {
+                    const { translations } = await res.json();
+                    indices.forEach((fieldIndex, j) => {
+                        const targetField = TRANSLATABLE_FIELD_PAIRS[fieldIndex][targetKey];
+                        payload[targetField] = translations[j] || null;
                     });
                 }
-            } catch (e) { console.error('EN translation failed:', e); }
-        }
+            } catch (e) { console.error(`${targetLang} translation failed:`, e); }
+        };
 
-        // Only translate CZ fields that are empty
-        const needsCzTranslation = czFields.some(f => !(payload[f] as string));
-        if (needsCzTranslation) {
-            try {
-                const czRes = await fetch('/api/admin/translate', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ texts: textsToTranslate, targetLang: 'CS' }),
-                });
-                if (czRes.ok) {
-                    const { translations } = await czRes.json();
-                    czFields.forEach((f, i) => {
-                        if (!(payload[f] as string)) payload[f] = translations[i] || null;
-                    });
-                }
-            } catch (e) { console.error('CZ translation failed:', e); }
-        }
+        await translateLang('EN', 'en');
+        await translateLang('CS', 'cz');
 
         return payload;
     };
@@ -841,10 +859,11 @@ export default function PropertyForm({ initialData, mode }: PropertyFormProps) {
         };
 
         try {
-            // Auto-translate when publishing
+            // Auto-translate when publishing: any SK field changed since the last
+            // translation gets re-translated to EN/CZ, overwriting the stale value.
             if (publishStatus === 'published') {
                 setTranslating(true);
-                await translateFields(payload);
+                await translateFields(payload, originalSkValuesRef.current);
                 setTranslating(false);
             }
 
