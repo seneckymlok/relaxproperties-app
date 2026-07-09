@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { groqChat } from "@/lib/groq";
 
 // Valid values for enum filters
-const VALID_COUNTRIES = ["all", "spain", "croatia", "italy", "portugal", "greece", "cyprus", "montenegro", "bulgaria"];
+const VALID_COUNTRIES = ["all", "spain", "croatia", "italy", "portugal", "greece", "cyprus", "montenegro", "bulgaria", "albania"];
 const VALID_PROPERTY_TYPES = ["all", "villa", "apartment", "house", "land"];
 const VALID_BEDROOMS = ["all", "1", "2", "3", "4+"];
 const VALID_SORT = ["featured", "price-asc", "price-desc", "newest", "area-desc"];
@@ -20,7 +20,7 @@ const SYSTEM_PROMPT = `You are a real estate search assistant for a Mediterranea
 Return a JSON object with these fields:
 
 1. ENUM FILTERS (use exact values only):
-   - country: "all" | "spain" | "croatia" | "italy" | "portugal" | "greece" | "montenegro" | "bulgaria"
+   - country: "all" | "spain" | "croatia" | "italy" | "portugal" | "greece" | "cyprus" | "montenegro" | "bulgaria" | "albania"
    - propertyType: "all" | "villa" | "apartment" | "house" | "land"
    - bedrooms: "all" | "1" | "2" | "3" | "4+"
    - sort: "featured" | "price-asc" | "price-desc" | "newest" | "area-desc"
@@ -57,6 +57,8 @@ COUNTRY NAME MAPPINGS (multilingual):
 - Greece/Grécko/Řecko → "greece"
 - Montenegro/Čierna Hora/Černá Hora → "montenegro"
 - Bulgaria/Bulharsko → "bulgaria"
+- Cyprus/Kypr → "cyprus"
+- Albania/Albánsko/Albánie → "albania"
 
 PROPERTY TYPE MAPPINGS (multilingual):
 - Villa/Vila → "villa"

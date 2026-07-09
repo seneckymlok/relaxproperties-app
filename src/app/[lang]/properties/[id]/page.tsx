@@ -302,7 +302,7 @@ export default async function PropertyDetailPage({ params }: PropertyDetailPageP
 
     // ── Structured data (JSON-LD) ────────────────────────────────────────────
     const BASE_URLS = { sk: 'https://relaxproperties.sk', en: 'https://relaxproperties.eu', cz: 'https://relaxproperties.cz' };
-    const COUNTRY_ISO: Record<string, string> = { bg: 'BG', hr: 'HR', es: 'ES', gr: 'GR', cy: 'CY', bulgaria: 'BG', croatia: 'HR', spain: 'ES', greece: 'GR', cyprus: 'CY' };
+    const COUNTRY_ISO: Record<string, string> = { bg: 'BG', hr: 'HR', es: 'ES', gr: 'GR', cy: 'CY', al: 'AL', bulgaria: 'BG', croatia: 'HR', spain: 'ES', greece: 'GR', cyprus: 'CY', albania: 'AL', italy: 'IT', portugal: 'PT', montenegro: 'ME' };
     const canonical = `${BASE_URLS[lang]}/${lang}/properties/${property.slug || id}`;
 
     const propertyJsonLd = {

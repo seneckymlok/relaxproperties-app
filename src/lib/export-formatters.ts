@@ -29,6 +29,8 @@ const COUNTRY_TO_ISO: Record<string, string> = {
     germany: 'DE',
     czechia: 'CZ',
     slovakia: 'SK',
+    cyprus: 'CY',
+    albania: 'AL',
 };
 
 /** Our internal country slugs → Slovak display names */
@@ -45,6 +47,8 @@ const COUNTRY_TO_SK: Record<string, string> = {
     germany: 'Nemecko',
     czechia: 'Česká republika',
     slovakia: 'Slovensko',
+    cyprus: 'Cyprus',
+    albania: 'Albánsko',
 };
 
 /**

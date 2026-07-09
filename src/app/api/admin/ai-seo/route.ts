@@ -71,7 +71,8 @@ export async function POST(request: NextRequest) {
             const countryLabels: Record<string, string> = {
                 croatia: 'Chorvátsko', spain: 'Španielsko', bulgaria: 'Bulharsko',
                 greece: 'Grécko', italy: 'Taliansko', slovakia: 'Slovensko',
-                montenegro: 'Čierna Hora',
+                montenegro: 'Čierna Hora', cyprus: 'Cyprus', portugal: 'Portugalsko',
+                albania: 'Albánsko',
             };
             details.push(`Krajina: ${countryLabels[body.country] || body.country}`);
         }

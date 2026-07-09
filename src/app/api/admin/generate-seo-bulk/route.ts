@@ -38,6 +38,9 @@ const COUNTRY_LABELS: Record<string, { sk: string; en: string; cz: string }> = {
     montenegro:  { sk: 'Čierna Hora', en: 'Montenegro',  cz: 'Černá Hora' },
     italy:       { sk: 'Taliansko',   en: 'Italy',       cz: 'Itálie' },
     slovakia:    { sk: 'Slovensko',   en: 'Slovakia',    cz: 'Slovensko' },
+    cyprus:      { sk: 'Cyprus',      en: 'Cyprus',      cz: 'Kypr' },
+    portugal:    { sk: 'Portugalsko', en: 'Portugal',    cz: 'Portugalsko' },
+    albania:     { sk: 'Albánsko',    en: 'Albania',     cz: 'Albánie' },
 };
 
 function priceStr(p: PropertyRecord, lang: 'sk' | 'en' | 'cz'): string {

@@ -39,6 +39,9 @@ const COUNTRY_SLUG_MAP: Record<string, string> = {
     "slovakia": "slovakia",
     "italy": "italy",
     "montenegro": "montenegro",
+    "cyprus": "cyprus",
+    "portugal": "portugal",
+    "albania": "albania",
     // Common English names
     "republic of croatia": "croatia",
     "hellenic republic": "greece",
@@ -46,6 +49,9 @@ const COUNTRY_SLUG_MAP: Record<string, string> = {
     "kingdom of spain": "spain",
     "republic of bulgaria": "bulgaria",
     "slovak republic": "slovakia",
+    "republic of cyprus": "cyprus",
+    "portuguese republic": "portugal",
+    "republic of albania": "albania",
 };
 
 export interface GeoData {

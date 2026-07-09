@@ -52,7 +52,8 @@ export async function POST(request: NextRequest) {
         if (body.country) {
             const countryLabels: Record<string, string> = {
                 croatia: 'Chorvátsko', spain: 'Španielsko', bulgaria: 'Bulharsko',
-                greece: 'Grécko', italy: 'Taliansko', montenegro: 'Čierna Hora'
+                greece: 'Grécko', italy: 'Taliansko', montenegro: 'Čierna Hora',
+                cyprus: 'Cyprus', portugal: 'Portugalsko', albania: 'Albánsko'
             };
             details.push(`Krajina: ${countryLabels[body.country] || body.country}`);
         }
