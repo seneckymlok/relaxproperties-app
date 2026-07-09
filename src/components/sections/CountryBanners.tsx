@@ -30,6 +30,7 @@ export default function CountryBanners({ lang = 'sk', dictionary, properties = [
             italy: { sk: 'Taliansko', en: 'Italy', cz: 'Itálie' },
             portugal: { sk: 'Portugalsko', en: 'Portugal', cz: 'Portugalsko' },
             montenegro: { sk: 'Čierna Hora', en: 'Montenegro', cz: 'Černá Hora' },
+            albania: { sk: 'Albánsko', en: 'Albania', cz: 'Albánie' },
         };
         // Dictionary override if available
         if (dictionary?.buyingProcess?.countries) {
@@ -75,6 +76,12 @@ export default function CountryBanners({ lang = 'sk', dictionary, properties = [
             image: "/images/countries/cyprus.webp",
             properties: getCount("cyprus"),
         },
+        {
+            id: "albania",
+            name: getCountryName("albania"),
+            image: "/images/countries/albania.webp",
+            properties: getCount("albania"),
+        },
     ];
 
     const propertiesLabel = lang === 'en' ? 'properties' : lang === 'cz' ? 'nemovitostí' : 'nehnuteľností';
@@ -91,7 +98,7 @@ export default function CountryBanners({ lang = 'sk', dictionary, properties = [
                     src={country.image}
                     alt={country.name}
                     fill
-                    sizes="(max-width: 640px) 75vw, (max-width: 1280px) 45vw, 20vw"
+                    sizes="(max-width: 640px) 75vw, (max-width: 1280px) 45vw, 33vw"
                     quality={60}
                     className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
                 />
@@ -135,8 +142,8 @@ export default function CountryBanners({ lang = 'sk', dictionary, properties = [
                     ))}
                 </div>
 
-                {/* Desktop: single uniform row of 5 */}
-                <div className="hidden xl:grid grid-cols-5 gap-6">
+                {/* Desktop: 2 rows of 3 */}
+                <div className="hidden xl:grid grid-cols-3 gap-6">
                     {countries.map((country) => (
                         <div key={country.id} data-reveal>
                             <CountryCard country={country} />

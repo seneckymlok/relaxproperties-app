@@ -22,6 +22,8 @@ const countryFlags: Record<string, string> = {
     slovakia: "🇸🇰",
     italy: "🇮🇹",
     montenegro: "🇲🇪",
+    cyprus: "🇨🇾",
+    albania: "🇦🇱",
 };
 
 const countryLabels: Record<string, string> = {
@@ -32,6 +34,8 @@ const countryLabels: Record<string, string> = {
     slovakia: "Slovensko",
     italy: "Taliansko",
     montenegro: "Čierna Hora",
+    cyprus: "Cyprus",
+    albania: "Albánsko",
 };
 
 const statusDotColors: Record<string, string> = {

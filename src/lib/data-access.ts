@@ -211,6 +211,7 @@ const countriesMap: Record<string, Record<Language, string>> = {
     cyprus: { sk: 'Cyprus', en: 'Cyprus', cz: 'Kypr' },
     montenegro: { sk: 'Čierna Hora', en: 'Montenegro', cz: 'Černá Hora' },
     bulgaria: { sk: 'Bulharsko', en: 'Bulgaria', cz: 'Bulharsko' },
+    albania: { sk: 'Albánsko', en: 'Albania', cz: 'Albánie' },
 };
 
 const propertyTypesMap: Record<string, Record<Language, string>> = {

@@ -143,6 +143,7 @@ const COUNTRY_OPTIONS = [
     { value: "greece", label: "Grécko" },
     { value: "slovakia", label: "Slovensko" },
     { value: "italy", label: "Taliansko" },
+    { value: "albania", label: "Albánsko" },
 ];
 
 const TYPE_OPTIONS = [

@@ -26,6 +26,8 @@ const countriesMap: Record<string, Record<string, string>> = {
     greece: { sk: 'Grécko', en: 'Greece', cz: 'Řecko' },
     montenegro: { sk: 'Čierna Hora', en: 'Montenegro', cz: 'Černá Hora' },
     bulgaria: { sk: 'Bulharsko', en: 'Bulgaria', cz: 'Bulharsko' },
+    cyprus: { sk: 'Cyprus', en: 'Cyprus', cz: 'Kypr' },
+    albania: { sk: 'Albánsko', en: 'Albania', cz: 'Albánie' },
 };
 
 function translateCountry(country: string, lang: string): string {
